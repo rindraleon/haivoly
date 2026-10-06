@@ -8,7 +8,12 @@
  *      hook métier, appel HTTP ni feuille de style) ;
  *   2. chaque import de ces fichiers **résout** vers un module existant ;
  *   3. inventaire des routes et détection des écrans jamais atteints
- *      (informatif : signale un écran orphelin après un renommage).
+ *      (informatif : signale un écran orphelin après un renommage) ;
+ *   4. **joignabilité** : une route qui n'est ciblée par aucune navigation
+ *      (`router.push` / `replace` / `navigate`, `pathname:`, `href=`) n'est
+ *      atteignable que par lien profond — donc, en pratique, morte. Elles sont
+ *      listées : c'est ainsi qu'a été repéré `/modifier-culture`, seul chemin
+ *      d'édition d'une culture et pourtant relié à rien.
  *
  * Usage :  node scripts/verifier-routes.mjs   (alias `npm run verifier:routes`)
  */
@@ -56,6 +61,50 @@ function resoudre(cheminImport, fichierSource) {
   return candidats.find((candidat) => existsSync(candidat)) ?? null;
 }
 
+/** Chemin public d'une route : les groupes `(…)` n'apparaissent pas dans l'URL. */
+function cheminRoute(fichier) {
+  const morceaux = relative(racineApp, fichier)
+    .replace(/\.tsx?$/, '')
+    .split('/')
+    .filter((morceau) => !morceau.startsWith('('));
+  if (morceaux[morceaux.length - 1] === 'index') morceaux.pop();
+  return `/${morceaux.join('/')}`;
+}
+
+/**
+ * Cibles de navigation écrites hors de `src/app` : littéraux de `router.*`,
+ * `pathname:` des appels par objet, `href=` des redirections.
+ */
+function ciblesNavigation() {
+  const cibles = new Map();
+  const racineSrc = join(racine, 'src');
+  const motifs = [
+    /router\s*\.\s*(?:push|replace|navigate)\s*\(\s*['"`]([^'"`]+)/g,
+    /pathname\s*:\s*['"`]([^'"`]+)/g,
+    /href\s*=\s*[{]?\s*['"`]([^'"`]+)/g,
+  ];
+
+  for (const fichier of fichiers(racineSrc, /\.tsx$|\.ts$/)) {
+    if (fichier.startsWith(racineApp)) continue;
+    const source = readFileSync(fichier, 'utf8');
+    for (const motif of motifs) {
+      for (const [, brut] of source.matchAll(motif)) {
+        // Gabarits (`\`/detail/${id}\``) : on garde la partie fixe ;
+        // groupes `(app)` retirés, paramètres de requête ignorés.
+        const nettoye = brut
+          .split('?')[0]
+          .replace(/\$\{[^}]*\}/g, '')
+          .replace(/\([^)]*\)\//g, '')
+          .replace(/\/+$/, '');
+        // `router.replace('/')` : la racine reste la racine.
+        const chemin = nettoye || (brut.startsWith('/') ? '/' : '');
+        if (chemin) cibles.set(chemin, relative(racine, fichier));
+      }
+    }
+  }
+  return cibles;
+}
+
 const routes = fichiers(racineApp, /\.tsx$|\.ts$/).filter(
   (chemin) => !/\.(test|spec)\.tsx?$/.test(chemin),
 );
@@ -66,10 +115,14 @@ const cibles = new Set();
 for (const fichier of routes) {
   const source = readFileSync(fichier, 'utf8');
   const nom = relative(racine, fichier);
-  const utiles = source
+  // On ne compte que le **code** : les commentaires (lignes `//` et blocs
+  // `/* … */`) documentent la couche de routage, ils ne l'alourdissent pas.
+  const sansCommentaires = source
+    .replace(/\/\*[\s\S]*?\*\//g, '')
     .split('\n')
-    .filter((ligne) => ligne.trim() && !ligne.trim().startsWith('//'))
-    .length;
+    .map((ligne) => ligne.split('//')[0].trim())
+    .filter(Boolean);
+  const utiles = sansCommentaires.length;
 
   // Un `_layout.tsx` n'est pas une route : c'est la composition de la pile de
   // navigation (providers, en-têtes) — il a le droit à un peu plus de lignes.
@@ -116,4 +169,34 @@ if (problemes.length > 0) {
 if (orphelins.length > 0) {
   console.log(`\n⚠️  ${orphelins.length} écran(s) non atteint(s) depuis une route :`);
   for (const chemin of orphelins) console.log(`   ${chemin}`);
+}
+
+// ── Routes jamais ciblées par une navigation (mortes ou lien profond seul) ─
+const ciblesNav = ciblesNavigation();
+const feuilletes = routes.filter((fichier) => !fichier.endsWith('_layout.tsx'));
+
+const jamaisCiblees = feuilletes
+  .map((fichier) => ({ chemin: cheminRoute(fichier), fichier: relative(racine, fichier) }))
+  // `/` est le point d'entrée de l'application (expo-router) : hors sujet.
+  .filter(({ chemin }) => chemin !== '/')
+  .filter(({ chemin }) => {
+    for (const cible of ciblesNav.keys()) {
+      if (cible === chemin) return false;
+      if (cible !== '/' && (chemin.startsWith(`${cible}/`) || cible.startsWith(`${chemin}/`))) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+jamaisCiblees.sort((a, b) => a.chemin.localeCompare(b.chemin));
+
+if (jamaisCiblees.length > 0) {
+  console.log(
+    `\n⚠️  ${jamaisCiblees.length} route(s) jamais ciblée(s) par une navigation`,
+  );
+  console.log('    (accessibles uniquement par lien profond — à relier ou à retirer) :');
+  for (const { chemin, fichier } of jamaisCiblees) {
+    console.log(`   ${chemin.padEnd(28)} ${fichier}`);
+  }
 }

@@ -7,7 +7,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Plus, Sprout, Wheat } from 'lucide-react-native';
+import { Pencil, Plus, Sprout, Wheat } from 'lucide-react-native';
 
 import { colors } from '@/theme';
 import { Badge } from '@/components/CommonComponent/Badge';
@@ -57,6 +57,27 @@ export default function DetailCultureScreen() {
       title={data.nom}
       subtitle={data.parcelle?.nom ? `Parcelle : ${data.parcelle.nom}` : undefined}
       onBack={() => router.back()}
+      headerRight={
+        /* Action « Modifier » explicite, avec icône Lucide : l'écran
+           d'édition s'ouvre pré-rempli à partir de la culture chargée. */
+        <Button
+          size="sm"
+          variant="ghost"
+          onPress={() =>
+            router.push({
+              pathname: '/(app)/(cultures)/modifier-culture',
+              params: {
+                parcelleId: data.parcelleId,
+                cultureId: data.id,
+                parcelleNom: data.parcelle?.nom ?? '',
+              },
+            })
+          }
+          leftIcon={<Pencil size={15} color={colors.primary[700]} />}
+        >
+          Modifier
+        </Button>
+      }
       footer={
         peutEtreRecoltee ? (
           <Button

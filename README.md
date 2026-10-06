@@ -31,7 +31,8 @@ npm run lint                          # ESLint + Prettier : 0 erreur / 0 avertis
 npm test                              # Jest : 6 suites / 41 tests (logique pure)
 npm run sonar                         # SonarJS : 0 erreur, 3 avertissements
 npm run verifier:api                  # appels mobile ↔ routes du backend
-npm run verifier:routes                # fichiers de src/app courts et sans logique
+npm run verifier:routes               # fichiers de src/app courts, sans logique,
+                                      # routes réellement atteignables
 npx expo export --platform android    # bundle Metro complet (7,3 Mo)
 ```
 
@@ -182,7 +183,7 @@ manifeste autorise une suppression.
 | `npm test` | Tests unitaires de la **logique pure** (Jest 29, environnement Node) : conversions de dates `YYYY-MM-DD` ↔ `Date` ↔ ISO, statut d'intervention, formatage des nombres, polygones (nettoyage, aire, centroïde), contrat hors-ligne, clés TanStack Query. `jest-expo` n'est **pas** installé : il entre en conflit de versions avec `react-native@0.86.2` — les tests de rendu se font sur appareil. |
 | `npm run sonar` | Règles SonarJS (fiabilité + code smells) via `eslint.sonar.config.js`. Les fichiers générés (`components/sections-generees.json`) et les tests sont exclus : ils ne doivent pas être corrigés à la main. |
 | `npm run verifier:api` | Compare chaque appel sortant des `*.service.ts` aux routes déclarées par les contrôleurs NestJS (`../backend/src/**/*.controller.ts`). Échoue si un appel n'a pas de route. |
-| `npm run verifier:routes` | Contrôle que `src/app/**` reste une **couche de routage** : ≤ 12 lignes utiles, aucune logique (hook, HTTP, styles), imports résolus, et signale tout écran non atteint depuis une route. |
+| `npm run verifier:routes` | Contrôle que `src/app/**` reste une **couche de routage** : ≤ 12 lignes de code utiles (commentaires exclus), aucune logique (hook, HTTP, styles), imports résolus ; signale tout écran non atteint depuis une route **et toute route jamais ciblée par une navigation** (dead route / lien profond uniquement). |
 
 Journalisation : les écrans n'appellent plus `console.log` directement, mais
 `logger.debug(domaine, …)` (`src/utils/logger.ts`) — actif en développement
