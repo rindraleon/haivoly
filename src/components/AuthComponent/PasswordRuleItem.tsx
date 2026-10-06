@@ -1,5 +1,5 @@
 /**
- * Sous-composant `CheckItem` extrait de `ResetPasswordScreen`.
+ * Sous-composant `CultureCheckItem` extrait de `ResetPasswordScreen`.
  *
  * Regroupe la présentation d'un élément de liste et ses interactions
  * locales, ce qui allège nettement le composant principal.
@@ -9,7 +9,7 @@ import { Text, View } from 'react-native';
 import { colors } from '@/theme';
 import { styles } from '@/screens/AuthScreen/ResetPasswordScreen.styles';
 
-export function CheckItem({ valid, text }: { valid: boolean; text: string }) {
+export function PasswordRuleItem({ valid, text }: { valid: boolean; text: string }) {
   return (
     <View style={styles.checkRow}>
       <View style={[styles.checkIcon, valid && styles.checkIconValid]}>

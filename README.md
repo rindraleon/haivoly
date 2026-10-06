@@ -28,11 +28,13 @@ bord-à-bord est le comportement par défaut depuis le SDK 54.
 ```bash
 npx tsc --noEmit                      # typage strict : 0 erreur
 npm run lint                          # ESLint + Prettier : 0 erreur / 0 avertissement
-npm test                              # Jest : 6 suites / 41 tests (logique pure)
+npm test                              # Jest : 10 suites / 83 tests (logique pure)
 npm run sonar                         # SonarJS : 0 erreur, 3 avertissements
 npm run verifier:api                  # appels mobile ↔ routes du backend
 npm run verifier:routes               # fichiers de src/app courts, sans logique,
                                       # routes réellement atteignables
+npm run verifier:composants           # composants réutilisables : aucun orphelin,
+                                      # aucun nom ambigu, design system préservé
 npx expo export --platform android    # bundle Metro complet (7,3 Mo)
 ```
 
@@ -128,6 +130,26 @@ sous-composants), `extraire-sections.js` (grands blocs JSX), `extraire-imbriquee
 `src/components/sections-generees.json` (40 entrées, toutes résolues) — seul ce
 manifeste autorise une suppression.
 
+### Composants réutilisables et sections d'écran
+
+`src/components/` contient **deux familles**, et une seule est réutilisable :
+
+| Famille | Où | Réutilisable | Pourquoi |
+| ------- | -- | ------------ | -------- |
+| **Design system** (33 fichiers) | `CommonComponent` (barils : `Button`, `Input`, `Card`, `Badge`, `AppSelect`, `ScreenHeader`, `EmptyState`, `ErrorState`, `LoadingState`, `SearchBar`, `DateInput`, `ConfirmDialog`…), plus `ParcelleFormShell`, `ParcelleMap`, `ParcelleWizard`, `SyncBanner` | ✅ | Ils reçoivent **tout par propriétés** et n'importent aucun écran : ils se posent dans n'importe quel écran, avec un rendu identique |
+| **Sections d'écran** (54 fichiers) | `CultureComponent`, `ObservationComponent`, `InterventionComponent`, `AuthComponent`, `ProfileComponent`, `ParcelleComponent` | ❌ | Extraites d'un écran par `scripts/extraire-sections.js` pour l'alléger : elles importent `@/screens/...` (styles et utilitaires de leur écran) et ne servent qu'à lui |
+
+Règle appliquée par `npm run verifier:composants` : **aucune section n'entre dans
+le design system**, aucun composant réutilisable ne dépend d'un écran, aucun
+fichier mort, aucun nom exporté en double. Les imports se font par **chemin
+direct** (`@/components/CommonComponent/Button`) : le baril `@/components`
+n'est jamais importé, et toute collision de nom serait signalée.
+
+Exemple de contrat partagé : `ParcelleFormShell` est utilisé par les six écrans
+du parcours parcelle (création, modification, délimitation, détail, cultures,
+récoltes) — c'est ce fichier unique, et non six copies, qui garantit le même
+fond, les mêmes marges, le même en-tête et l'action fixée en bas.
+
 ---
 
 ## 3. Corrections apportées
@@ -180,9 +202,11 @@ manifeste autorise une suppression.
 
 | Commande | Ce qu'elle vérifie |
 | -------- | ------------------ |
-| `npm test` | Tests unitaires de la **logique pure** (Jest 29, environnement Node) : conversions de dates `YYYY-MM-DD` ↔ `Date` ↔ ISO, statut d'intervention, formatage des nombres, polygones (nettoyage, aire, centroïde), contrat hors-ligne, clés TanStack Query. `jest-expo` n'est **pas** installé : il entre en conflit de versions avec `react-native@0.86.2` — les tests de rendu se font sur appareil. |
+| `npm test` | Tests unitaires de la **logique pure** (Jest 29, environnement Node) : conversions de dates `YYYY-MM-DD` ↔ `Date` ↔ ISO, statut d'intervention, formatage des nombres, polygones (nettoyage, aire, centroïde), contrat hors-ligne, clés TanStack Query, **compression d'image** (dimensions, seuils, gain), **erreurs API indexées**, session, préparation des photos. `jest-expo` n'est **pas** installé : il entre en conflit de versions avec `react-native@0.86.2` — les tests de rendu se font sur appareil. |
 | `npm run sonar` | Règles SonarJS (fiabilité + code smells) via `eslint.sonar.config.js`. Les fichiers générés (`components/sections-generees.json`) et les tests sont exclus : ils ne doivent pas être corrigés à la main. |
 | `npm run verifier:api` | Compare chaque appel sortant des `*.service.ts` aux routes déclarées par les contrôleurs NestJS (`../backend/src/**/*.controller.ts`). Échoue si un appel n'a pas de route. |
+| `npm run verifier:routes` | Contrôle que `src/app/**` reste une **couche de routage** : ≤ 12 lignes de code utiles (commentaires exclus), aucune logique (hook, HTTP, styles), imports résolus ; signale tout écran non atteint depuis une route **et toute route jamais ciblée par une navigation** (dead route / lien profond uniquement). |
+| `npm run verifier:composants` | Inventorie les 87 fichiers de `src/components/` et croise **tous** les imports du projet. Échoue si un composant réutilisable n'est utilisé nulle part, si un baril cite un fichier absent, si une section d'écran entre dans le design system, si un composant réutilisable importe un écran, ou si deux fichiers exportent le même nom. Affiche en information les composants les plus utilisés et les motifs faits main restants (`ActivityIndicator`, `TextInput`, adoption de `EmptyState`). |
 | `npm run verifier:routes` | Contrôle que `src/app/**` reste une **couche de routage** : ≤ 12 lignes de code utiles (commentaires exclus), aucune logique (hook, HTTP, styles), imports résolus ; signale tout écran non atteint depuis une route **et toute route jamais ciblée par une navigation** (dead route / lien profond uniquement). |
 
 Journalisation : les écrans n'appellent plus `console.log` directement, mais

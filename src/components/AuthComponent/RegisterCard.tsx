@@ -17,7 +17,7 @@ import { Sprout } from 'lucide-react-native';
 import type { Dispatch, SetStateAction } from 'react';
 import { Text, View } from 'react-native';
 
-import { Card1 } from '@/components/AuthComponent/Card1';
+import { RegisterFormFields } from '@/components/AuthComponent/RegisterFormFields';
 type Props = {
   clearFieldError: (field: "nom" | "prenom" | "email" | "telephone" | "password") => void;
   email: string;
@@ -38,7 +38,7 @@ type Props = {
   telephone: string;
 };
 
-export function Card({
+export function RegisterCard({
   clearFieldError,
   email,
   errors,
@@ -64,7 +64,7 @@ export function Card({
                   }
                 >
 
-                  <Card1
+                  <RegisterFormFields
                     clearFieldError={clearFieldError}
                     email={email}
                     errors={errors}

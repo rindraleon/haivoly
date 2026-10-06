@@ -65,7 +65,8 @@
     "test:coverage": "jest --coverage",
     "sonar": "eslint --config eslint.sonar.config.js \"src/**/*.{ts,tsx}\"",
     "verifier:api": "node scripts/verifier-api.mjs",
-    "verifier:routes": "node scripts/verifier-routes.mjs"
+    "verifier:routes": "node scripts/verifier-routes.mjs",
+    "verifier:composants": "node scripts/verifier-composants.mjs"
   },
   "private": true
 }

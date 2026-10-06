@@ -5,7 +5,7 @@
  * du composant parent sont reçues en props, ce qui évite de faire
  * transiter toute la logique de l’écran dans un seul fichier.
  */
-import { CheckItem } from '@/components/CultureComponent/CheckItem';
+import { CultureCheckItem } from '@/components/CultureComponent/CultureCheckItem';
 import { ReviewRow } from '@/components/CultureComponent/ReviewRow';
 import { styles } from '@/screens/CultureScreen/CultureCreateScreen.styles';
 import type { CulturePayload, Culture } from '@/types';
@@ -484,17 +484,17 @@ export function VueCreationCulture12({
                       Vérification
                     </Text>
 
-                    <CheckItem
+                    <CultureCheckItem
                       label="Nom de la culture renseigné"
                       checked={!!nom.trim()}
                     />
 
-                    <CheckItem
+                    <CultureCheckItem
                       label="Parcelle associée"
                       checked={!!parcelleId}
                     />
 
-                    <CheckItem
+                    <CultureCheckItem
                       label="Dates cohérentes"
                       checked={
                         !(
@@ -506,7 +506,7 @@ export function VueCreationCulture12({
                       }
                     />
 
-                    <CheckItem
+                    <CultureCheckItem
                       label="Délimitation configurée"
                       checked={true}
                       last

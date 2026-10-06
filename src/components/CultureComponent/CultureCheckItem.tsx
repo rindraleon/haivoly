@@ -1,5 +1,5 @@
 /**
- * Sous-composant `CheckItem` extrait de `CultureCreateScreen`.
+ * Sous-composant `CultureCheckItem` extrait de `CultureCreateScreen`.
  *
  * Regroupe la présentation d'un élément de liste et ses interactions
  * locales, ce qui allège nettement le composant principal.
@@ -8,7 +8,7 @@ import { Check } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 import { styles } from '@/screens/CultureScreen/CultureCreateScreen.styles';
 
-export function CheckItem({
+export function CultureCheckItem({
   label,
   checked,
   last = false,

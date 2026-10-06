@@ -1,5 +1,5 @@
 /**
- * Section `Card1` extraite de `Card`.
+ * Section `RegisterFormFields` extraite de `Card`.
  *
  * Le rendu est repris à l’identique : seules les valeurs et les actions
  * du composant parent sont reçues en props, ce qui évite de faire
@@ -37,7 +37,7 @@ type Props = {
   telephone: string;
 };
 
-export function Card1({
+export function RegisterFormFields({
   clearFieldError,
   email,
   errors,

@@ -10,7 +10,7 @@ import { Button } from '@/components/CommonComponent/Button';
 import { PasswordInput } from '@/components/CommonComponent/PasswordInput';
 
 import { styles } from './ResetPasswordScreen.styles';
-import { CheckItem } from '@/components/AuthComponent/CheckItem';
+import { PasswordRuleItem } from '@/components/AuthComponent/PasswordRuleItem';
 export default function ResetPasswordScreen() {
   const { token: tokenParam } = useLocalSearchParams<{ token?: string }>();
   const [token, setToken] = useState(tokenParam || '');
@@ -132,10 +132,10 @@ export default function ResetPasswordScreen() {
 
               {newPassword.length > 0 && (
                 <View style={styles.checks}>
-                  <CheckItem valid={checks.len} text="Au moins 8 caractères" />
-                  <CheckItem valid={checks.upper} text="Une majuscule" />
-                  <CheckItem valid={checks.lower} text="Une minuscule" />
-                  <CheckItem valid={checks.number} text="Un chiffre" />
+                  <PasswordRuleItem valid={checks.len} text="Au moins 8 caractères" />
+                  <PasswordRuleItem valid={checks.upper} text="Une majuscule" />
+                  <PasswordRuleItem valid={checks.lower} text="Une minuscule" />
+                  <PasswordRuleItem valid={checks.number} text="Un chiffre" />
                 </View>
               )}
 

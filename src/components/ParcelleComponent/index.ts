@@ -2,7 +2,6 @@
  * Composants `ParcelleComponent`.
  */
 export * from './ParcelleCard';
-export * from './ParcelleFormHeader';
 export * from './ParcelleFormShell';
 export * from './ParcelleMap';
 export * from './ParcelleWizard';

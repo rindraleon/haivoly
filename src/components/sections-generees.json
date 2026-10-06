@@ -1,6 +1,6 @@
 [
-  "src/components/AuthComponent/Card.tsx",
-  "src/components/AuthComponent/Card1.tsx",
+  "src/components/AuthComponent/RegisterCard.tsx",
+  "src/components/AuthComponent/RegisterFormFields.tsx",
   "src/components/AuthComponent/Keyboard.tsx",
   "src/components/AuthComponent/Keyboard1.tsx",
   "src/components/CultureComponent/CultureCard1.tsx",

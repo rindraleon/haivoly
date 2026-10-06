@@ -2,7 +2,7 @@
  * Composants `CultureComponent`.
  */
 export * from './ButtonNext';
-export * from './CheckItem';
+export * from './CultureCheckItem';
 export * from './CultureCard';
 export * from './CultureCard1';
 export * from './DateField';
