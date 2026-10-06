@@ -328,6 +328,11 @@ export function PhotosIntervention({
 
                 {modificationAutorisee ? (
                   <TouchableOpacity
+                    accessibilityRole="button"
+                    accessibilityLabel="Supprimer la photo"
+                    // Bouton visuel de 28 px : `hitSlop` porte la cible
+                    // tactile à ~44 px, sans agrandir l'icône.
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     style={styles.deletePhotoButton}
                     onPress={() =>
                       confirmerSuppressionPhoto(photo.id)
