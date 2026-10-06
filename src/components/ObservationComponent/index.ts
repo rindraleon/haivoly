@@ -1,0 +1,17 @@
+/**
+ * Composants `ObservationComponent`.
+ */
+export * from './Fermerajoutglobal';
+export * from './Fermerajoutglobal2';
+export * from './Fermerajoutglobal21';
+export * from './Fermerfiltre';
+export * from './Liste';
+export * from './ModalAjout';
+export * from './ModalFiltre';
+export * from './ModeCulture';
+export * from './ObservationCard';
+export * from './ObservationCard1';
+export * from './VueCreationObservation';
+export * from './VueModificationObservation';
+export * from './VueObservations';
+export * from './VueObservations1';

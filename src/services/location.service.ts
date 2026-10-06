@@ -1,0 +1,106 @@
+ 
+import * as Location from 'expo-location';
+import { logger } from '@/utils/logger';
+
+export interface GPSPosition {
+  latitude: number;
+  longitude: number;
+  accuracy?: number;
+}
+
+export async function getCurrentLocation(): Promise<GPSPosition> {
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== 'granted') {
+    throw new Error('Permission de localisation refusée.');
+  }
+
+  const servicesEnabled = await Location.hasServicesEnabledAsync();
+  if (!servicesEnabled) {
+    throw new Error('Veuillez activer la localisation GPS.');
+  }
+
+  logger.debug('location.service', 'GPS : recherche d’une position récente...');
+
+  return new Promise(async (resolve, reject) => {
+    let subscription: Location.LocationSubscription | null = null;
+    let bestLocation: Location.LocationObject | null = null;
+
+    const finish = (location: Location.LocationObject) => {
+      if (subscription) {
+        subscription.remove();
+        subscription = null;
+      }
+      logger.debug('location.service', 'GPS : position retenue', {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        accuracy: location.coords.accuracy,
+      });
+      resolve({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        accuracy: location.coords.accuracy ?? undefined,
+      });
+    };
+
+    const timeout = setTimeout(() => {
+      if (bestLocation) {
+        const accuracy = bestLocation.coords.accuracy;
+        if (accuracy !== null && accuracy <= 20) {
+          finish(bestLocation);
+          return;
+        }
+        if (subscription) {
+          subscription.remove();
+          subscription = null;
+        }
+        reject(
+          new Error(
+            `GPS trop imprécis (${accuracy?.toFixed(1) ?? 'inconnue'} m). Veuillez patienter et réessayer.`,
+          ),
+        );
+        return;
+      }
+      if (subscription) {
+        subscription.remove();
+        subscription = null;
+      }
+      reject(new Error('Impossible d’obtenir une position GPS suffisamment précise.'));
+    }, 10000);
+
+    try {
+      subscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.BestForNavigation,
+          distanceInterval: 1,
+          timeInterval: 1000,
+        },
+        (location) => {
+          logger.debug('location.service', 'GPS UPDATE:', {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            accuracy: location.coords.accuracy,
+          });
+
+          if (
+            !bestLocation ||
+            (location.coords.accuracy ?? 9999) < (bestLocation.coords.accuracy ?? 9999)
+          ) {
+            bestLocation = location;
+          }
+
+          if (location.coords.accuracy !== null && location.coords.accuracy <= 10) {
+            clearTimeout(timeout);
+            finish(location);
+          }
+        },
+      );
+    } catch (error) {
+      clearTimeout(timeout);
+      if (subscription) {
+        subscription.remove();
+        subscription = null;
+      }
+      reject(error);
+    }
+  });
+}

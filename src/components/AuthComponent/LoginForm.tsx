@@ -1,0 +1,97 @@
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
+import { Input } from '@/components/CommonComponent/Input';
+import { PasswordInput } from '@/components/CommonComponent/PasswordInput';
+import { Button } from '@/components/CommonComponent/Button';
+import { colors, radius } from '@/theme';
+
+type Props = {
+  email: string;
+  password: string;
+  errors: { email?: string; password?: string; general?: string };
+  loading: boolean;
+  onEmailChange: (v: string) => void;
+  onPasswordChange: (v: string) => void;
+  onSubmit: () => void;
+};
+
+export function LoginForm({ email, password, errors, loading, onEmailChange, onPasswordChange, onSubmit }: Props) {
+  return (
+    <View style={styles.form}>
+      <Input
+        label="Adresse email"
+        placeholder="exemple@email.com"
+        value={email}
+        onChangeText={onEmailChange}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+        autoComplete="email"
+        editable={!loading}
+        returnKeyType="next"
+        error={errors.email}
+        required
+      />
+
+      <View style={{ gap: 6 }}>
+        <PasswordInput
+          label="Mot de passe"
+          placeholder="Votre mot de passe"
+          value={password}
+          onChangeText={onPasswordChange}
+          editable={!loading}
+          returnKeyType="done"
+          onSubmitEditing={onSubmit}
+          error={errors.password}
+          required
+        />
+        <Pressable onPress={() => router.push('/(auth)/forgot-password' as any)} hitSlop={8} style={styles.forgotWrap}>
+          <Text style={styles.forgotText}>Mot de passe oublié ?</Text>
+        </Pressable>
+      </View>
+
+      <Button onPress={onSubmit} loading={loading} fullWidth size="lg">
+        {loading ? 'Connexion...' : 'Se connecter'}
+      </Button>
+
+      <View style={styles.divider}>
+        <View style={styles.line} />
+        <Text style={styles.or}>ou</Text>
+        <View style={styles.line} />
+      </View>
+
+      <View style={styles.registerBox}>
+        <Text style={styles.registerHint}>Pas encore de compte ?</Text>
+        <Pressable
+          onPress={() => router.push('/(auth)/register' as any)}
+          disabled={loading}
+          style={({ pressed }) => [styles.registerBtn, pressed && { opacity: 0.7 }]}
+        >
+          <Text style={styles.registerBtnText}>Créer un compte</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  form: { gap: 14 },
+  forgotWrap: { alignSelf: 'flex-end', paddingVertical: 2 },
+  forgotText: { fontSize: 13, fontWeight: '600', color: colors.primary[600] },
+  divider: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 2 },
+  line: { flex: 1, height: 1, backgroundColor: colors.border.default },
+  or: { fontSize: 12, color: colors.neutral[400], fontWeight: '600' },
+  registerBox: { alignItems: 'center', gap: 10, marginTop: 4 },
+  registerHint: { fontSize: 13, color: colors.neutral[500] },
+  registerBtn: {
+    alignSelf: 'stretch',
+    minHeight: 48,
+    borderRadius: radius.md,
+    borderWidth: 1.25,
+    borderColor: colors.primary[200],
+    backgroundColor: colors.primary[50],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  registerBtnText: { fontSize: 14, fontWeight: '700', color: colors.primary[700] },
+});

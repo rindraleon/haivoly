@@ -1,33 +1,39 @@
-import { api } from '@/api/client';
+import { env } from '@/config/env';
+import { retirerBarreFinale } from '@/utils/url';
 
+/**
+ * URL absolue d'un média servi par l'API.
+ *
+ * Le client HTTP n'intervient plus ici : l'URL de base vient de
+ * `EXPO_PUBLIC_API_URL` (`src/config/env.ts`), ce qui évite de dépendre d'un
+ * client axios pour un simple calcul de chemin.
+ */
 export function getMediaUrl(url?: string | null): string {
   if (!url) {
     return '';
   }
 
-  const baseURL =
-    api.defaults.baseURL?.replace(/\/+$/, '') ?? '';
+  const baseUrl = retirerBarreFinale(env.apiUrl);
 
-  if (!baseURL) {
+  if (!baseUrl) {
     return url;
   }
 
-  // URL relative venant de la base
+  // Chemin relatif venant de la base de données (`/uploads/…`).
   if (url.startsWith('/')) {
-    return `${baseURL}${url}`;
+    return `${baseUrl}${url}`;
   }
 
-  // Ancienne URL complète :
-  // http://192.168.x.x:3000/uploads/...
-  // On récupère seulement le chemin /uploads/...
+  // Ancienne URL complète (`http://192.168.x.x:3000/uploads/…`) : on ne garde
+  // que le chemin, l'hôte étant désormais celui de l'API configurée.
   try {
     const parsed = new URL(url);
 
     if (parsed.pathname.startsWith('/uploads/')) {
-      return `${baseURL}${parsed.pathname}`;
+      return `${baseUrl}${parsed.pathname}`;
     }
   } catch {
-    // URL invalide : on continue avec le traitement ci-dessous
+    // URL invalide : on retombe sur la valeur d'origine.
   }
 
   return url;

@@ -1,0 +1,297 @@
+/**
+ * ProfilScreen — implémentation de l’écran.
+ *
+ * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
+ * réexporter ce composant : toute la logique vit ici.
+ */
+import React from 'react';
+
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
+
+import { router } from 'expo-router';
+
+import { Sprout, User } from 'lucide-react-native';
+
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { useProfile } from '@/hooks/profile/useProfile';
+import { removeToken } from '@/storage/authStorage';
+
+import { colors } from '@/theme';
+
+import { AppBottomBar } from '@/components/CommonComponent/AppBottomBar';
+
+import { styles } from './ProfilScreen.styles';
+import { AgricultureBackground } from '@/components/ProfileComponent/AgricultureBackground';
+
+
+import { VueProfil } from '@/components/ProfileComponent/VueProfil';
+// =====================================================
+// ÉCRAN PROFIL
+// =====================================================
+
+export default function ProfilScreen() {
+  const insets = useSafeAreaInsets();
+
+  const {
+    data: profile,
+    isLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = useProfile();
+
+  // ===================================================
+  // DÉCONNEXION
+  // ===================================================
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Déconnexion',
+      'Voulez-vous vraiment vous déconnecter ?',
+      [
+        {
+          text: 'Annuler',
+          style: 'cancel',
+        },
+
+        {
+          text: 'Se déconnecter',
+          style: 'destructive',
+
+          onPress: async () => {
+            try {
+              await removeToken();
+
+              router.replace(
+                '/(auth)/login',
+              );
+            } catch (error) {
+              console.error(
+                'Erreur déconnexion :',
+                error,
+              );
+
+              Alert.alert(
+                'Erreur',
+                'Impossible de vous déconnecter. Veuillez réessayer.',
+              );
+            }
+          },
+        },
+      ],
+    );
+  };
+
+  // ===================================================
+  // LOADING
+  // ===================================================
+
+  if (isLoading) {
+    return (
+      <View style={styles.screen}>
+        <AgricultureBackground />
+
+        <View
+          style={[
+            styles.loadingContainer,
+            {
+              paddingTop:
+                Math.max(
+                  insets.top,
+                  20,
+                ),
+            },
+          ]}
+        >
+          <View
+            style={
+              styles.loadingIcon
+            }
+          >
+            <Sprout
+              size={28}
+              color={
+                colors.primary[700]
+              }
+            />
+          </View>
+
+          <ActivityIndicator
+            size="small"
+            color={
+              colors.primary[600]
+            }
+          />
+
+          <Text
+            style={
+              styles.loadingText
+            }
+          >
+            Chargement du profil...
+          </Text>
+        </View>
+
+        <AppBottomBar />
+      </View>
+    );
+  }
+
+  // ===================================================
+  // ERREUR
+  // ===================================================
+
+  if (isError || !profile) {
+    return (
+      <View style={styles.screen}>
+        <AgricultureBackground />
+
+        <ScrollView
+          contentContainerStyle={[
+            styles.errorContainer,
+            {
+              paddingTop:
+                Math.max(
+                  insets.top,
+                  24,
+                ),
+              paddingBottom: 120,
+            },
+          ]}
+          refreshControl={
+            <RefreshControl
+              refreshing={isFetching}
+              onRefresh={() =>
+                refetch()
+              }
+              tintColor={
+                colors.primary[600]
+              }
+            />
+          }
+          showsVerticalScrollIndicator={
+            false
+          }
+        >
+          <View
+            style={
+              styles.errorIcon
+            }
+          >
+            <User
+              size={28}
+              color={
+                colors.primary[700]
+              }
+            />
+          </View>
+
+          <Text
+            style={
+              styles.errorTitle
+            }
+          >
+            Impossible de charger le profil
+          </Text>
+
+          <Text
+            style={
+              styles.errorText
+            }
+          >
+            Vérifiez votre connexion puis
+            faites glisser vers le bas pour
+            réessayer.
+          </Text>
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.retryButton,
+              pressed &&
+                styles.retryButtonPressed,
+            ]}
+            onPress={() =>
+              refetch()
+            }
+            accessibilityRole="button"
+            accessibilityLabel="Réessayer de charger le profil"
+          >
+            <Text
+              style={
+                styles.retryButtonText
+              }
+            >
+              Réessayer
+            </Text>
+          </Pressable>
+        </ScrollView>
+
+        <AppBottomBar />
+      </View>
+    );
+  }
+
+  // ===================================================
+  // DONNÉES PROFIL
+  // ===================================================
+
+  const fullName = [
+    profile.prenom,
+    profile.nom,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .trim() || 'Utilisateur';
+
+  const roleLabel =
+    profile.role ===
+    'AGRICULTEUR'
+      ? 'Agriculteur'
+      : 'Propriétaire';
+
+  const initials =
+    `${profile.prenom?.charAt(0) ?? ''}${profile.nom?.charAt(0) ?? ''}`
+      .toUpperCase() || 'U';
+
+  // ===================================================
+  // RENDER
+  // ===================================================
+
+  return (
+    <VueProfil
+      fullName={fullName}
+      handleLogout={handleLogout}
+      initials={initials}
+      insets={insets}
+      isFetching={isFetching}
+      profile={profile}
+      refetch={refetch}
+      roleLabel={roleLabel}
+    />
+  );
+}
+
+// =====================================================
+// HEADER SECTION
+// =====================================================
+
+// =====================================================
+// INFO ROW
+// =====================================================
+
+// =====================================================
+// FOND AGRICOLE
+// =====================================================
+
+// =====================================================
+// STYLES
+// =====================================================

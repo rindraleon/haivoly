@@ -1,0 +1,518 @@
+/**
+ * Section `VueProfil` extraite de `ProfilScreen`.
+ *
+ * Le rendu est repris à l’identique : seules les valeurs et les actions
+ * du composant parent sont reçues en props, ce qui évite de faire
+ * transiter toute la logique de l’écran dans un seul fichier.
+ */
+import { AppBottomBar } from '@/components/CommonComponent/AppBottomBar';
+import { AgricultureBackground } from '@/components/ProfileComponent/AgricultureBackground';
+import { InfoRow } from '@/components/ProfileComponent/InfoRow';
+import { SectionHeader } from '@/components/ProfileComponent/SectionHeader';
+import { styles } from '@/screens/ProfileScreen/ProfilScreen.styles';
+
+import { colors } from '@/theme';
+import type { QueryObserverResult, RefetchOptions } from '@tanstack/query-core';
+import { ChevronRight, LogOut, Mail, Phone, ShieldCheck, Sprout, User } from 'lucide-react-native';
+import { Alert, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import type { EdgeInsets } from 'react-native-safe-area-context';
+
+import type {
+  Utilisateur,
+} from '@/types';
+type Props = {
+  fullName: string;
+  handleLogout: () => void;
+  initials: string;
+  insets: EdgeInsets;
+  isFetching: boolean;
+  profile: NoInfer<Utilisateur> | undefined;
+  refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<NoInfer<Utilisateur>, Error>>;
+  roleLabel: "Agriculteur" | "Propriétaire";
+};
+
+export function VueProfil({
+  fullName,
+  handleLogout,
+  initials,
+  insets,
+  isFetching,
+  profile,
+  refetch,
+  roleLabel,
+}: Props) {
+  if (!profile) return null;
+  return (
+<View style={styles.screen}>
+        <AgricultureBackground />
+
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={[
+            styles.content,
+            {
+              paddingTop:
+                Math.max(
+                  insets.top,
+                  18,
+                ),
+              paddingBottom: 120,
+            },
+          ]}
+          refreshControl={
+            <RefreshControl
+              refreshing={isFetching}
+              onRefresh={() =>
+                refetch()
+              }
+              tintColor={
+                colors.primary[600]
+              }
+              colors={[
+                colors.primary[600],
+              ]}
+            />
+          }
+          showsVerticalScrollIndicator={
+            false
+          }
+        >
+
+          {/* =================================================
+              HEADER
+          ================================================= */}
+
+          <View
+            style={
+              styles.header
+            }
+          >
+            <View
+              style={
+                styles.headerIcon
+              }
+            >
+              <Sprout
+                size={19}
+                color={
+                  colors.primary[700]
+                }
+              />
+            </View>
+
+            <View
+              style={
+                styles.headerTexts
+              }
+            >
+              <Text
+                style={
+                  styles.eyebrow
+                }
+              >
+                COMPTE HAI VOLY
+              </Text>
+
+              <Text
+                style={
+                  styles.title
+                }
+              >
+                Mon profil
+              </Text>
+
+              <Text
+                style={
+                  styles.subtitle
+                }
+              >
+                Gérez vos informations personnelles
+              </Text>
+            </View>
+          </View>
+
+          {/* =================================================
+              CARTE IDENTITÉ
+          ================================================= */}
+
+          <View
+            style={
+              styles.profileCard
+            }
+          >
+            <View
+              style={
+                styles.profileCardGlow
+              }
+            />
+
+            <View
+              style={
+                styles.profileMain
+              }
+            >
+              <View
+                style={
+                  styles.avatarWrapper
+                }
+              >
+                <View
+                  style={
+                    styles.avatar
+                  }
+                >
+                  <Text
+                    style={
+                      styles.avatarText
+                    }
+                  >
+                    {initials}
+                  </Text>
+                </View>
+
+                <View
+                  style={
+                    styles.avatarBadge
+                  }
+                >
+                  <ShieldCheck
+                    size={15}
+                    color="#FFFFFF"
+                  />
+                </View>
+              </View>
+
+              <View
+                style={
+                  styles.profileIdentity
+                }
+              >
+                <Text
+                  style={
+                    styles.profileLabel
+                  }
+                >
+                  VOTRE COMPTE
+                </Text>
+
+                <Text
+                  style={
+                    styles.fullName
+                  }
+                  numberOfLines={2}
+                >
+                  {fullName}
+                </Text>
+
+                <View
+                  style={
+                    styles.roleBadge
+                  }
+                >
+                  <Sprout
+                    size={14}
+                    color={
+                      colors.primary[700]
+                    }
+                  />
+
+                  <Text
+                    style={
+                      styles.roleText
+                    }
+                  >
+                    {roleLabel}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <View
+              style={
+                styles.profileDivider
+              }
+            />
+
+            <View
+              style={
+                styles.profileHint
+              }
+            >
+              <ShieldCheck
+                size={16}
+                color={
+                  colors.primary[600]
+                }
+              />
+
+              <Text
+                style={
+                  styles.profileHintText
+                }
+              >
+                Vos informations sont utilisées
+                pour personnaliser votre
+                expérience HaiVoly.
+              </Text>
+            </View>
+          </View>
+
+          {/* =================================================
+              INFORMATIONS PERSONNELLES
+          ================================================= */}
+
+          <View
+            style={
+              styles.section
+            }
+          >
+            <SectionHeader
+              title="Informations personnelles"
+              subtitle="Vos coordonnées"
+            />
+
+            <View
+              style={
+                styles.infoCard
+              }
+            >
+              <InfoRow
+                icon={
+                  <User
+                    size={20}
+                    color={
+                      colors.primary[600]
+                    }
+                  />
+                }
+                label="Nom complet"
+                value={fullName}
+              />
+
+              <View
+                style={
+                  styles.separator
+                }
+              />
+
+              <InfoRow
+                icon={
+                  <Mail
+                    size={20}
+                    color={
+                      colors.primary[600]
+                    }
+                  />
+                }
+                label="Adresse e-mail"
+                value={profile.email}
+              />
+
+              <View
+                style={
+                  styles.separator
+                }
+              />
+
+              <InfoRow
+                icon={
+                  <Phone
+                    size={20}
+                    color={
+                      colors.primary[600]
+                    }
+                  />
+                }
+                label="Téléphone"
+                value={
+                  profile.telephone ||
+                  'Non renseigné'
+                }
+              />
+            </View>
+          </View>
+
+          {/* =================================================
+              COMPTE
+          ================================================= */}
+
+          <View
+            style={
+              styles.section
+            }
+          >
+            <SectionHeader
+              title="Mon compte"
+              subtitle="Gérez votre compte"
+            />
+
+            <View
+              style={
+                styles.infoCard
+              }
+            >
+              <Pressable
+                style={({ pressed }) => [
+                  styles.menuItem,
+                  pressed &&
+                    styles.menuItemPressed,
+                ]}
+                onPress={() => {
+                  Alert.alert(
+                    'Modification du profil',
+                    'La modification du profil sera disponible prochainement.',
+                  );
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Modifier mon profil"
+              >
+                <View
+                  style={
+                    styles.menuLeft
+                  }
+                >
+                  <View
+                    style={
+                      styles.menuIcon
+                    }
+                  >
+                    <User
+                      size={20}
+                      color={
+                        colors.primary[600]
+                      }
+                    />
+                  </View>
+
+                  <View
+                    style={
+                      styles.menuTextBlock
+                    }
+                  >
+                    <Text
+                      style={
+                        styles.menuTitle
+                      }
+                    >
+                      Modifier mon profil
+                    </Text>
+
+                    <Text
+                      style={
+                        styles.menuSubtitle
+                      }
+                    >
+                      Informations personnelles
+                    </Text>
+                  </View>
+                </View>
+
+                <View
+                  style={
+                    styles.chevronCircle
+                  }
+                >
+                  <ChevronRight
+                    size={18}
+                    color={
+                      colors.primary[700]
+                    }
+                  />
+                </View>
+              </Pressable>
+            </View>
+          </View>
+
+          {/* =================================================
+              DÉCONNEXION
+          ================================================= */}
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.logoutButton,
+              pressed &&
+                styles.logoutPressed,
+            ]}
+            onPress={handleLogout}
+            accessibilityRole="button"
+            accessibilityLabel="Se déconnecter"
+          >
+            <View
+              style={
+                styles.logoutIcon
+              }
+            >
+              <LogOut
+                size={19}
+                color={
+                  colors.error[600]
+                }
+              />
+            </View>
+
+            <View
+              style={
+                styles.logoutContent
+              }
+            >
+              <Text
+                style={
+                  styles.logoutText
+                }
+              >
+                Se déconnecter
+              </Text>
+
+              <Text
+                style={
+                  styles.logoutSubtitle
+                }
+              >
+                Quitter votre compte HaiVoly
+              </Text>
+            </View>
+
+            <ChevronRight
+              size={18}
+              color={
+                colors.error[200]
+              }
+            />
+          </Pressable>
+
+          {/* =================================================
+              FOOTER
+          ================================================= */}
+
+          <View
+            style={
+              styles.footer
+            }
+          >
+            <View
+              style={
+                styles.footerIcon
+              }
+            >
+              <Sprout
+                size={15}
+                color={
+                  colors.primary[600]
+                }
+              />
+            </View>
+
+            <Text
+              style={
+                styles.versionText
+              }
+            >
+              HaiVoly
+            </Text>
+          </View>
+        </ScrollView>
+
+        <AppBottomBar />
+      </View>
+  );
+}
