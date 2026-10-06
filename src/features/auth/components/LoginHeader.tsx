@@ -1,22 +1,28 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { Sprout } from 'lucide-react-native';
+import { Sprout, ShieldCheck, TrendingUp } from 'lucide-react-native';
 import { colors, radius } from '@/design/tokens';
 
 export function LoginHeader() {
   return (
     <View style={styles.brandBand}>
-      {/* Logo + titre */}
       <View style={styles.brandCard}>
-        <View style={styles.logoRow}>
-          <Sprout size={32} color="#FFFFFF" strokeWidth={2.4} />
-          <Text style={styles.brandTitle}>Haivoly</Text>
+        <View style={styles.logoCircle}>
+          <Sprout size={28} color="#FFFFFF" strokeWidth={2.2} />
         </View>
+        <Text style={styles.brandTitle}>Haivoly</Text>
         <Text style={styles.brandSubtitle}>Gestion agricole intelligente</Text>
       </View>
 
-      {/* Pill sécurisé */}
-      <View style={styles.pill}>
-        <Text style={styles.pillText}>Sécurisé • Pensé pour le terrain</Text>
+      <View style={styles.trustRow}>
+        <View style={styles.trustItem}>
+          <ShieldCheck size={14} color={colors.primary[700]} />
+          <Text style={styles.trustText}>Sécurisé</Text>
+        </View>
+        <View style={styles.dot} />
+        <View style={styles.trustItem}>
+          <TrendingUp size={14} color={colors.primary[700]} />
+          <Text style={styles.trustText}>Pensé pour le terrain</Text>
+        </View>
       </View>
     </View>
   );
@@ -24,29 +30,39 @@ export function LoginHeader() {
 
 const styles = StyleSheet.create({
   brandBand: {
-    backgroundColor: '#1B7A2B', // vert capture
-    paddingTop: 52,
-    paddingBottom: 48,
+    backgroundColor: colors.primary[500],
+    paddingTop: 56,
+    paddingBottom: 28,
     paddingHorizontal: 24,
-    alignItems: 'center',
-    gap: 14,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
-    marginBottom: -28, // chevauchement carte
+    gap: 16,
   },
-  brandCard: { alignItems: 'center', gap: 6 },
-  logoRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  brandTitle: { fontSize: 34, fontWeight: '900', color: '#FFFFFF', letterSpacing: -0.9 },
-  brandSubtitle: { fontSize: 14, color: 'rgba(255,255,255,0.92)', fontWeight: '500', letterSpacing: -0.1 },
-  pill: {
+  brandCard: { alignItems: 'center', gap: 8 },
+  logoCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.35)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  brandTitle: { fontSize: 32, fontWeight: '800', color: '#FFFFFF', letterSpacing: -0.8 },
+  brandSubtitle: { fontSize: 13.5, color: 'rgba(255,255,255,0.9)', fontWeight: '500', letterSpacing: -0.1 },
+  trustRow: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    alignItems: 'center',
+    gap: 10,
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 14,
-    paddingVertical: 7,
+    paddingVertical: 8,
     borderRadius: radius.full,
     borderWidth: 1,
     borderColor: '#E5E7EB',
-    boxShadow: '0 1px 6px rgba(0,0,0,0.08)',
-    elevation: 2,
   },
-  pillText: { fontSize: 12, fontWeight: '700', color: '#1B5E20', letterSpacing: -0.1 },
+  trustItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  trustText: { fontSize: 11.5, fontWeight: '600', color: colors.neutral[700] },
+  dot: { width: 3, height: 3, borderRadius: 1.5, backgroundColor: colors.neutral[300] },
 });

@@ -143,29 +143,47 @@ export const radius = {
 
 export const shadows = {
   none: {
-    boxShadow: 'none',
+    shadowColor: 'transparent',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
     elevation: 0,
-  } as any,
+  },
   xs: {
-    boxShadow: '0 1px 2px rgba(16,24,40,.06)',
+    shadowColor: '#101828',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
     elevation: 1,
-  } as any,
+  },
   sm: {
-    boxShadow: '0 1px 3px rgba(16,24,40,.06)',
+    shadowColor: '#101828',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.07,
+    shadowRadius: 3,
     elevation: 2,
-  } as any,
+  },
   md: {
-    boxShadow: '0 4px 16px rgba(16,24,40,.08)',
+    shadowColor: '#101828',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
     elevation: 4,
-  } as any,
+  },
   lg: {
-    boxShadow: '0 8px 32px rgba(16,24,40,.10)',
+    shadowColor: '#101828',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.10,
+    shadowRadius: 16,
     elevation: 8,
-  } as any,
+  },
   card: {
-    boxShadow: '0 1px 8px rgba(16,24,40,.06)',
+    shadowColor: '#101828',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
     elevation: 2,
-  } as any,
+  },
 } as const;
 
 export const sizing = {

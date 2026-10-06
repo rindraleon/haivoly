@@ -2,6 +2,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  useQueries,
 } from '@tanstack/react-query';
 
 import {
@@ -215,4 +216,44 @@ export function useSavePointsGPSCulture() {
       });
     },
   });
+}
+// ==============================
+// RECUPERER LES CULTURES
+// DE TOUTES LES PARCELLES
+// ==============================
+
+export function useToutesLesCultures(
+  parcelles: { id: string; nom: string }[] | undefined,
+) {
+  const results = useQueries({
+    queries: (parcelles ?? []).map((parcelle) => ({
+      queryKey: ['cultures', parcelle.id],
+      queryFn: () => getCultures(parcelle.id),
+      enabled: !!parcelle.id,
+    })),
+  });
+
+  const cultures = results.flatMap((result, index) => {
+    const parcelle = parcelles?.[index];
+
+    if (!result.data || !parcelle) {
+      return [];
+    }
+
+    return result.data.map((culture) => ({
+      ...culture,
+      parcelleId: parcelle.id,
+      parcelleNom: parcelle.nom,
+    }));
+  });
+
+  return {
+    data: cultures,
+    isLoading: results.some((result) => result.isLoading),
+    isError: results.some((result) => result.isError),
+    refetch: () =>
+      Promise.all(
+        results.map((result) => result.refetch()),
+      ),
+  };
 }

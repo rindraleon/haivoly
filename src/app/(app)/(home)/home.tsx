@@ -29,7 +29,8 @@ import { OfflineBanner } from '@/features/offline/components/OfflineBanner';
 import { useNetwork } from '@/hooks/useNetwork';
 import { getPendingCount } from '@/features/sync/services/queue';
 import { syncOnce, startAutoSync } from '@/features/sync/services/syncEngine';
-import { getItem, StorageKeys } from '@/storage/database';
+import { getItem, setItem, StorageKeys } from '@/storage/database';
+import { markRecommendationReadLocal,} from '@/features/recommendations/services/sync';
 import type { Recommendation } from '@/features/notifications/types';
 
 export default function HomeScreen() {
@@ -119,11 +120,27 @@ export default function HomeScreen() {
       >
         {/* Header composé */}
         <View style={styles.header}>
-          <HomeHeader onLogout={handleLogout} />
-          <OfflineBanner isOnline={isOnline ?? true} pendingCount={pendingCount} isSyncing={isSyncing} onSyncPress={handleSync} />
-          <UserSummary user={user as any} greeting={greeting} />
+<HomeHeader
+  user={user as any}
+  greeting={greeting}
+  loadingParcelles={loadingParcelles}
+  parcellesCount={parcellesActives.length}
+  superficieHa={ha}
+  pendingCount={pendingCount}
+  isOnline={isOnline ?? true}
+  notificationCount={
+    recommendations.filter((r) => !r.readAt).length
+  }
+/>
 
-          {/* Stats */}
+<OfflineBanner
+  isOnline={isOnline ?? true}
+  pendingCount={pendingCount}
+  isSyncing={isSyncing}
+  onSyncPress={handleSync}
+/>
+
+          {/* Stats 
           <View style={styles.statsRow}>
             <Card style={[styles.statCard as any, { flex: 1.1 } as any]}>
               <Text style={styles.statValue}>{loadingParcelles ? '—' : parcellesActives.length}</Text>
@@ -140,28 +157,61 @@ export default function HomeScreen() {
               <Text style={styles.statLabel}>Notifications</Text>
               <Text style={styles.statHint}>recommandations</Text>
             </Card>
-          </View>
-        </View>
+          </View>*/}
+        </View> 
 
         {/* Actions rapides — composant dédié */}
         <ActionSection parcellesCount={parcellesActives.length} />
 
         {/* Notifications / Recommandations — centre */}
-        <NotificationCenter
-          items={recommendations.slice(0, 3)}
-          onMarkAllRead={async () => {
-            const updated = recommendations.map((r) => ({ ...r, readAt: new Date().toISOString() }));
-            setRecommendations(updated);
-            const { setItem } = await import('@/storage/database');
-            await setItem(StorageKeys.RECOMMENDATIONS, updated);
-          }}
-          onPressItem={async (item) => {
-            const updated = recommendations.map((r) => (r.id === item.id ? { ...r, readAt: new Date().toISOString() } : r));
-            setRecommendations(updated);
-            const { setItem } = await import('@/storage/database');
-            await setItem(StorageKeys.RECOMMENDATIONS, updated);
-          }}
-        />
+        {recommendations.length > 0 && (
+  <NotificationCenter
+    items={recommendations.slice(0, 3)}
+    onMarkAllRead={async () => {
+      const now = new Date().toISOString();
+
+      const updated = recommendations.map((r) => ({
+        ...r,
+        readAt: r.readAt ?? now,
+      }));
+
+      setRecommendations(updated);
+
+      await setItem(
+        StorageKeys.RECOMMENDATIONS,
+        updated,
+      );
+
+      // Synchronisation backend
+      if (isOnline) {
+        try {
+          const { markAllRecommendationsRead } = await import(
+            '@/api/recommendations'
+          );
+
+          await markAllRecommendationsRead();
+        } catch {
+          // Le statut local reste conservé
+          // si le backend est momentanément indisponible.
+        }
+      }
+    }}
+    onPressItem={async (item) => {
+      await markRecommendationReadLocal(item.id);
+
+      const updated = recommendations.map((r) =>
+        r.id === item.id
+          ? {
+              ...r,
+              readAt: r.readAt ?? new Date().toISOString(),
+            }
+          : r,
+      );
+
+      setRecommendations(updated);
+    }}
+  />
+)}
 
         {/* Parcelles récentes — reste atomique pour l’instant */}
         <View style={styles.section}>

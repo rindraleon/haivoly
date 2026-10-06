@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -10,6 +11,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
+import {
+  ArrowLeft,
+  Banknote,
+  CalendarDays,
+  Check,
+  ChevronDown,
+  FileText,
+  MapPin,
+  Package,
+  Scale,
+  Sprout,
+  Wrench,
+} from 'lucide-react-native';
 
 import {
   router,
@@ -23,6 +38,27 @@ import {
 import {
   useCreateIntervention,
 } from '@/hooks/useInterventions';
+
+// =====================================================
+// UNITÉS DISPONIBLES POUR LES INTERVENTIONS AGRICOLES
+// =====================================================
+
+const UNITE_OPTIONS = [
+  'kg',
+  'g',
+  't',
+  'L',
+  'mL',
+  'sac',
+  'sacs',
+  'bidon',
+  'bidons',
+  'seaux',
+  'unités',
+  'doses',
+  'plants',
+  'arbres',
+] as const;
 
 // =====================================================
 // ÉCRAN
@@ -73,6 +109,13 @@ export default function AjoutInterventionScreen() {
 
   const [cout, setCout] =
     useState('');
+
+  // ===================================================
+  // ÉTAT LISTE UNITÉ
+  // ===================================================
+
+  const [unitModalVisible, setUnitModalVisible] =
+    useState(false);
 
   // ===================================================
   // MUTATION
@@ -284,6 +327,16 @@ export default function AjoutInterventionScreen() {
     createMutation.isPending;
 
   // ===================================================
+  // SÉLECTION UNITÉ
+  // ===================================================
+
+  const selectionnerUnite =
+    (value: string) => {
+      setUnite(value);
+      setUnitModalVisible(false);
+    };
+
+  // ===================================================
   // AFFICHAGE
   // ===================================================
 
@@ -300,85 +353,266 @@ export default function AjoutInterventionScreen() {
     >
       <ScrollView
         contentContainerStyle={
-          styles.content
+          styles.scrollContent
         }
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
 
-        {/* =========================================== */}
-        {/* TITRE */}
-        {/* =========================================== */}
-
-        <Text
-          style={
-            styles.title
-          }
-        >
-          Ajouter une intervention
-        </Text>
-
-        {/* =========================================== */}
-        {/* CULTURE */}
-        {/* =========================================== */}
+        {/* ==================================================
+            HEADER
+        ================================================== */}
 
         <View
           style={
-            styles.headerCard
+            styles.header
           }
         >
-          <Text
+          <TouchableOpacity
             style={
-              styles.cultureName
+              styles.backButton
             }
+            onPress={() =>
+              router.back()
+            }
+            disabled={
+              isSubmitting
+            }
+            activeOpacity={0.8}
           >
-            🌱 {cultureNom ||
-              'Culture'}
-          </Text>
+            <ArrowLeft
+              size={21}
+              color="#172018"
+              strokeWidth={2.2}
+            />
+          </TouchableOpacity>
 
-          <Text
+          <View
             style={
-              styles.parcelleName
+              styles.headerTextBlock
             }
           >
-            Parcelle :{' '}
-            {parcelleNom ||
-              parcelleId ||
-              'Non renseignée'}
-          </Text>
+            <Text
+              style={
+                styles.eyebrow
+              }
+            >
+              SUIVI TERRAIN
+            </Text>
+
+            <Text
+              style={
+                styles.title
+              }
+            >
+              Nouvelle intervention
+            </Text>
+
+            <Text
+              style={
+                styles.subtitle
+              }
+            >
+              Enregistrez une opération réalisée
+              sur cette culture.
+            </Text>
+          </View>
         </View>
 
-        {/* =========================================== */}
-        {/* FORMULAIRE */}
-        {/* =========================================== */}
+        {/* ==================================================
+            FICHE CULTURE
+        ================================================== */}
 
         <View
           style={
-            styles.card
+            styles.contextCard
           }
         >
-          <Text
+          <View
             style={
-              styles.cardTitle
+              styles.contextAccent
+            }
+          />
+
+          <View
+            style={
+              styles.contextMain
             }
           >
-            Informations de l’intervention
-          </Text>
+            <View
+              style={
+                styles.contextIconLarge
+              }
+            >
+              <Sprout
+                size={24}
+                color="#166534"
+                strokeWidth={2.2}
+              />
+            </View>
 
-          {/* TYPE */}
+            <View
+              style={
+                styles.contextIdentity
+              }
+            >
+              <Text
+                style={
+                  styles.contextOverline
+                }
+              >
+                CULTURE SUIVIE
+              </Text>
 
-          <Text
+              <Text
+                style={
+                  styles.contextCulture
+                }
+                numberOfLines={1}
+              >
+                {cultureNom ||
+                  'Culture'}
+              </Text>
+
+              <View
+                style={
+                  styles.parcelleLine
+                }
+              >
+                <MapPin
+                  size={14}
+                  color="#6B7280"
+                  strokeWidth={2}
+                />
+
+                <Text
+                  style={
+                    styles.parcelleText
+                  }
+                  numberOfLines={1}
+                >
+                  {parcelleNom ||
+                    parcelleId ||
+                    'Parcelle non renseignée'}
+                </Text>
+              </View>
+            </View>
+
+            <View
+              style={
+                styles.interventionBadge
+              }
+            >
+              <Wrench
+                size={12}
+                color="#166534"
+                strokeWidth={2.2}
+              />
+
+              <Text
+                style={
+                  styles.interventionBadgeText
+                }
+              >
+                INTERVENTION
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* ==================================================
+            SECTION INTERVENTION
+        ================================================== */}
+
+        <View
+          style={
+            styles.sectionHeader
+          }
+        >
+          <View
             style={
-              styles.label
+              styles.sectionIcon
             }
           >
-            Type d’intervention *
-          </Text>
+            <Wrench
+              size={17}
+              color="#166534"
+              strokeWidth={2.2}
+            />
+          </View>
+
+          <View
+            style={
+              styles.sectionHeaderText
+            }
+          >
+            <Text
+              style={
+                styles.sectionTitle
+              }
+            >
+              Intervention
+            </Text>
+
+            <Text
+              style={
+                styles.sectionSubtitle
+              }
+            >
+              Décrivez l’opération réalisée sur la culture.
+            </Text>
+          </View>
+        </View>
+
+        {/* ==================================================
+            TYPE
+        ================================================== */}
+
+        <View
+          style={
+            styles.fieldCard
+          }
+        >
+          <View
+            style={
+              styles.fieldTopRow
+            }
+          >
+            <View
+              style={
+                styles.fieldTitleWrap
+              }
+            >
+              <Wrench
+                size={16}
+                color="#166534"
+                strokeWidth={2.1}
+              />
+
+              <Text
+                style={
+                  styles.fieldLabel
+                }
+              >
+                TYPE D’INTERVENTION
+              </Text>
+            </View>
+
+            <Text
+              style={
+                styles.requiredText
+              }
+            >
+              Obligatoire
+            </Text>
+          </View>
 
           <TextInput
             style={
               styles.input
             }
             placeholder="Ex : FERTILISATION"
+            placeholderTextColor="#9CA3AF"
             value={type}
             onChangeText={
               setType
@@ -389,21 +623,64 @@ export default function AjoutInterventionScreen() {
             autoCapitalize="characters"
           />
 
-          {/* DESCRIPTION */}
-
           <Text
             style={
-              styles.label
+              styles.fieldHint
             }
           >
-            Description
+            Indiquez la nature de l’intervention réalisée.
           </Text>
+        </View>
+
+        {/* ==================================================
+            DESCRIPTION
+        ================================================== */}
+
+        <View
+          style={
+            styles.descriptionCard
+          }
+        >
+          <View
+            style={
+              styles.fieldTopRow
+            }
+          >
+            <View
+              style={
+                styles.fieldTitleWrap
+              }
+            >
+              <FileText
+                size={16}
+                color="#166534"
+                strokeWidth={2.1}
+              />
+
+              <Text
+                style={
+                  styles.fieldLabel
+                }
+              >
+                DESCRIPTION
+              </Text>
+            </View>
+
+            <Text
+              style={
+                styles.optionalText
+              }
+            >
+              Facultatif
+            </Text>
+          </View>
 
           <TextInput
             style={
-              styles.textArea
+              styles.descriptionInput
             }
             placeholder="Ex : Fertilisation complémentaire après plantation"
+            placeholderTextColor="#9CA3AF"
             value={description}
             onChangeText={
               setDescription
@@ -412,58 +689,263 @@ export default function AjoutInterventionScreen() {
               !isSubmitting
             }
             multiline
-            numberOfLines={4}
+            numberOfLines={6}
             textAlignVertical="top"
           />
 
-          {/* DATE */}
-
-          <Text
+          <View
             style={
-              styles.label
+              styles.descriptionFooter
             }
           >
-            Date *
-          </Text>
+            <Text
+              style={
+                styles.descriptionHint
+              }
+            >
+              Ajoutez les détails utiles sur l’opération effectuée.
+            </Text>
+          </View>
+        </View>
 
-          <TextInput
-            style={
-              styles.input
-            }
-            placeholder="AAAA-MM-JJ"
-            value={date}
-            onChangeText={
-              setDate
-            }
-            editable={
-              !isSubmitting
-            }
-            keyboardType="numbers-and-punctuation"
-          />
+        {/* ==================================================
+            CONSEIL TERRAIN
+        ================================================== */}
 
-          <Text
+        <View
+          style={
+            styles.tipCard
+          }
+        >
+          <View
             style={
-              styles.helpText
+              styles.tipIcon
             }
           >
-            Format : AAAA-MM-JJ
-          </Text>
+            <Sprout
+              size={16}
+              color="#166534"
+              strokeWidth={2}
+            />
+          </View>
 
-          {/* PRODUIT */}
-
-          <Text
+          <View
             style={
-              styles.label
+              styles.tipContent
             }
           >
-            Produit
-          </Text>
+            <Text
+              style={
+                styles.tipTitle
+              }
+            >
+              Conseil terrain
+            </Text>
+
+            <Text
+              style={
+                styles.tipText
+              }
+            >
+              Notez ce qui a été appliqué,
+              réalisé ou observé pendant l’intervention.
+            </Text>
+          </View>
+        </View>
+
+        {/* ==================================================
+            DATE
+        ================================================== */}
+
+        <View
+          style={
+            styles.sectionHeader
+          }
+        >
+          <View
+            style={
+              styles.sectionIcon
+            }
+          >
+            <CalendarDays
+              size={17}
+              color="#166534"
+              strokeWidth={2.2}
+            />
+          </View>
+
+          <View
+            style={
+              styles.sectionHeaderText
+            }
+          >
+            <Text
+              style={
+                styles.sectionTitle
+              }
+            >
+              Moment de l’intervention
+            </Text>
+
+            <Text
+              style={
+                styles.sectionSubtitle
+              }
+            >
+              Quand cette intervention a-t-elle été réalisée ?
+            </Text>
+          </View>
+        </View>
+
+        <View
+          style={
+            styles.dateCard
+          }
+        >
+          <View
+            style={
+              styles.dateIcon
+            }
+          >
+            <CalendarDays
+              size={19}
+              color="#166534"
+              strokeWidth={2.1}
+            />
+          </View>
+
+          <View
+            style={
+              styles.dateContent
+            }
+          >
+            <Text
+              style={
+                styles.dateLabel
+              }
+            >
+              DATE DE L’INTERVENTION
+            </Text>
+
+            <TextInput
+              style={
+                styles.dateInput
+              }
+              placeholder="AAAA-MM-JJ"
+              placeholderTextColor="#9CA3AF"
+              value={date}
+              onChangeText={
+                setDate
+              }
+              editable={
+                !isSubmitting
+              }
+              keyboardType="numbers-and-punctuation"
+            />
+          </View>
+        </View>
+
+        <Text
+          style={
+            styles.dateHelp
+          }
+        >
+          Format attendu : AAAA-MM-JJ
+        </Text>
+
+        {/* ==================================================
+            PRODUIT
+        ================================================== */}
+
+        <View
+          style={
+            styles.sectionHeader
+          }
+        >
+          <View
+            style={
+              styles.sectionIcon
+            }
+          >
+            <Package
+              size={17}
+              color="#166534"
+              strokeWidth={2.2}
+            />
+          </View>
+
+          <View
+            style={
+              styles.sectionHeaderText
+            }
+          >
+            <Text
+              style={
+                styles.sectionTitle
+              }
+            >
+              Produit et quantité
+            </Text>
+
+            <Text
+              style={
+                styles.sectionSubtitle
+              }
+            >
+              Renseignez les produits utilisés, si nécessaire.
+            </Text>
+          </View>
+        </View>
+
+        {/* ==================================================
+            PRODUIT
+        ================================================== */}
+
+        <View
+          style={
+            styles.fieldCard
+          }
+        >
+          <View
+            style={
+              styles.fieldTopRow
+            }
+          >
+            <View
+              style={
+                styles.fieldTitleWrap
+              }
+            >
+              <Package
+                size={16}
+                color="#166534"
+                strokeWidth={2.1}
+              />
+
+              <Text
+                style={
+                  styles.fieldLabel
+                }
+              >
+                PRODUIT
+              </Text>
+            </View>
+
+            <Text
+              style={
+                styles.optionalText
+              }
+            >
+              Facultatif
+            </Text>
+          </View>
 
           <TextInput
             style={
               styles.input
             }
             placeholder="Ex : NPK 15-15-15"
+            placeholderTextColor="#9CA3AF"
             value={produit}
             onChangeText={
               setProduit
@@ -472,71 +954,242 @@ export default function AjoutInterventionScreen() {
               !isSubmitting
             }
           />
+        </View>
 
-          {/* QUANTITÉ */}
+        {/* ==================================================
+            QUANTITÉ + UNITÉ
+        ================================================== */}
 
-          <Text
+        <View
+          style={
+            styles.quantityUnitRow
+          }
+        >
+          {/* ==============================================
+              QUANTITÉ
+          ============================================== */}
+
+          <View
             style={
-              styles.label
+              styles.quantityCard
             }
           >
-            Quantité
-          </Text>
+            <View
+              style={
+                styles.fieldTopRowCompact
+              }
+            >
+              <View
+                style={
+                  styles.fieldTitleWrap
+                }
+              >
+                <Scale
+                  size={16}
+                  color="#166534"
+                  strokeWidth={2.1}
+                />
 
-          <TextInput
+                <Text
+                  style={
+                    styles.fieldLabel
+                  }
+                >
+                  QUANTITÉ
+                </Text>
+              </View>
+
+              <Text
+                style={
+                  styles.optionalText
+                }
+              >
+                Facultatif
+              </Text>
+            </View>
+
+            <TextInput
+              style={
+                styles.input
+              }
+              placeholder="Ex : 25"
+              placeholderTextColor="#9CA3AF"
+              value={quantite}
+              onChangeText={
+                setQuantite
+              }
+              editable={
+                !isSubmitting
+              }
+              keyboardType="decimal-pad"
+            />
+          </View>
+
+          {/* ==============================================
+              UNITÉ
+          ============================================== */}
+
+          <View
             style={
-              styles.input
-            }
-            placeholder="Ex : 25"
-            value={quantite}
-            onChangeText={
-              setQuantite
-            }
-            editable={
-              !isSubmitting
-            }
-            keyboardType="decimal-pad"
-          />
-
-          {/* UNITÉ */}
-
-          <Text
-            style={
-              styles.label
+              styles.unitCard
             }
           >
-            Unité
-          </Text>
+            <View
+              style={
+                styles.fieldTopRowCompact
+              }
+            >
+              <View
+                style={
+                  styles.fieldTitleWrap
+                }
+              >
+                <Scale
+                  size={16}
+                  color="#166534"
+                  strokeWidth={2.1}
+                />
 
-          <TextInput
+                <Text
+                  style={
+                    styles.fieldLabel
+                }
+                >
+                  UNITÉ
+                </Text>
+              </View>
+
+              <Text
+                style={
+                  styles.optionalText
+                }
+              >
+                Facultatif
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              style={
+                styles.dropdownButton
+              }
+              onPress={() =>
+                setUnitModalVisible(true)
+              }
+              disabled={
+                isSubmitting
+              }
+              activeOpacity={0.8}
+            >
+              <Text
+                style={[
+                  styles.dropdownText,
+                  !unite &&
+                    styles.dropdownPlaceholder,
+                ]}
+                numberOfLines={1}
+              >
+                {unite ||
+                  'Choisir'}
+              </Text>
+
+              <ChevronDown
+                size={18}
+                color="#6B7280"
+                strokeWidth={2.2}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* ==================================================
+            COÛT
+        ================================================== */}
+
+        <View
+          style={
+            styles.sectionHeader
+          }
+        >
+          <View
             style={
-              styles.input
-            }
-            placeholder="Ex : kg, L, sacs..."
-            value={unite}
-            onChangeText={
-              setUnite
-            }
-            editable={
-              !isSubmitting
-            }
-          />
-
-          {/* COÛT */}
-
-          <Text
-            style={
-              styles.label
+              styles.sectionIcon
             }
           >
-            Coût
-          </Text>
+            <Banknote
+              size={17}
+              color="#166534"
+              strokeWidth={2.2}
+            />
+          </View>
+
+          <View
+            style={
+              styles.sectionHeaderText
+            }
+          >
+            <Text
+              style={
+                styles.sectionTitle
+              }
+            >
+              Coût de l’intervention
+            </Text>
+
+            <Text
+              style={
+                styles.sectionSubtitle
+              }
+            >
+              Indiquez le coût si vous souhaitez le suivre.
+            </Text>
+          </View>
+        </View>
+
+        <View
+          style={
+            styles.fieldCard
+          }
+        >
+          <View
+            style={
+              styles.fieldTopRow
+            }
+          >
+            <View
+              style={
+                styles.fieldTitleWrap
+              }
+            >
+              <Banknote
+                size={16}
+                color="#166534"
+                strokeWidth={2.1}
+              />
+
+              <Text
+                style={
+                  styles.fieldLabel
+                }
+              >
+                COÛT
+              </Text>
+            </View>
+
+            <Text
+              style={
+                styles.optionalText
+              }
+            >
+              Facultatif
+            </Text>
+          </View>
 
           <TextInput
             style={
               styles.input
             }
             placeholder="Ex : 150000"
+            placeholderTextColor="#9CA3AF"
             value={cout}
             onChangeText={
               setCout
@@ -549,22 +1202,22 @@ export default function AjoutInterventionScreen() {
 
           <Text
             style={
-              styles.helpText
+              styles.fieldHint
             }
           >
             Montant en Ariary (Ar)
           </Text>
         </View>
 
-        {/* =========================================== */}
-        {/* ENREGISTRER */}
-        {/* =========================================== */}
+        {/* ==================================================
+            ACTION PRINCIPALE
+        ================================================== */}
 
         <TouchableOpacity
           style={[
             styles.saveButton,
             isSubmitting &&
-              styles.disabledButton,
+              styles.saveButtonDisabled,
           ]}
           onPress={
             enregistrerIntervention
@@ -572,35 +1225,65 @@ export default function AjoutInterventionScreen() {
           disabled={
             isSubmitting
           }
+          activeOpacity={0.85}
         >
           {isSubmitting ? (
             <>
               <ActivityIndicator
                 size="small"
+                color="#FFFFFF"
               />
 
               <Text
                 style={
-                  styles.buttonText
+                  styles.saveText
                 }
               >
                 Enregistrement...
               </Text>
             </>
           ) : (
-            <Text
-              style={
-                styles.buttonText
-              }
-            >
-              Enregistrer l’intervention
-            </Text>
+            <>
+              <View
+                style={
+                  styles.saveIcon
+                }
+              >
+                <Check
+                  size={18}
+                  color="#FFFFFF"
+                  strokeWidth={2.8}
+                />
+              </View>
+
+              <View
+                style={
+                  styles.saveTextBlock
+                }
+              >
+                <Text
+                  style={
+                    styles.saveText
+                  }
+                >
+                  Enregistrer l’intervention
+                </Text>
+
+                <Text
+                  style={
+                    styles.saveSubtext
+                  }
+                >
+                  Sauvegarder l’opération terrain
+                </Text>
+              </View>
+            </>
           )}
         </TouchableOpacity>
 
-        {/* =========================================== */}
-        {/* ANNULER */}
-        {/* =========================================== */}
+        {/* ==================================================
+            ANNULER
+        ================================================== */}
 
         <TouchableOpacity
           style={
@@ -612,7 +1295,14 @@ export default function AjoutInterventionScreen() {
           disabled={
             isSubmitting
           }
+          activeOpacity={0.8}
         >
+          <ArrowLeft
+            size={17}
+            color="#4B5563"
+            strokeWidth={2.1}
+          />
+
           <Text
             style={
               styles.cancelButtonText
@@ -622,7 +1312,371 @@ export default function AjoutInterventionScreen() {
           </Text>
         </TouchableOpacity>
 
+        <Text
+          style={
+            styles.bottomHint
+          }
+        >
+          Vous pourrez retrouver cette intervention
+          dans le suivi de la culture.
+        </Text>
+
       </ScrollView>
+
+      {/* ==================================================
+          MODAL LISTE UNITÉS
+      ================================================== */}
+
+      <Modal
+        visible={
+          unitModalVisible
+        }
+        transparent
+        animationType="fade"
+        onRequestClose={() =>
+          setUnitModalVisible(false)
+        }
+      >
+        <View
+          style={
+            styles.modalOverlay
+          }
+        >
+          <TouchableOpacity
+            style={
+              StyleSheet.absoluteFill
+            }
+            activeOpacity={1}
+            onPress={() =>
+              setUnitModalVisible(false)
+            }
+          />
+
+          <View
+            style={
+              styles.unitModal
+            }
+          >
+            <View
+              style={
+                styles.modalHeader
+              }
+            >
+              <View
+                style={
+                  styles.modalHeaderIcon
+                }
+              >
+                <Scale
+                  size={19}
+                  color="#166534"
+                  strokeWidth={2.2}
+                />
+              </View>
+
+              <View
+                style={
+                  styles.modalHeaderTextBlock
+                }
+              >
+                <Text
+                  style={
+                    styles.modalTitle
+                  }
+                >
+                  Choisir une unité
+                </Text>
+
+                <Text
+                  style={
+                    styles.modalSubtitle
+                  }
+                >
+                  Sélectionnez l’unité utilisée pour la quantité.
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                style={
+                  styles.modalCloseButton
+                }
+                onPress={() =>
+                  setUnitModalVisible(false)
+                }
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={
+                    styles.modalCloseText
+                  }
+                >
+                  ×
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView
+              style={
+                styles.unitList
+              }
+              contentContainerStyle={
+                styles.unitListContent
+              }
+              showsVerticalScrollIndicator={false}
+            >
+              {/* ==========================================
+                  AUCUNE UNITÉ
+              ========================================== */}
+
+              <TouchableOpacity
+                style={[
+                  styles.unitOption,
+                  !unite &&
+                    styles.unitOptionSelected,
+                ]}
+                onPress={() =>
+                  selectionnerUnite('')
+                }
+                activeOpacity={0.8}
+              >
+                <View
+                  style={
+                    styles.unitOptionTextBlock
+                  }
+                >
+                  <Text
+                    style={[
+                      styles.unitOptionText,
+                      !unite &&
+                        styles.unitOptionTextSelected,
+                    ]}
+                  >
+                    Aucune unité
+                  </Text>
+
+                  <Text
+                    style={
+                      styles.unitOptionHint
+                    }
+                  >
+                    Ne pas préciser d’unité
+                  </Text>
+                </View>
+
+                {!unite && (
+                  <View
+                    style={
+                      styles.unitCheck
+                    }
+                  >
+                    <Check
+                      size={16}
+                      color="#FFFFFF"
+                      strokeWidth={2.8}
+                    />
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              {/* ==========================================
+                  UNITÉS
+              ========================================== */}
+
+              {UNITE_OPTIONS.map(
+                (item) => {
+                  const selected =
+                    unite === item;
+
+                  return (
+                    <TouchableOpacity
+                      key={item}
+                      style={[
+                        styles.unitOption,
+                        selected &&
+                          styles.unitOptionSelected,
+                      ]}
+                      onPress={() =>
+                        selectionnerUnite(item)
+                      }
+                      activeOpacity={0.8}
+                    >
+                      <View
+                        style={
+                          styles.unitOptionTextBlock
+                        }
+                      >
+                        <Text
+                          style={[
+                            styles.unitOptionText,
+                            selected &&
+                              styles.unitOptionTextSelected,
+                          ]}
+                        >
+                          {item}
+                        </Text>
+
+                        {item === 'kg' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            kilogramme
+                          </Text>
+                        )}
+
+                        {item === 'g' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            gramme
+                          </Text>
+                        )}
+
+                        {item === 't' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            tonne
+                          </Text>
+                        )}
+
+                        {item === 'L' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            litre
+                          </Text>
+                        )}
+
+                        {item === 'mL' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            millilitre
+                          </Text>
+                        )}
+
+                        {item === 'sac' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            sac
+                          </Text>
+                        )}
+
+                        {item === 'sacs' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            sacs
+                          </Text>
+                        )}
+
+                        {item === 'bidon' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            bidon
+                          </Text>
+                        )}
+
+                        {item === 'bidons' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            bidons
+                          </Text>
+                        )}
+
+                        {item === 'seaux' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            seaux
+                          </Text>
+                        )}
+
+                        {item === 'unités' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            quantité comptée à l’unité
+                          </Text>
+                        )}
+
+                        {item === 'doses' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            doses de produit
+                          </Text>
+                        )}
+
+                        {item === 'plants' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            plants
+                          </Text>
+                        )}
+
+                        {item === 'arbres' && (
+                          <Text
+                            style={
+                              styles.unitOptionHint
+                            }
+                          >
+                            arbres
+                          </Text>
+                        )}
+                      </View>
+
+                      {selected && (
+                        <View
+                          style={
+                            styles.unitCheck
+                          }
+                        >
+                          <Check
+                            size={16}
+                            color="#FFFFFF"
+                            strokeWidth={2.8}
+                          />
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  );
+                },
+              )}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }
@@ -634,157 +1688,709 @@ export default function AjoutInterventionScreen() {
 const styles =
   StyleSheet.create({
 
+    // =================================================
+    // CONTENEUR
+    // =================================================
+
     container: {
       flex: 1,
-      backgroundColor:
-        '#f5f5f5',
+      backgroundColor: '#F4F8F3',
     },
 
-    content: {
-      padding: 20,
-      paddingBottom: 40,
+    scrollContent: {
+      paddingHorizontal: 16,
+      paddingTop: 14,
+      paddingBottom: 36,
     },
 
-    // ================================================
-    // TITRE
-    // ================================================
-
-    title: {
-      fontSize: 28,
-      fontWeight: 'bold',
-      marginBottom: 15,
-    },
-
-    // ================================================
+    // =================================================
     // HEADER
-    // ================================================
+    // =================================================
 
-    headerCard: {
-      backgroundColor:
-        '#e8f5e9',
-      borderRadius: 10,
-      padding: 18,
-      marginBottom: 15,
-      borderWidth: 1,
-      borderColor:
-        '#c8e6c9',
-    },
-
-    cultureName: {
-      fontSize: 23,
-      fontWeight: 'bold',
-      color: '#2e7d32',
-    },
-
-    parcelleName: {
-      fontSize: 15,
-      color: '#555',
-      marginTop: 6,
-    },
-
-    // ================================================
-    // CARD
-    // ================================================
-
-    card: {
-      backgroundColor:
-        '#fff',
-      borderRadius: 10,
-      padding: 16,
-      marginBottom: 15,
-      borderWidth: 1,
-      borderColor:
-        '#ddd',
-    },
-
-    cardTitle: {
-      fontSize: 19,
-      fontWeight: 'bold',
+    header: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
       marginBottom: 18,
     },
 
-    // ================================================
-    // FORMULAIRE
-    // ================================================
-
-    label: {
-      fontSize: 15,
-      fontWeight: 'bold',
-      color: '#555',
-      marginBottom: 8,
-      marginTop: 10,
-    },
-
-    input: {
-      minHeight: 50,
+    backButton: {
+      width: 42,
+      height: 42,
+      borderRadius: 21,
+      backgroundColor: '#FFFFFF',
       borderWidth: 1,
-      borderColor: '#ccc',
-      borderRadius: 10,
-      backgroundColor: '#fff',
-      paddingHorizontal: 14,
-      fontSize: 15,
+      borderColor: '#DCE7DA',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 12,
     },
 
-    textArea: {
-      minHeight: 110,
+    headerTextBlock: {
+      flex: 1,
+      paddingTop: 1,
+    },
+
+    eyebrow: {
+      fontSize: 10,
+      fontWeight: '800',
+      color: '#4D7C55',
+      letterSpacing: 1,
+      marginBottom: 3,
+    },
+
+    title: {
+      fontSize: 24,
+      lineHeight: 29,
+      fontWeight: '800',
+      color: '#172018',
+      letterSpacing: -0.4,
+    },
+
+    subtitle: {
+      marginTop: 4,
+      fontSize: 12,
+      lineHeight: 18,
+      color: '#6B7280',
+    },
+
+    // =================================================
+    // CONTEXTE CULTURE
+    // =================================================
+
+    contextCard: {
+      position: 'relative',
+      overflow: 'hidden',
+      backgroundColor: '#FFFFFF',
+      borderRadius: 20,
       borderWidth: 1,
-      borderColor: '#ccc',
-      borderRadius: 10,
-      backgroundColor: '#fff',
-      paddingHorizontal: 14,
-      paddingVertical: 12,
-      fontSize: 15,
+      borderColor: '#DCE7DA',
+      marginBottom: 24,
+      shadowColor: '#14532D',
+      shadowOffset: {
+        width: 0,
+        height: 4,
+      },
+      shadowOpacity: 0.07,
+      shadowRadius: 10,
+      elevation: 2,
     },
 
-    helpText: {
-      fontSize: 13,
-      color: '#777',
+    contextAccent: {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      bottom: 0,
+      width: 5,
+      backgroundColor: '#22C55E',
+    },
+
+    contextMain: {
+      minHeight: 106,
+      paddingVertical: 15,
+      paddingHorizontal: 15,
+      paddingLeft: 18,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+
+    contextIconLarge: {
+      width: 48,
+      height: 48,
+      borderRadius: 16,
+      backgroundColor: '#ECFDF3',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 12,
+    },
+
+    contextIdentity: {
+      flex: 1,
+      minWidth: 0,
+    },
+
+    contextOverline: {
+      fontSize: 9,
+      fontWeight: '800',
+      letterSpacing: 0.9,
+      color: '#9CA3AF',
+    },
+
+    contextCulture: {
+      marginTop: 2,
+      fontSize: 17,
+      lineHeight: 21,
+      fontWeight: '800',
+      color: '#172018',
+    },
+
+    parcelleLine: {
+      flexDirection: 'row',
+      alignItems: 'center',
       marginTop: 5,
     },
 
-    // ================================================
-    // BOUTONS
-    // ================================================
+    parcelleText: {
+      flex: 1,
+      marginLeft: 5,
+      fontSize: 11,
+      color: '#6B7280',
+    },
 
-    saveButton: {
-      minHeight: 52,
-      borderRadius: 10,
-      backgroundColor:
-        '#2e7d32',
-      justifyContent:
-        'center',
+    interventionBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginLeft: 8,
+      paddingHorizontal: 8,
+      paddingVertical: 7,
+      borderRadius: 999,
+      backgroundColor: '#ECFDF3',
+      borderWidth: 1,
+      borderColor: '#BBF7D0',
+    },
+
+    interventionBadgeText: {
+      marginLeft: 4,
+      fontSize: 8,
+      fontWeight: '800',
+      color: '#166534',
+    },
+
+    // =================================================
+    // SECTION HEADER
+    // =================================================
+
+    sectionHeader: {
+      flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 10,
+      marginTop: 2,
+    },
+
+    sectionIcon: {
+      width: 34,
+      height: 34,
+      borderRadius: 11,
+      backgroundColor: '#E8F5E4',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 9,
+    },
+
+    sectionHeaderText: {
+      flex: 1,
+    },
+
+    sectionTitle: {
+      fontSize: 14,
+      lineHeight: 18,
+      fontWeight: '800',
+      color: '#172018',
+    },
+
+    sectionSubtitle: {
+      marginTop: 2,
+      fontSize: 11,
+      lineHeight: 16,
+      color: '#6B7280',
+    },
+
+    // =================================================
+    // CHAMPS
+    // =================================================
+
+    fieldCard: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: '#DCE7DA',
+      overflow: 'hidden',
+      marginBottom: 14,
+    },
+
+    fieldTopRow: {
+      minHeight: 48,
+      paddingHorizontal: 14,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderBottomWidth: 1,
+      borderBottomColor: '#EEF3ED',
+    },
+
+    fieldTopRowCompact: {
+      minHeight: 46,
       paddingHorizontal: 12,
       flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderBottomWidth: 1,
+      borderBottomColor: '#EEF3ED',
+    },
+
+    fieldTitleWrap: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      minWidth: 0,
+      flexShrink: 1,
+    },
+
+    fieldLabel: {
+      marginLeft: 7,
+      fontSize: 10,
+      fontWeight: '800',
+      letterSpacing: 0.8,
+      color: '#4B5563',
+      flexShrink: 1,
+    },
+
+    requiredText: {
+      fontSize: 9,
+      fontWeight: '700',
+      color: '#16A34A',
+    },
+
+    optionalText: {
+      fontSize: 9,
+      fontWeight: '700',
+      color: '#9CA3AF',
+      marginLeft: 5,
+    },
+
+    input: {
+      minHeight: 56,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      fontSize: 14,
+      lineHeight: 20,
+      color: '#172018',
+      backgroundColor: '#FFFFFF',
+    },
+
+    fieldHint: {
+      paddingHorizontal: 14,
+      paddingBottom: 11,
+      fontSize: 10,
+      lineHeight: 15,
+      color: '#9CA3AF',
+    },
+
+    // =================================================
+    // DESCRIPTION
+    // =================================================
+
+    descriptionCard: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: '#DCE7DA',
+      overflow: 'hidden',
+      marginBottom: 14,
+    },
+
+    descriptionInput: {
+      minHeight: 150,
+      paddingHorizontal: 14,
+      paddingTop: 14,
+      paddingBottom: 12,
+      fontSize: 14,
+      lineHeight: 21,
+      color: '#172018',
+      backgroundColor: '#FFFFFF',
+    },
+
+    descriptionFooter: {
+      minHeight: 42,
+      paddingHorizontal: 12,
+      paddingBottom: 9,
+      paddingTop: 2,
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
+    },
+
+    descriptionHint: {
+      flex: 1,
+      paddingRight: 12,
+      fontSize: 10,
+      lineHeight: 14,
+      color: '#9CA3AF',
+    },
+
+    // =================================================
+    // CONSEIL TERRAIN
+    // =================================================
+
+    tipCard: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      backgroundColor: '#F0FDF4',
+      borderWidth: 1,
+      borderColor: '#D1FAE5',
+      borderRadius: 15,
+      padding: 12,
+      marginBottom: 22,
+    },
+
+    tipIcon: {
+      width: 32,
+      height: 32,
+      borderRadius: 10,
+      backgroundColor: '#DCFCE7',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 9,
+    },
+
+    tipContent: {
+      flex: 1,
+    },
+
+    tipTitle: {
+      fontSize: 11,
+      fontWeight: '800',
+      color: '#166534',
+    },
+
+    tipText: {
+      marginTop: 3,
+      fontSize: 10,
+      lineHeight: 15,
+      color: '#4B5563',
+    },
+
+    // =================================================
+    // DATE
+    // =================================================
+
+    dateCard: {
+      minHeight: 72,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#FFFFFF',
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: '#DCE7DA',
+      paddingHorizontal: 12,
+    },
+
+    dateIcon: {
+      width: 38,
+      height: 38,
+      borderRadius: 12,
+      backgroundColor: '#ECFDF3',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 10,
+    },
+
+    dateContent: {
+      flex: 1,
+    },
+
+    dateLabel: {
+      fontSize: 9,
+      fontWeight: '800',
+      letterSpacing: 0.7,
+      color: '#9CA3AF',
+      marginBottom: 2,
+    },
+
+    dateInput: {
+      minHeight: 30,
+      paddingHorizontal: 0,
+      paddingVertical: 0,
+      fontSize: 13,
+      fontWeight: '700',
+      color: '#172018',
+    },
+
+    dateHelp: {
+      marginTop: 6,
+      marginLeft: 3,
+      marginBottom: 22,
+      fontSize: 10,
+      lineHeight: 15,
+      color: '#9CA3AF',
+    },
+
+    // =================================================
+    // QUANTITÉ + UNITÉ
+    // =================================================
+
+    quantityUnitRow: {
+      flexDirection: 'row',
+      alignItems: 'stretch',
       gap: 10,
+      marginBottom: 14,
     },
 
-    disabledButton: {
-      opacity: 0.6,
+    quantityCard: {
+      flex: 1,
+      minWidth: 0,
+      backgroundColor: '#FFFFFF',
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: '#DCE7DA',
+      overflow: 'hidden',
     },
 
-    buttonText: {
-      color: '#fff',
-      fontSize: 16,
-      fontWeight: 'bold',
+    unitCard: {
+      flex: 1,
+      minWidth: 0,
+      backgroundColor: '#FFFFFF',
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: '#DCE7DA',
+      overflow: 'hidden',
     },
+
+    dropdownButton: {
+      minHeight: 56,
+      paddingHorizontal: 12,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: '#FFFFFF',
+    },
+
+    dropdownText: {
+      flex: 1,
+      marginRight: 8,
+      fontSize: 14,
+      fontWeight: '700',
+      color: '#172018',
+    },
+
+    dropdownPlaceholder: {
+      color: '#9CA3AF',
+      fontWeight: '500',
+    },
+
+    // =================================================
+    // SAVE
+    // =================================================
+
+    saveButton: {
+      minHeight: 58,
+      borderRadius: 17,
+      backgroundColor: '#166534',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 14,
+      marginTop: 2,
+      shadowColor: '#166534',
+      shadowOffset: {
+        width: 0,
+        height: 5,
+      },
+      shadowOpacity: 0.18,
+      shadowRadius: 10,
+      elevation: 4,
+    },
+
+    saveButtonDisabled: {
+      opacity: 0.72,
+    },
+
+    saveIcon: {
+      width: 36,
+      height: 36,
+      borderRadius: 12,
+      backgroundColor: '#22C55E',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 10,
+    },
+
+    saveTextBlock: {
+      flex: 1,
+    },
+
+    saveText: {
+      color: '#FFFFFF',
+      fontSize: 14,
+      fontWeight: '800',
+    },
+
+    saveSubtext: {
+      marginTop: 2,
+      color: '#DCFCE7',
+      fontSize: 10,
+      fontWeight: '500',
+    },
+
+    // =================================================
+    // ANNULER
+    // =================================================
 
     cancelButton: {
       minHeight: 50,
-      borderRadius: 10,
-      backgroundColor:
-        '#e0e0e0',
-      justifyContent:
-        'center',
+      borderRadius: 15,
+      backgroundColor: '#FFFFFF',
+      borderWidth: 1,
+      borderColor: '#DCE7DA',
+      flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'center',
       paddingHorizontal: 12,
+      marginTop: 10,
     },
 
     cancelButtonText: {
-      color: '#333',
-      fontSize: 16,
-      fontWeight: 'bold',
+      marginLeft: 7,
+      color: '#4B5563',
+      fontSize: 13,
+      fontWeight: '700',
     },
 
+    // =================================================
+    // BOTTOM HINT
+    // =================================================
+
+    bottomHint: {
+      marginTop: 10,
+      textAlign: 'center',
+      fontSize: 10,
+      lineHeight: 15,
+      color: '#9CA3AF',
+    },
+
+    // =================================================
+    // MODAL UNITÉS
+    // =================================================
+
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(15, 23, 18, 0.42)',
+      justifyContent: 'flex-end',
+    },
+
+    unitModal: {
+      maxHeight: '78%',
+      backgroundColor: '#F4F8F3',
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      overflow: 'hidden',
+      paddingBottom: Platform.OS === 'ios' ? 26 : 18,
+    },
+
+    modalHeader: {
+      minHeight: 82,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      backgroundColor: '#FFFFFF',
+      borderBottomWidth: 1,
+      borderBottomColor: '#E5ECE3',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+
+    modalHeaderIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 13,
+      backgroundColor: '#ECFDF3',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 10,
+    },
+
+    modalHeaderTextBlock: {
+      flex: 1,
+      minWidth: 0,
+    },
+
+    modalTitle: {
+      fontSize: 16,
+      fontWeight: '800',
+      color: '#172018',
+    },
+
+    modalSubtitle: {
+      marginTop: 2,
+      fontSize: 10,
+      lineHeight: 15,
+      color: '#6B7280',
+    },
+
+    modalCloseButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: '#F4F8F3',
+      borderWidth: 1,
+      borderColor: '#DCE7DA',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: 8,
+    },
+
+    modalCloseText: {
+      marginTop: -2,
+      fontSize: 25,
+      lineHeight: 28,
+      color: '#4B5563',
+      fontWeight: '400',
+    },
+
+    unitList: {
+      flexGrow: 0,
+    },
+
+    unitListContent: {
+      paddingHorizontal: 16,
+      paddingTop: 12,
+      paddingBottom: 18,
+    },
+
+    unitOption: {
+      minHeight: 64,
+      marginBottom: 8,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      backgroundColor: '#FFFFFF',
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: '#DCE7DA',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+
+    unitOptionSelected: {
+      backgroundColor: '#F0FDF4',
+      borderColor: '#86EFAC',
+    },
+
+    unitOptionTextBlock: {
+      flex: 1,
+      minWidth: 0,
+    },
+
+    unitOptionText: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: '#172018',
+    },
+
+    unitOptionTextSelected: {
+      color: '#166534',
+    },
+
+    unitOptionHint: {
+      marginTop: 2,
+      fontSize: 10,
+      lineHeight: 14,
+      color: '#9CA3AF',
+    },
+
+    unitCheck: {
+      width: 28,
+      height: 28,
+      borderRadius: 10,
+      backgroundColor: '#22C55E',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: 10,
+    },
   });

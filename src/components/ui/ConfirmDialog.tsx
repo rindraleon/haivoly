@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Platform,
+import {
   Animated,
   Modal,
   Pressable,
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border.default,
     overflow: 'hidden',
-    ...(Platform.OS === 'web' ? ({ boxShadow: (shadows.lg as any).boxShadow } as any) : (shadows.lg as any)),
+    ...shadows.lg,
   },
   accent: { height: 4, width: '100%' },
   header: {

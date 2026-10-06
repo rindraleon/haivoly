@@ -1,6 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
-import { LogIn, Mail } from 'lucide-react-native';
 import { Input } from '@/components/ui/Input';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { Button } from '@/components/ui/Button';
@@ -20,8 +19,8 @@ export function LoginForm({ email, password, errors, loading, onEmailChange, onP
   return (
     <View style={styles.form}>
       <Input
-        label="Email"
-        placeholder="Adresse email"
+        label="Adresse email"
+        placeholder="exemple@email.com"
         value={email}
         onChangeText={onEmailChange}
         keyboardType="email-address"
@@ -31,26 +30,27 @@ export function LoginForm({ email, password, errors, loading, onEmailChange, onP
         editable={!loading}
         returnKeyType="next"
         error={errors.email}
-        leftIcon={<Mail size={18} color="#98A2B3" />}
+        required
       />
 
       <View style={{ gap: 6 }}>
         <PasswordInput
-          label="Password"
-          placeholder="Mot de passe"
+          label="Mot de passe"
+          placeholder="Votre mot de passe"
           value={password}
           onChangeText={onPasswordChange}
           editable={!loading}
           returnKeyType="done"
           onSubmitEditing={onSubmit}
           error={errors.password}
+          required
         />
         <Pressable onPress={() => router.push('/(auth)/forgot-password' as any)} hitSlop={8} style={styles.forgotWrap}>
           <Text style={styles.forgotText}>Mot de passe oublié ?</Text>
         </Pressable>
       </View>
 
-      <Button onPress={onSubmit} loading={loading} fullWidth size="lg" leftIcon={<LogIn size={18} color="white" />}>
+      <Button onPress={onSubmit} loading={loading} fullWidth size="lg">
         {loading ? 'Connexion...' : 'Se connecter'}
       </Button>
 
@@ -60,32 +60,38 @@ export function LoginForm({ email, password, errors, loading, onEmailChange, onP
         <View style={styles.line} />
       </View>
 
-      <Pressable
-        onPress={() => router.push('/(auth)/register' as any)}
-        disabled={loading}
-        style={({ pressed }) => [styles.outlineBtn, pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] }]}
-      >
-        <Text style={styles.outlineText}>Créer un compte</Text>
-      </Pressable>
+      <View style={styles.registerBox}>
+        <Text style={styles.registerHint}>Pas encore de compte ?</Text>
+        <Pressable
+          onPress={() => router.push('/(auth)/register' as any)}
+          disabled={loading}
+          style={({ pressed }) => [styles.registerBtn, pressed && { opacity: 0.7 }]}
+        >
+          <Text style={styles.registerBtnText}>Créer un compte</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   form: { gap: 14 },
-  forgotWrap: { alignSelf: 'flex-end', paddingVertical: 2, marginTop: 2 },
-  forgotText: { fontSize: 13, fontWeight: '600', color: '#2E7D32' },
-  divider: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 4 },
-  line: { flex: 1, height: 1, backgroundColor: '#E5E7EB' },
-  or: { fontSize: 12.5, color: '#9CA3AF', fontWeight: '600' },
-  outlineBtn: {
-    minHeight: 52,
-    borderRadius: 999,
-    borderWidth: 1.5,
-    borderColor: '#2E7D32',
-    backgroundColor: '#FFFFFF',
+  forgotWrap: { alignSelf: 'flex-end', paddingVertical: 2 },
+  forgotText: { fontSize: 13, fontWeight: '600', color: colors.primary[600] },
+  divider: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 2 },
+  line: { flex: 1, height: 1, backgroundColor: colors.border.default },
+  or: { fontSize: 12, color: colors.neutral[400], fontWeight: '600' },
+  registerBox: { alignItems: 'center', gap: 10, marginTop: 4 },
+  registerHint: { fontSize: 13, color: colors.neutral[500] },
+  registerBtn: {
+    alignSelf: 'stretch',
+    minHeight: 48,
+    borderRadius: radius.md,
+    borderWidth: 1.25,
+    borderColor: colors.primary[200],
+    backgroundColor: colors.primary[50],
     alignItems: 'center',
     justifyContent: 'center',
   },
-  outlineText: { fontSize: 15, fontWeight: '700', color: '#2E7D32' },
+  registerBtnText: { fontSize: 14, fontWeight: '700', color: colors.primary[700] },
 });

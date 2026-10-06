@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, Pressable, StyleSheet, View, type ViewStyle, type StyleProp } from 'react-native';
+import { Pressable, StyleSheet, View, type ViewStyle, type StyleProp } from 'react-native';
 import { colors, radius, shadows } from '@/design/tokens';
 
 interface CardProps {
@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
 });
 
 const stylesByVariant: Record<string, ViewStyle> = {
-  default: { ...(Platform.OS === 'web' ? ({ boxShadow: (shadows.card as any).boxShadow } as any) : (shadows.card as any)), borderColor: colors.border.default },
-  elevated: { ...(Platform.OS === 'web' ? ({ boxShadow: (shadows.md as any).boxShadow } as any) : (shadows.md as any)), borderColor: 'transparent' },
-  outline: { borderColor: colors.border.strong, backgroundColor: '#FFFFFF', boxShadow: 'none', elevation: 0 } as any,
+  default: { ...shadows.card, borderColor: colors.border.default },
+  elevated: { ...shadows.md, borderColor: 'transparent' },
+  outline: { borderColor: colors.border.strong, backgroundColor: '#FFFFFF', shadowOpacity: 0, elevation: 0 },
   muted: { backgroundColor: colors.neutral[100], borderColor: colors.border.default },
 };

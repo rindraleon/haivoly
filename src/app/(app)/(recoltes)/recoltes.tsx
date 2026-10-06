@@ -15,6 +15,8 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 
 import { getRecolte, Recolte } from '@/api/recoltes';
 
+import { getMediaUrl } from '@/utils/mediaUrl';
+
 export default function RecoltesScreen() {
   const { cultureId } = useLocalSearchParams<{ cultureId: string }>();
 
@@ -35,7 +37,7 @@ export default function RecoltesScreen() {
       console.log('📷 PHOTOS:', data.photos);
       console.log(
   '🔗 URL PHOTOS:',
-  data.photos?.map((photo) => photo.url),
+  data.photos?.map((photo) => getMediaUrl(photo.url)),
 );
       
       setRecolte(data);
@@ -186,7 +188,7 @@ export default function RecoltesScreen() {
                 {recolte.photos.map((photo) => (
                   <Image
                     key={photo.id}
-                    source={{ uri: photo.url }}
+                    source={{ uri: getMediaUrl(photo.url) }}
                     style={styles.photo}
                   />
                 ))}

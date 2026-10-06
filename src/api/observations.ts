@@ -179,7 +179,10 @@ export async function deletePhotoObservation(
   observationId: string,
   photoId: string,
 ): Promise<void> {
-  await api.delete(
-    `/parcelles/${parcelleId}/cultures/${cultureId}/observations/${observationId}/photos/${photoId}`,
-  );
+  const url =
+    `/parcelles/${parcelleId}/cultures/${cultureId}/observations/${observationId}/photos/${photoId}`;
+
+  console.log('🗑️ URL SUPPRESSION PHOTO:', url);
+
+  await api.delete(url);
 }

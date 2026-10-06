@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@expo/ui": "~57.0.12",
+    "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "^3.1.1",
     "@react-native-community/datetimepicker": "^9.1.0",
     "@react-native-picker/picker": "2.11.4",
@@ -48,13 +49,10 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "start": "expo start --tunnel",
-    "start:tunnel": "expo start --tunnel",
-    "start:lan": "expo start --clear",
-    "start:web": "expo start --web",
+    "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint"
   },

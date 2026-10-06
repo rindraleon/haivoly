@@ -31,6 +31,6 @@ export default function Index() {
     );
   }
 
-  if (token) return <Redirect href="/(app)/home" />;
+  if (token) return <Redirect href="/home" />;
   return <Redirect href="/(auth)/login" />;
 }

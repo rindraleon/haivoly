@@ -77,7 +77,7 @@ export default function LoginScreen() {
             <View style={styles.card}>
               <View style={styles.header}>
                 <Text style={styles.hTitle}>Bienvenue</Text>
-                <Text style={styles.hSubtitle}>Connectez-vous pour accéder à vos vos exploitations.</Text>
+                <Text style={styles.hSubtitle}>Connectez-vous pour accéder à vos parcelles et cultures.</Text>
               </View>
 
               {errors.general && (
@@ -124,7 +124,10 @@ const styles = StyleSheet.create({
     borderColor: colors.border.default,
     padding: 20,
     gap: 18,
-    boxShadow: '0 8px 32px rgba(16,24,40,.10)',
+    shadowColor: '#101828',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
     elevation: 4,
   },
   header: { gap: 6 },
