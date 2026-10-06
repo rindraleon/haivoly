@@ -31,6 +31,8 @@ type Props = {
   onSupprimer: (observation: Observation) => void;
   parcelleNom: string;
   photoEnCours: boolean;
+  /** Libellé de l'étape d'envoi en cours ('' si aucun envoi). */
+  libelleEnvoi: string;
   photos: NoInfer<PhotoObservation[]>;
   photosQuery: UseQueryResult<NoInfer<PhotoObservation[]>, Error>;
   statutCulture: StatutCulture | undefined;
@@ -47,6 +49,7 @@ export function ObservationCard1({
   onSupprimer,
   parcelleNom,
   photoEnCours,
+  libelleEnvoi,
   photos,
   photosQuery,
   statutCulture,
@@ -422,6 +425,22 @@ export function ObservationCard1({
                 </ScrollView>
               </>
             )}
+
+            {libelleEnvoi ? (
+              <View
+                style={styles.envoiPill}
+                accessibilityRole="progressbar"
+                accessibilityLabel={libelleEnvoi}
+              >
+                <ActivityIndicator
+                  size="small"
+                  color={colors.primary[700]}
+                />
+                <Text style={styles.envoiPillText}>
+                  {libelleEnvoi}
+                </Text>
+              </View>
+            ) : null}
           </View>
 
           {/* FOOTER */}

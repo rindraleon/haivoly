@@ -7,8 +7,7 @@
  * tels quels ; c'est le serveur qui valide la propriété et les règles métier.
  */
 import { http } from '@/services/http';
-import type { Photo , Intervention, Paginated , InterventionPayload } from '@/types';
-import { fichierDepuisUri } from '@/utils/photo';
+import type { FichierPhoto, Photo , Intervention, Paginated , InterventionPayload } from '@/types';
 
 
 export type { InterventionPayload };
@@ -34,7 +33,16 @@ export const interventionsApi = {
  */
 export const interventionPhotosApi = {
   list: (parcelleId: string, cultureId: string, interventionId: string) => http.get<Photo[]>(`/parcelles/${parcelleId}/cultures/${cultureId}/interventions/${interventionId}/photos`),
-  upload: (parcelleId: string, cultureId: string, interventionId: string, uri: string) =>
-    http.upload<Photo>(`/parcelles/${parcelleId}/cultures/${cultureId}/interventions/${interventionId}/photos/upload`, fichierDepuisUri(uri)),
+  /** `fichier` est préparé par l'appelant (`preparerFichierPhoto` : compressé). */
+  upload: (
+    parcelleId: string,
+    cultureId: string,
+    interventionId: string,
+    fichier: FichierPhoto,
+  ) =>
+    http.upload<Photo>(
+      `/parcelles/${parcelleId}/cultures/${cultureId}/interventions/${interventionId}/photos/upload`,
+      fichier,
+    ),
   remove: (parcelleId: string, cultureId: string, interventionId: string, photoId: string) => http.delete<void>(`/parcelles/${parcelleId}/cultures/${cultureId}/interventions/${interventionId}/photos/${photoId}`),
 };

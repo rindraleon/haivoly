@@ -331,12 +331,9 @@ export default function HistoriqueCulturesScreen() {
 
         }
 
-      } catch (error) {
+      } catch {
 
-        console.error(
-          'ERREUR CHARGEMENT POINTS HISTORIQUE:',
-          error,
-        );
+        logger.warn('CultureHistoryScreen', "Échec du chargement de l'historique");
 
       } finally {
 

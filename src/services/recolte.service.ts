@@ -6,8 +6,7 @@
  * tels quels ; c'est le serveur qui valide la propriété et les règles métier.
  */
 import { http } from '@/services/http';
-import { fichierDepuisUri } from '@/utils/photo';
-import type { Paginated, Photo, PhotoPayload, Recolte , RecoltePayload } from '@/types';
+import type { FichierPhoto, Paginated, Photo, PhotoPayload, Recolte , RecoltePayload } from '@/types';
 
 
 export type { RecoltePayload };
@@ -35,8 +34,9 @@ export const recoltePhotosApi = {
   list: (recolteId: string) => http.get<Photo[]>(`/recoltes/${recolteId}/photos`),
   get: (recolteId: string, photoId: string) =>
     http.get<Photo>(`/recoltes/${recolteId}/photos/${photoId}`),
-  upload: (recolteId: string, uri: string) =>
-    http.upload<Photo>(`/recoltes/${recolteId}/photos/upload`, fichierDepuisUri(uri)),
+  /** `fichier` est préparé par l'appelant (`preparerFichierPhoto` : compressé). */
+  upload: (recolteId: string, fichier: FichierPhoto) =>
+    http.upload<Photo>(`/recoltes/${recolteId}/photos/upload`, fichier),
   update: (recolteId: string, photoId: string, data: PhotoPayload) =>
     http.patch<Photo>(`/recoltes/${recolteId}/photos/${photoId}`, data),
   remove: (recolteId: string, photoId: string) =>

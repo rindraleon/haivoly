@@ -569,9 +569,7 @@ export default function CulturesScreen() {
                           ),
                       };
 
-                    } catch (
-                      error
-                    ) {
+                    } catch (error) {
 
                       logger.debug('CultureListScreen', 
                         `Erreur GPS culture ${culture.id}`,
@@ -674,9 +672,7 @@ export default function CulturesScreen() {
                         ),
                     };
 
-                  } catch (
-                    error
-                  ) {
+                  } catch (error) {
 
                     logger.debug('CultureListScreen', 
                       `Erreur GPS culture ${culture.id}`,
@@ -703,14 +699,9 @@ export default function CulturesScreen() {
 
           }
 
-        } catch (
-          error
-        ) {
+        } catch {
 
-          console.error(
-            'Erreur chargement GPS cultures',
-            error,
-          );
+          logger.warn('CultureListScreen', 'Échec du chargement des tracés GPS');
 
           if (actif) {
 
@@ -1431,7 +1422,7 @@ function supprimerCulturesExistantes() {
 
       try {
         map.removeLayer(layer);
-      } catch (error) {
+      } catch {
       }
 
     }
@@ -1442,7 +1433,7 @@ function supprimerCulturesExistantes() {
 
       try {
         map.removeLayer(marker);
-      } catch (error) {
+      } catch {
       }
 
     }
@@ -1655,14 +1646,9 @@ function traiterMessage(
 
     }
 
-  } catch (
-    error
-  ) {
+  } catch {
 
-    console.error(
-      'Erreur message carte',
-      error,
-    );
+    logger.warn('CultureListScreen', "Échec de l'affichage du message de carte");
 
   }
 

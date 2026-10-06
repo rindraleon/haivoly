@@ -24,6 +24,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useProfile } from '@/hooks/profile/useProfile';
 import { removeToken } from '@/storage/authStorage';
+import { queryClient } from '@/providers/AppProviders';
 
 import { colors } from '@/theme';
 
@@ -34,6 +35,7 @@ import { AgricultureBackground } from '@/components/ProfileComponent/Agriculture
 
 
 import { VueProfil } from '@/components/ProfileComponent/VueProfil';
+import { logger } from '@/utils/logger';
 // =====================================================
 // ÉCRAN PROFIL
 // =====================================================
@@ -71,18 +73,22 @@ export default function ProfilScreen() {
             try {
               await removeToken();
 
+              // Purge du cache : sans cela, un autre compte connecté ensuite
+              // verrait brièvement les données du précédent.
+              queryClient.clear();
+
               router.replace(
                 '/(auth)/login',
               );
-            } catch (error) {
-              console.error(
-                'Erreur déconnexion :',
-                error,
+            } catch {
+              logger.warn(
+                'ProfilScreen',
+                'Échec de la déconnexion',
               );
 
               Alert.alert(
-                'Erreur',
-                'Impossible de vous déconnecter. Veuillez réessayer.',
+                'Déconnexion impossible',
+                'Veuillez réessayer dans un instant.',
               );
             }
           },

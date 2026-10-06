@@ -21,6 +21,7 @@ import { Errors } from '@/screens/AuthScreen/RegisterScreen.helpers';
 
 import { Keyboard } from '@/components/AuthComponent/Keyboard';
 import { estEmailValide } from '@/utils/email';
+import { erreursParChamp, estErreurDe, messageErreur } from '@/utils/erreur';
 // =====================================================
 // TYPES
 // =====================================================
@@ -296,33 +297,27 @@ export default function RegisterScreen() {
         },
 
         onError: (
-          err: any,
+          err: unknown,
         ) => {
 
-          const msg =
-            err?.response?.data?.message;
-
-          let message =
-            "Impossible de créer le compte.";
-
-          if (
-            Array.isArray(msg)
-          ) {
-
-            message =
-              msg.join('\n');
-
-          } else if (
-            typeof msg === 'string'
-          ) {
-
-            message =
-              msg;
-          }
+          // Erreur structurée : le serveur indique le champ fautif
+          // (`fields[].path`) ou un code précis (`USER_EMAIL_ALREADY_EXISTS`).
+          const erreursServeur =
+            erreursParChamp(err);
 
           setErrors({
-            general:
-              message,
+            nom: erreursServeur.nom,
+            email:
+              erreursServeur.email ??
+              (estErreurDe(err, 'USER_EMAIL_ALREADY_EXISTS')
+                ? 'Cette adresse email est déjà utilisée.'
+                : undefined),
+            telephone: erreursServeur.telephone,
+            password: erreursServeur.password,
+            general: messageErreur(
+              err,
+              'Impossible de créer le compte.',
+            ),
           });
         },
       },

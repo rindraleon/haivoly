@@ -19,6 +19,12 @@ import {
 } from '@/hooks/observation/usePhotosObservations';
 import { useState } from 'react';
 import { StatutCulture } from '@/screens/ObservationScreen/ObservationListScreen.helpers';
+import { messageErreur } from '@/utils/erreur';
+import {
+  LIBELLE_ETAPE_ENVOI,
+  preparerFichierPhoto,
+  type EtapeEnvoiPhoto,
+} from '@/utils/photo';
 
 
 import { ObservationCard1 } from '@/components/ObservationComponent/ObservationCard1';
@@ -26,6 +32,7 @@ import type {
   Observation,
   PhotoObservation,
 } from '@/types';
+import { logger } from '@/utils/logger';
 export function ObservationCard({
   observation,
   parcelleId,
@@ -78,19 +85,35 @@ export function ObservationCard({
   ] =
     useState(false);
 
+  // Étape d'envoi : verrou anti double-envoi + libellé affiché à l'utilisateur.
+  const [
+    etapeEnvoi,
+    setEtapeEnvoi,
+  ] = useState<EtapeEnvoiPhoto>('inactif');
+
   const envoyerPhoto =
     async (
       uri: string,
     ) => {
-      if (!modificationAutorisee) {
+      if (
+        !modificationAutorisee ||
+        etapeEnvoi !== 'inactif'
+      ) {
         return;
       }
 
-      setPhotoEnCours(true);
+      setEtapeEnvoi('compression');
 
       try {
+        const fichier =
+          await preparerFichierPhoto(
+            uri,
+          );
+
+        setEtapeEnvoi('envoi');
+
         await uploadPhoto.mutateAsync(
-          uri,
+          fichier,
         );
 
         await photosQuery.refetch();
@@ -99,22 +122,32 @@ export function ObservationCard({
           'Succès',
           'Photo ajoutée avec succès.',
         );
-      } catch (
-        error: any
-      ) {
-        console.error(
-          'ERREUR UPLOAD PHOTO OBSERVATION:',
-          error?.response?.data ||
-            error,
+      } catch (error) {
+        logger.warn(
+          'ObservationCard',
+          "Échec de l'envoi d'une photo",
         );
 
         Alert.alert(
-          'Erreur',
-          error?.response?.data
-            ?.message ||
-            "Impossible d'envoyer la photo.",
+          'Envoi impossible',
+          messageErreur(
+            error,
+            "La photo n'a pas pu être envoyée. Vérifiez votre connexion.",
+          ),
+          [
+            {
+              text: 'Annuler',
+              style: 'cancel',
+            },
+            {
+              text: 'Réessayer',
+              onPress: () =>
+                void envoyerPhoto(uri),
+            },
+          ],
         );
       } finally {
+        setEtapeEnvoi('inactif');
         setPhotoEnCours(false);
       }
     };
@@ -155,13 +188,8 @@ export function ObservationCard({
         await envoyerPhoto(
           result.assets[0].uri,
         );
-      } catch (
-        error
-      ) {
-        console.error(
-          'ERREUR GALERIE OBSERVATION:',
-          error,
-        );
+      } catch {
+        logger.warn('ObservationCard', 'Sélection dans la galerie impossible');
 
         Alert.alert(
           'Erreur',
@@ -205,13 +233,8 @@ export function ObservationCard({
         await envoyerPhoto(
           result.assets[0].uri,
         );
-      } catch (
-        error
-      ) {
-        console.error(
-          'ERREUR CAMERA OBSERVATION:',
-          error,
-        );
+      } catch {
+        logger.warn('ObservationCard', 'Prise de photo impossible');
 
         Alert.alert(
           'Erreur',
@@ -287,10 +310,7 @@ export function ObservationCard({
                 } catch (
                   err: any
                 ) {
-                  console.error(
-                    'ERREUR SUPPRESSION PHOTO OBSERVATION:',
-                    err,
-                  );
+                  logger.warn('ObservationCard', "Échec de la suppression d'une photo");
 
                   Alert.alert(
                     'Erreur',
@@ -334,6 +354,7 @@ export function ObservationCard({
         onSupprimer={onSupprimer}
         parcelleNom={parcelleNom}
         photoEnCours={photoEnCours}
+        libelleEnvoi={LIBELLE_ETAPE_ENVOI[etapeEnvoi]}
         photos={photos}
         photosQuery={photosQuery}
         statutCulture={statutCulture}

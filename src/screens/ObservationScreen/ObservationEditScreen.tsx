@@ -26,6 +26,7 @@ import { styles } from './ObservationEditScreen.styles';
 
 import { StatutCulture } from '@/screens/ObservationScreen/ObservationEditScreen.helpers';
 import { VueModificationObservation } from '@/components/ObservationComponent/VueModificationObservation';
+import { logger } from '@/utils/logger';
 export default function ModifierObservationScreen() {
   const params =
     useLocalSearchParams<{
@@ -203,11 +204,7 @@ export default function ModifierObservationScreen() {
           ],
         );
       } catch (error: any) {
-        console.error(
-          'ERREUR MODIFICATION OBSERVATION:',
-          error?.response?.data ||
-            error,
-        );
+        logger.warn('ObservationEditScreen', "Échec de la modification de l'observation");
 
         Alert.alert(
           'Erreur',

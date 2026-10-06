@@ -26,6 +26,7 @@ import {
 
 
 import { VueCreationObservation } from '@/components/ObservationComponent/VueCreationObservation';
+import { logger } from '@/utils/logger';
 type StatutCulture =
   | 'PLANIFIEE'
   | 'EN_COURS'
@@ -163,11 +164,7 @@ export default function AjoutObservationScreen() {
           ],
         );
       } catch (error: any) {
-        console.error(
-          'ERREUR OBSERVATION:',
-          error?.response?.data ||
-            error,
-        );
+        logger.warn('ObservationCreateScreen', "Échec de la création de l'observation");
 
         Alert.alert(
           'Erreur',

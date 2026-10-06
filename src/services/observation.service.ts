@@ -6,8 +6,7 @@
  * tels quels ; c'est le serveur qui valide la propriété et les règles métier.
  */
 import { http } from '@/services/http';
-import type { Photo , Observation, Paginated } from '@/types';
-import { fichierDepuisUri } from '@/utils/photo';
+import type { FichierPhoto, Photo , Observation, Paginated } from '@/types';
 
 export const observationsApi = {
   listByCulture: (cultureId: string, params?: { page?: number; limit?: number }) =>
@@ -30,7 +29,16 @@ export const observationsApi = {
  */
 export const observationPhotosApi = {
   list: (parcelleId: string, cultureId: string, observationId: string) => http.get<Photo[]>(`/parcelles/${parcelleId}/cultures/${cultureId}/observations/${observationId}/photos`),
-  upload: (parcelleId: string, cultureId: string, observationId: string, uri: string) =>
-    http.upload<Photo>(`/parcelles/${parcelleId}/cultures/${cultureId}/observations/${observationId}/photos/upload`, fichierDepuisUri(uri)),
+  /** `fichier` est préparé par l'appelant (`preparerFichierPhoto` : compressé). */
+  upload: (
+    parcelleId: string,
+    cultureId: string,
+    observationId: string,
+    fichier: FichierPhoto,
+  ) =>
+    http.upload<Photo>(
+      `/parcelles/${parcelleId}/cultures/${cultureId}/observations/${observationId}/photos/upload`,
+      fichier,
+    ),
   remove: (parcelleId: string, cultureId: string, observationId: string, photoId: string) => http.delete<void>(`/parcelles/${parcelleId}/cultures/${cultureId}/observations/${observationId}/photos/${photoId}`),
 };

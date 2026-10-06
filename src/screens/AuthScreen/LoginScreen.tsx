@@ -8,12 +8,14 @@ import { router } from 'expo-router';
 import { AlertCircle } from 'lucide-react-native';
 import { useLogin } from '@/hooks/auth/useLogin';
 import { saveToken } from '@/storage/authStorage';
+import { reinitialiserExpirationSession } from '@/services/http';
 import { colors } from '@/theme';
 import { LoginHeader } from '@/components/AuthComponent/LoginHeader';
 import { LoginForm } from '@/components/AuthComponent/LoginForm';
 
 import { styles } from './LoginScreen.styles';
 import { estEmailValide } from '@/utils/email';
+import { erreurChamp, messageErreur } from '@/utils/erreur';
 type FieldErrors = { email?: string; password?: string; general?: string };
 
 export default function LoginScreen() {
@@ -43,6 +45,9 @@ export default function LoginScreen() {
         onSuccess: async (data) => {
           try {
             await saveToken(data.access_token);
+            // Nouvelle session : la prochaine expiration devra de nouveau être
+            // signalée à l'utilisateur.
+            reinitialiserExpirationSession();
             // Une connexion n'est pas une opération métier : l'API de
             // synchronisation n'accepte que CREATE/UPDATE/DELETE sur une
             // ressource (parcelle, culture…). La journaliser ici ferait échouer
@@ -52,12 +57,15 @@ export default function LoginScreen() {
             setErrors({ general: "Erreur lors de l'enregistrement de la session." });
           }
         },
-        onError: (error: any) => {
-          const msg = error?.response?.data?.message;
-          let message = 'Email ou mot de passe incorrect.';
-          if (Array.isArray(msg)) message = msg.join('\n');
-          else if (typeof msg === 'string') message = msg;
-          setErrors({ general: message });
+        onError: (error) => {
+          // Le serveur reste la source de vérité : son message est affiché tel
+          // quel (repli générique si absent), et les champs qu'il désigne sont
+          // soulignés individuellement grâce à l'indexation `fields`.
+          setErrors({
+            email: erreurChamp(error, 'email'),
+            password: erreurChamp(error, 'password'),
+            general: messageErreur(error, 'Email ou mot de passe incorrect.'),
+          });
         },
       },
     );

@@ -7,6 +7,22 @@ module.exports = defineConfig([
   {
     ignores: ["dist/*"],
   },
+  // Code applicatif : aucune trace directe. `console.log` en production finit
+  // dans la console du téléphone (données visibles, rendu ralenti) ; tout passe
+  // par `@/utils/logger`, qui journalise uniquement en développement.
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    rules: {
+      "no-console": "error",
+    },
+  },
+  // Le journal lui-même est le seul endroit autorisé à écrire dans la console.
+  {
+    files: ["src/utils/logger.ts"],
+    rules: {
+      "no-console": "off",
+    },
+  },
   // Les scripts de maintenance (Node) ne sont pas du code applicatif :
   // `__dirname`, `process` et `console` y sont légitimes.
   {

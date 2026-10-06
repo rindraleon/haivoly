@@ -30,6 +30,7 @@ import { formatDate , dateOnlyVersDateLocale, toDateOnly } from '@/utils/date';
 import type {
   StatutCulture,
 } from '@/types';
+import { logger } from '@/utils/logger';
 export default function ModifierCultureScreen() {
 
   // =====================================================
@@ -303,11 +304,7 @@ export default function ModifierCultureScreen() {
           error: any,
         ) => {
 
-          console.error(
-            'ERREUR MODIFICATION CULTURE:',
-            error?.response?.data ||
-              error,
-          );
+          logger.warn('CultureEditScreen', 'Échec de la modification de la culture');
 
           Alert.alert(
             'Erreur',

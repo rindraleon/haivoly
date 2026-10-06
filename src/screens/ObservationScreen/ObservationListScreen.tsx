@@ -49,6 +49,7 @@ import type {
   Observation,
 } from '@/types';
 import { observationsCulturesApi } from './observationsCulturesApi';
+import { logger } from '@/utils/logger';
 /**
  * Instant de référence du rendu.
  * Capturé une fois au chargement du module afin de garder le rendu **pur**
@@ -1065,12 +1066,7 @@ export default function ObservationsScreen() {
                 } catch (
                   error: any
                 ) {
-                  console.error(
-                    'ERREUR SUPPRESSION OBSERVATION:',
-                    error?.response
-                      ?.data ||
-                      error,
-                  );
+                  logger.warn('ObservationListScreen', "Échec de la suppression de l'observation");
 
                   Alert.alert(
                     'Erreur',
@@ -1142,12 +1138,7 @@ export default function ObservationsScreen() {
                 } catch (
                   error: any
                 ) {
-                  console.error(
-                    'ERREUR SUPPRESSION OBSERVATION:',
-                    error?.response
-                      ?.data ||
-                      error,
-                  );
+                  logger.warn('ObservationListScreen', "Échec de la suppression de l'observation");
 
                   Alert.alert(
                     'Erreur',

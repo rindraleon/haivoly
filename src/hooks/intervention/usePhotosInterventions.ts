@@ -4,6 +4,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { interventionPhotosApi } from '@/services';
+import type { FichierPhoto } from '@/types';
 import { queryKeys } from '../queryKeys';
 
 export function usePhotosIntervention(
@@ -26,8 +27,16 @@ export function useUploadPhotoIntervention(
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (uri: string) =>
-      interventionPhotosApi.upload(parcelleId, cultureId, interventionId, uri),
+    // `FichierPhoto` (et non une URI) : la compression est faite par l'écran
+    // via `preparerFichierPhoto`, qui peut ainsi afficher l'étape en cours
+    // (« Compression… » puis « Envoi… »).
+    mutationFn: (fichier: FichierPhoto) =>
+      interventionPhotosApi.upload(
+        parcelleId,
+        cultureId,
+        interventionId,
+        fichier,
+      ),
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.photosIntervention(parcelleId, cultureId, interventionId),

@@ -268,6 +268,33 @@ photoAddIcon: {
     justifyContent: 'center',
   },
 
+/** Pastille « Compression… » / « Envoi… » pendant un téléversement de photo. */
+envoiPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 8,
+    marginTop: 10,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    backgroundColor: '#DCFCE7',
+  },
+
+envoiPillText: {
+    fontSize: 12.5,
+    fontWeight: '600',
+    color: '#166534',
+  },
+
+/** Explication de la compression automatique, sous la bande de photos. */
+compressionNote: {
+    marginTop: 9,
+    fontSize: 11.5,
+    lineHeight: 16,
+    color: colors.neutral[500],
+  },
+
 cardFooter: {
     marginTop: 12,
     paddingTop: 10,

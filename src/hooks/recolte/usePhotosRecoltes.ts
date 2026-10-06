@@ -7,7 +7,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { recoltePhotosApi } from '@/services';
-import type { PhotoPayload } from '@/types';
+import type { FichierPhoto, PhotoPayload } from '@/types';
 import { queryKeys } from '../queryKeys';
 
 export function usePhotosRecolte(recolteId: string) {
@@ -22,7 +22,9 @@ export function useUploadPhotoRecolte(recolteId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (uri: string) => recoltePhotosApi.upload(recolteId, uri),
+    // Même contrat que les autres photos : fichier déjà compressé.
+    mutationFn: (fichier: FichierPhoto) =>
+      recoltePhotosApi.upload(recolteId, fichier),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.photosRecolte(recolteId) });
     },

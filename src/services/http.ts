@@ -3,6 +3,7 @@ import axios, {
   AxiosInstance,
   AxiosRequestConfig,
   InternalAxiosRequestConfig,
+  isAxiosError,
 } from 'axios';
 
 import { env } from '@/config/env';
@@ -21,23 +22,77 @@ import { clearToken, getToken } from '@/storage/authStorage';
  *   • déconnexion automatique sur 401.
  */
 
+/**
+ * Champ de formulaire fautif, tel que renvoyé par le backend.
+ *
+ * `path` est le chemin structuré (`['pointsGPS', 0, 'latitude']`) : il permet de
+ * rattacher l'erreur **au bon élément** d'une liste, sans re-parser une chaîne.
+ */
+export interface ChampInvalide {
+  field: string;
+  path?: (string | number)[];
+  code: string;
+  message: string;
+  value?: unknown;
+}
+
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
   readonly details?: unknown;
+  /** Champs fautifs indexés (`VALIDATION_ERROR`). */
+  readonly fields: ChampInvalide[];
 
-  constructor(message: string, status = 0, code = 'UNKNOWN', details?: unknown) {
+  constructor(
+    message: string,
+    status = 0,
+    code = 'UNKNOWN',
+    details?: unknown,
+    fields: ChampInvalide[] = [],
+  ) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.code = code;
     this.details = details;
+    // Assainissement systématique : une charge utile malformée (champ sans
+    // `field`, entrée non objet) ne doit pas casser l'affichage d'un formulaire.
+    this.fields = champsRecus(fields);
   }
 
   /** Vrai si l'erreur est liée au réseau (mode hors-ligne). */
   get isNetworkError(): boolean {
     return this.status === 0;
   }
+
+  /** Vrai si l'erreur porte des champs de formulaire identifiés. */
+  get hasFieldErrors(): boolean {
+    return this.fields.length > 0;
+  }
+}
+
+/** Sécurise la charge utile `fields` reçue du serveur. */
+function champsRecus(valeur: unknown): ChampInvalide[] {
+  if (!Array.isArray(valeur)) return [];
+
+  return valeur.flatMap((entree) => {
+    if (!entree || typeof entree !== 'object') return [];
+    const champ = entree as Record<string, unknown>;
+    if (typeof champ.field !== 'string') return [];
+
+    return [
+      {
+        field: champ.field,
+        path: Array.isArray(champ.path) ? (champ.path as (string | number)[]) : undefined,
+        code: typeof champ.code === 'string' ? champ.code : 'VALIDATION_ERROR',
+        message:
+          typeof champ.message === 'string'
+            ? champ.message
+            : 'Valeur invalide',
+        value: champ.value,
+      },
+    ];
+  });
 }
 
 interface ApiEnvelope<T> {
@@ -47,10 +102,31 @@ interface ApiEnvelope<T> {
 }
 
 let onUnauthorized: (() => void) | null = null;
+let sessionPerdueSignalee = false;
 
 /** Permet au provider d'auth de réagir à une expiration de session. */
 export function setUnauthorizedHandler(handler: (() => void) | null): void {
   onUnauthorized = handler;
+}
+
+/**
+ * Vrai si le 401 signifie que la session est perdue (jeton absent, invalide ou
+ * expiré) — et non un simple mot de passe erroné lors d'une connexion.
+ *
+ * Sans cette distinction, un utilisateur qui se trompe de mot de passe
+ * déclencherait le message « session expirée ».
+ */
+export function estExpirationDeSession(
+  statut: number,
+  code?: string,
+): boolean {
+  if (statut !== 401) return false;
+  return code !== 'AUTH_INVALID_CREDENTIALS';
+}
+
+/** Réarme la notification de session perdue après une connexion réussie. */
+export function reinitialiserExpirationSession(): void {
+  sessionPerdueSignalee = false;
 }
 
 // `axios.create` est bien l'instance par défaut d'axios (`import axios from
@@ -75,10 +151,23 @@ httpClient.interceptors.request.use(
 httpClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    if (error.response?.status === 401) {
+    const statut = error.response?.status ?? 0;
+    const corps = error.response?.data as
+      | { code?: string; errorCode?: string }
+      | undefined;
+    const code = corps?.code ?? corps?.errorCode;
+
+    if (estExpirationDeSession(statut, code)) {
       await clearToken();
-      onUnauthorized?.();
+
+      // Un seul signalement par session : dix requêtes en parallèle ne doivent
+      // pas produire dix fois le même message.
+      if (!sessionPerdueSignalee) {
+        sessionPerdueSignalee = true;
+        onUnauthorized?.();
+      }
     }
+
     return Promise.reject(error);
   },
 );
@@ -88,9 +177,18 @@ export function toApiError(error: unknown): ApiError {
 
   const axiosError = error as AxiosError<{
     message?: string | string[];
+    code?: string;
     errorCode?: string;
+    fields?: unknown;
     details?: unknown;
   }>;
+
+  // Erreur JavaScript quelconque (et non une erreur HTTP) : elle n'est pas
+  // exploitable par l'utilisateur, on la classe « inconnue » pour que l'écran
+  // affiche son propre message.
+  if (!isAxiosError(error)) {
+    return new ApiError('Une erreur inattendue est survenue.', 0, 'UNKNOWN');
+  }
 
   if (!axiosError.response) {
     return new ApiError(
@@ -106,11 +204,20 @@ export function toApiError(error: unknown): ApiError {
     ? 'Données invalides'
     : (rawMessage ?? 'Une erreur est survenue');
 
+  const fields = champsRecus(data?.fields);
+  // Un message générique ne doit pas masquer les champs fautifs : quand le
+  // serveur en fournit, l'écran affiche l'erreur sous chaque champ.
+  const messageFinal =
+    message === 'Validation échouée' && fields.length > 0
+      ? 'Certaines informations sont invalides.'
+      : message;
+
   return new ApiError(
-    message,
+    messageFinal,
     status,
-    data?.errorCode ?? 'HTTP_ERROR',
+    data?.code ?? data?.errorCode ?? 'HTTP_ERROR',
     Array.isArray(rawMessage) ? rawMessage : data?.details,
+    fields,
   );
 }
 

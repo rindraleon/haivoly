@@ -34,6 +34,7 @@ import { useCreateCulture } from '@/hooks';
 
 import { VueCreationCulture } from '@/components/CultureComponent/VueCreationCulture';
 import { formatDate, toDateOnly } from '@/utils/date';
+import { logger } from '@/utils/logger';
 export default function AjouterCultureScreen() {
   const {
     parcelleId,
@@ -235,11 +236,7 @@ export default function AjouterCultureScreen() {
         onError: (
           error: any,
         ) => {
-          console.error(
-            'ERREUR AJOUT CULTURE:',
-            error?.response?.data ||
-              error,
-          );
+          logger.warn('CultureCreateScreen', 'Échec de la création de la culture');
 
           Alert.alert(
             'Erreur',

@@ -7,6 +7,7 @@
 
 import { formatMontant } from '@/utils/formatNombre';
 import { formatDate } from '@/utils/date';
+import { logger } from '@/utils/logger';
 /* eslint-disable react/no-unescaped-entities */
 import React, { useCallback } from 'react';
 import {
@@ -28,7 +29,6 @@ import { getMediaUrl } from '@/utils/mediaUrl';
 
 import { styles } from './RecolteListScreen.styles';
 import { recoltesApi } from '@/services';
-import { logger } from '@/utils/logger';
 export default function RecoltesScreen() {
   const { cultureId } = useLocalSearchParams<{ cultureId: string }>();
 
@@ -58,7 +58,7 @@ export default function RecoltesScreen() {
       if (error?.response?.status === 404) {
         setRecolte(null);
       } else {
-        console.error('Erreur récupération récolte:', error);
+        logger.warn('RecolteListScreen', 'Échec du chargement de la récolte');
         Alert.alert(
           'Erreur',
           'Impossible de récupérer les informations de récolte.',

@@ -4,7 +4,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { StyleSheet } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
 
 import { ConfirmProvider } from '@/components/CommonComponent/ConfirmProvider';
 import { setUnauthorizedHandler } from '@/services/http';
@@ -72,11 +73,23 @@ function SyncProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => onSyncState(setState), []);
 
   useEffect(() => {
-    // Session expirée : on purge le cache pour éviter d'afficher des données
-    // appartenant à un compte déconnecté.
+    // Session perdue (jeton expiré, révoqué ou compte supprimé) :
+    //   1. purge du cache — aucune donnée du compte ne doit rester visible ;
+    //   2. message compréhensible, jamais « 401 Unauthorized » ;
+    //   3. retour à l'écran de connexion : l'utilisateur n'est jamais laissé
+    //      sur un écran protégé devenu incohérent (listes vides, erreurs).
     setUnauthorizedHandler(() => {
       queryClient.clear();
+
+      router.replace('/(auth)/login' as never);
+
+      Alert.alert(
+        'Session expirée',
+        'Votre session a expiré. Veuillez vous reconnecter pour continuer.',
+        [{ text: 'Se reconnecter' }],
+      );
     });
+
     return () => setUnauthorizedHandler(null);
   }, []);
 

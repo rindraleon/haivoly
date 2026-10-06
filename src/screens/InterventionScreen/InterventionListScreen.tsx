@@ -52,6 +52,7 @@ import { ResumeInterventions } from '@/components/InterventionComponent/ResumeIn
 import { VueInterventions } from '@/components/InterventionComponent/VueInterventions';
 import { VueInterventionsCulture } from '@/components/InterventionComponent/VueInterventionsCulture';
 import { interventionsCulturesApi } from './interventionsCulturesApi';
+import { logger } from '@/utils/logger';
 /**
  * Instant de référence du rendu.
  * Capturé une fois au chargement du module afin de garder le rendu **pur**
@@ -719,10 +720,7 @@ export default function InterventionsCultureScreen() {
         ),
       );
     } catch (error: any) {
-      console.error(
-        'ERREUR INTERVENTION:',
-        error?.response?.data || error,
-      );
+      logger.warn('InterventionListScreen', 'Échec du chargement des interventions');
 
       Alert.alert(
         'Erreur',
@@ -776,10 +774,7 @@ export default function InterventionsCultureScreen() {
                 ),
               );
             } catch (error: any) {
-              console.error(
-                'ERREUR SUPPRESSION INTERVENTION:',
-                error?.response?.data || error,
-              );
+              logger.warn('InterventionListScreen', "Échec de la suppression de l'intervention");
 
               Alert.alert(
                 'Erreur',
@@ -829,10 +824,7 @@ export default function InterventionsCultureScreen() {
                 ),
               );
             } catch (error: any) {
-              console.error(
-                'ERREUR SUPPRESSION INTERVENTION GLOBALE:',
-                error?.response?.data || error,
-              );
+              logger.warn('InterventionListScreen', 'Échec de la suppression groupée');
               Alert.alert('Erreur', normaliserErreur(error));
             }
           },

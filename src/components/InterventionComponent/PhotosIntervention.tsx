@@ -16,7 +16,12 @@ import {
   useUploadPhotoIntervention,
 } from '@/hooks/intervention/usePhotosInterventions';
 import { useEffect, useState } from 'react';
-import { normaliserErreur } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
+import { messageErreur } from '@/utils/erreur';
+import {
+  LIBELLE_ETAPE_ENVOI,
+  preparerFichierPhoto,
+  type EtapeEnvoiPhoto,
+} from '@/utils/photo';
 import { styles } from '@/screens/InterventionScreen/InterventionListScreen.styles';
 import { logger } from '@/utils/logger';
 
@@ -52,6 +57,10 @@ export function PhotosIntervention({
   const [photoEnCours, setPhotoEnCours] =
     useState(false);
 
+  // Étape d'envoi en cours : sert de verrou anti double-envoi et pilote le
+  // libellé affiché (« Compression… », « Envoi… »).
+  const [etapeEnvoi, setEtapeEnvoi] = useState<EtapeEnvoiPhoto>('inactif');
+
   // Les photos sont chargées directement par React Native <Image>.
   // Contrairement à Axios, <Image> ne récupère pas automatiquement
   // le JWT ajouté par l'interceptor Axios. On lui transmet donc le
@@ -68,11 +77,8 @@ export function PhotosIntervention({
         if (actif) {
           setToken(valeur ?? null);
         }
-      } catch (error) {
-        console.error(
-          'ERREUR LECTURE TOKEN POUR PHOTO INTERVENTION:',
-          error,
-        );
+      } catch {
+        logger.warn('PhotosIntervention', "Jeton d'authentification illisible");
 
         if (actif) {
           setToken(null);
@@ -87,25 +93,42 @@ export function PhotosIntervention({
     };
   }, []);
 
+  /**
+   * Envoi d'une photo, en deux étapes visibles par l'utilisateur :
+   * compression locale, puis téléversement. L'état sert aussi de verrou :
+   * un second appui pendant l'envoi n'ajoute pas de photo en double.
+   */
   const envoyerPhoto = async (uri: string) => {
-    if (!modificationAutorisee) {
+    if (!modificationAutorisee || etapeEnvoi !== 'inactif') {
       return;
     }
 
-    setPhotoEnCours(true);
+    setEtapeEnvoi('compression');
 
     try {
-      await uploadPhoto.mutateAsync(uri);
-      await photosQuery.refetch();
-      Alert.alert('Succès', 'Photo ajoutée avec succès.');
-    } catch (error: any) {
-      console.error(
-        'ERREUR UPLOAD PHOTO INTERVENTION:',
-        error?.response?.data || error,
-      );
+      const fichier = await preparerFichierPhoto(uri);
 
-      Alert.alert('Erreur', normaliserErreur(error));
+      setEtapeEnvoi('envoi');
+      await uploadPhoto.mutateAsync(fichier);
+      await photosQuery.refetch();
+
+      Alert.alert('Succès', 'Photo ajoutée avec succès.');
+    } catch (error) {
+      logger.warn('PhotosIntervention', "Échec de l'envoi d'une photo");
+      Alert.alert(
+        'Envoi impossible',
+        messageErreur(
+          error,
+          "La photo n'a pas pu être envoyée. Vérifiez votre connexion.",
+        ),
+        [
+          { text: 'Annuler', style: 'cancel' },
+          // Reprise immédiate, sans avoir à repasser par la galerie.
+          { text: 'Réessayer', onPress: () => void envoyerPhoto(uri) },
+        ],
+      );
     } finally {
+      setEtapeEnvoi('inactif');
       setPhotoEnCours(false);
     }
   };
@@ -139,8 +162,8 @@ export function PhotosIntervention({
       }
 
       await envoyerPhoto(result.assets[0].uri);
-    } catch (error) {
-      console.error('ERREUR GALERIE INTERVENTION:', error);
+    } catch {
+      logger.warn('PhotosIntervention', 'Sélection dans la galerie impossible');
       Alert.alert('Erreur', "Impossible de sélectionner l'image.");
     }
   };
@@ -172,8 +195,8 @@ export function PhotosIntervention({
       }
 
       await envoyerPhoto(result.assets[0].uri);
-    } catch (error) {
-      console.error('ERREUR CAMERA INTERVENTION:', error);
+    } catch {
+      logger.warn('PhotosIntervention', 'Prise de photo impossible');
       Alert.alert('Erreur', 'Impossible de prendre la photo.');
     }
   };
@@ -208,12 +231,15 @@ export function PhotosIntervention({
               await deletePhoto.mutateAsync(photoId);
               await photosQuery.refetch();
               Alert.alert('Succès', 'Photo supprimée.');
-            } catch (error: any) {
-              console.error(
-                'ERREUR SUPPRESSION PHOTO INTERVENTION:',
-                error,
+            } catch (error) {
+              logger.warn('PhotosIntervention', 'Échec de la suppression');
+              Alert.alert(
+                'Suppression impossible',
+                messageErreur(
+                  error,
+                  'La photo n’a pas pu être supprimée. Réessayez.',
+                ),
               );
-              Alert.alert('Erreur', normaliserErreur(error));
             }
           },
         },
@@ -296,15 +322,7 @@ export function PhotosIntervention({
                     });
                   }}
                   onError={event => {
-                    console.error(
-                      'ERREUR AFFICHAGE PHOTO INTERVENTION:',
-                      {
-                        photoId: photo.id,
-                        originalUrl: photo.url,
-                        mediaUrl: getMediaUrl(photo.url),
-                        error: event.nativeEvent.error,
-                      },
-                    );
+                    logger.warn('PhotosIntervention', 'Photo non affichable');
                   }}
                 />
 
@@ -333,10 +351,10 @@ export function PhotosIntervention({
                 accessibilityLabel="Ajouter une photo"
                 style={styles.photoAddTile}
                 onPress={choisirPhoto}
-                disabled={photoEnCours}
+                disabled={photoEnCours || etapeEnvoi !== 'inactif'}
                 activeOpacity={0.8}
               >
-                {photoEnCours ? (
+                {photoEnCours || etapeEnvoi !== 'inactif' ? (
                   <ActivityIndicator
                     size="small"
                     color={colors.primary[600]}
@@ -356,11 +374,29 @@ export function PhotosIntervention({
         </>
       )}
 
-      {!modificationAutorisee ? (
+      {etapeEnvoi !== 'inactif' ? (
+        <View
+          style={styles.envoiPill}
+          accessibilityRole="progressbar"
+          accessibilityLabel={LIBELLE_ETAPE_ENVOI[etapeEnvoi]}
+        >
+          <ActivityIndicator size="small" color={colors.primary[700]} />
+          <Text style={styles.envoiPillText}>
+            {LIBELLE_ETAPE_ENVOI[etapeEnvoi]}
+          </Text>
+        </View>
+      ) : null}
+
+      {modificationAutorisee ? (
+        <Text style={styles.compressionNote}>
+          Les photos sont compressées sur votre téléphone avant l’envoi :
+          moins de données, même qualité à l’œil.
+        </Text>
+      ) : (
         <Text style={styles.readOnlyFooterText}>
           Les photos ne peuvent pas être modifiées pour cette culture.
         </Text>
-      ) : null}
+      )}
     </View>
   );
 }
