@@ -1,19 +1,4 @@
 #!/usr/bin/env node
-/**
- * Sort les fonctions pures imbriquées dans le composant principal.
- *
- * Un écran React finit souvent par contenir des fonctions métier (géométrie,
- * formatage, calculs) déclarées **dans** le composant alors qu'elles ne
- * dépendent d'aucun état : elles sont ici déplacées telles quelles dans le
- * module d'utilitaires de l'écran (ou dans `src/components/<domaine>/` quand
- * elles produisent du JSX), et le composant les importe.
- *
- * La détection est un point fixe : une fonction est déplaçable si tous ses
- * identifiants libres sont soit de portée module, soit déjà déplacés, soit
- * globaux. Aucun appel à un hook n'est déplacé (`useState`, `useEffect`…).
- *
- *   node scripts/extraire-imbriquees.js <écran.tsx> [autre.tsx …] [--min 25]
- */
 const fs = require('fs');
 const path = require('path');
 const ts = require('/home/user/mobile/node_modules/typescript');
@@ -206,10 +191,6 @@ function traiter(cheminRelatif, minLignes) {
   const moduleNoms = new Set(declarations.map((d) => d.nom));
   tableImports.forEach((_, nom) => moduleNoms.add(nom));
 
-  // Types déclarés par l'écran lui-même : ils peuvent être importés en
-  // `import type` (effacé à la compilation, donc aucun cycle à l'exécution),
-  // contrairement aux valeurs de portée module qui, elles, interdisent le
-  // déplacement.
   const typesDuFichier = new Set();
   source.forEachChild((n) => {
     if (
@@ -319,9 +300,6 @@ function traiter(cheminRelatif, minLignes) {
   });
 
   const ecrire = (cheminCible, corps, titre, description, estHelpers) => {
-    // Les noms vivant dans les modules extraits (utilitaires, composants) sont
-    // apportés par les imports forcés : ils ne doivent pas être repris depuis
-    // la table d'imports de l'écran.
     const exclure = new Set([...nouveaux.keys(), ...exportables.keys()]);
     const forces = [];
     const utilises = [...identifiantsUtilises(corps)];

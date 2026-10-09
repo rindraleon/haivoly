@@ -1,13 +1,6 @@
 import { env } from '@/config/env';
 import { retirerBarreFinale } from '@/utils/url';
 
-/**
- * URL absolue d'un média servi par l'API.
- *
- * Le client HTTP n'intervient plus ici : l'URL de base vient de
- * `EXPO_PUBLIC_API_URL` (`src/config/env.ts`), ce qui évite de dépendre d'un
- * client axios pour un simple calcul de chemin.
- */
 export function getMediaUrl(url?: string | null): string {
   if (!url) {
     return '';

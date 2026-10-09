@@ -1,7 +1,3 @@
-/**
- * LoginScreen — composition de composants
- * Écran orchestre navigation + hooks, UI déléguée aux components
- */
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
@@ -48,19 +44,12 @@ export default function LoginScreen() {
             // Nouvelle session : la prochaine expiration devra de nouveau être
             // signalée à l'utilisateur.
             reinitialiserExpirationSession();
-            // Une connexion n'est pas une opération métier : l'API de
-            // synchronisation n'accepte que CREATE/UPDATE/DELETE sur une
-            // ressource (parcelle, culture…). La journaliser ici ferait échouer
-            // la file à chaque session, d'où l'absence volontaire d'enqueue().
             router.replace('/(app)/home' as any);
           } catch {
             setErrors({ general: "Erreur lors de l'enregistrement de la session." });
           }
         },
         onError: (error) => {
-          // Le serveur reste la source de vérité : son message est affiché tel
-          // quel (repli générique si absent), et les champs qu'il désigne sont
-          // soulignés individuellement grâce à l'indexation `fields`.
           setErrors({
             email: erreurChamp(error, 'email'),
             password: erreurChamp(error, 'password'),

@@ -34,13 +34,6 @@ interface AppSelectProps<T extends string = string> {
   emptyLabel?: string;
 }
 
-/**
- * Sélecteur unifié de l'application (feuille modale).
- *
- * Objectif : **ne jamais afficher un identifiant technique** dans un
- * formulaire. L'utilisateur choisit un libellé lisible, l'application envoie
- * la valeur correspondante (`value`) à l'API.
- */
 export function AppSelect<T extends string = string>({
   label,
   placeholder = 'Sélectionner…',

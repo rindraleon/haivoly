@@ -1,17 +1,4 @@
 #!/usr/bin/env node
-/**
- * Gardes de rendu des sections extraites.
- *
- * Deux sections sont rendues par leur écran **après** un retour anticipé
- * (`if (isError || !data) return <ErrorState />`) : la donnée y est donc
- * toujours définie, alors que son type déclaré reste `T | undefined`. Le
- * générateur ne peut pas le déduire du JSX extrait ; cette étape explicite la
- * garantie sous forme d'une garde de rendu, ce qui conserve le comportement
- * observé (la section n'est jamais affichée sans donnée).
- *
- * Le script est idempotent : relancer le découpage puis ce script redonne
- * exactement le même résultat.
- */
 const fs = require('fs');
 const path = require('path');
 

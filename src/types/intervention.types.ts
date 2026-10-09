@@ -1,11 +1,3 @@
-/**
- * Types du domaine `intervention` — contrat partagé avec l'API.
- *
- * Contrat de dates :
- *   • date calendaire → `YYYY-MM-DD` (jamais convertie en `Date`)
- *   • horodatage      → ISO-8601 UTC
- *   • affichage       → `JJ/MM/AAAA` (voir `@/utils/date`)
- */
 import type { StatutCulture } from './culture.types';
 
 export type StatutIntervention = 'PLANIFIEE' | 'EN_COURS' | 'TERMINEE';

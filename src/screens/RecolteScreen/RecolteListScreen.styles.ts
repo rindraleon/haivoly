@@ -1,7 +1,3 @@
-/**
- * Feuilles de style de `RecolteListScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({

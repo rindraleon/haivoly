@@ -1,7 +1,3 @@
-/**
- * Recommendations sync — Backend → Mobile (polling)
- * Offline-first : stocke localement, affiche même hors connexion
- */
 
 import { recommendationsApi } from '@/services';
 import { getIsOnline } from '@/hooks/common/useNetwork';
@@ -12,25 +8,11 @@ import {
 } from '@/storage/database';
 import type { Recommendation } from '@/types/notification.types';
 
-/**
- * Récupérer les recommandations depuis le backend.
- *
- * Si le téléphone est offline :
- * → retourne uniquement les recommandations locales.
- *
- * Si le téléphone est online :
- * → récupère les recommandations du backend
- * → fusionne avec le stockage local
- * → sauvegarde le résultat localement.
- */
 export async function fetchRecommendationsFromBackend(): Promise<
   Recommendation[]
 > {
   const online = await getIsOnline();
 
-  // ====================================================
-  // OFFLINE
-  // ====================================================
 
   if (!online) {
     return getItem<Recommendation[]>(
@@ -39,9 +21,6 @@ export async function fetchRecommendationsFromBackend(): Promise<
     );
   }
 
-  // ====================================================
-  // ONLINE
-  // ====================================================
 
   try {
     // Client typé unique (`src/services/api.ts`) : l'enveloppe `{success,data}`
@@ -104,12 +83,6 @@ export async function fetchRecommendationsFromBackend(): Promise<
   }
 }
 
-/**
- * Marquer une recommandation comme lue.
- *
- * 1. Mise à jour immédiate du stockage local.
- * 2. Synchronisation avec le backend si Internet est disponible.
- */
 export async function markRecommendationReadLocal(
   id: string,
 ): Promise<void> {
@@ -142,9 +115,6 @@ export async function markRecommendationReadLocal(
   });
 }
 
-/**
- * Démarrer le polling des recommandations.
- */
 export function startRecommendationPolling(
   intervalMs = 30000,
 ) {

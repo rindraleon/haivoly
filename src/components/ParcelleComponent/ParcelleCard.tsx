@@ -1,9 +1,3 @@
-/**
- * Sous-composant `ParcelleCard` extrait de `ParcelleListScreen`.
- *
- * Regroupe la présentation d'un élément de liste et ses interactions
- * locales, ce qui allège nettement le composant principal.
- */
 import { Badge } from '@/components/CommonComponent/Badge';
 import { MapPinned, ChevronRight, Ruler, Layers, Calendar } from 'lucide-react-native';
 import { Card } from '@/components/CommonComponent/Card';
@@ -19,9 +13,9 @@ import type {
 } from '@/types';
 export function ParcelleCard({
   parcelle,
-}: {
+}: Readonly<{
   parcelle: Parcelle;
-}) {
+}>) {
   const superficie =
     parcelle.superficie
       ? {

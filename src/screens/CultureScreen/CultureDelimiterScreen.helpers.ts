@@ -1,16 +1,5 @@
-/**
- * Fonctions pures de `CultureDelimiterScreen` (5).
- *
- * Déclarées à l'origine dans le composant, elles n'en dépendent pas :
- * les sortir garde le composant lisible et les rend testables.
- */
 import type {PointGPS} from '@/types';
 
-/**
- * Polygone d'une culture voisine, utilisé pour empêcher les chevauchements de
- * délimitations. Déclaré ici (et non dans l'écran) pour que les sections
- * extraites puissent l'importer sans créer de cycle avec l'écran.
- */
 export interface CulturePolygon {
   cultureId: string;
   cultureNom: string;
@@ -212,9 +201,6 @@ export const polygonsSeChevauchent = (
       return false;
     }
 
-    // ================================================
-    // 1. Vérifier les segments
-    // ================================================
 
     for (
       let i = 0;
@@ -257,9 +243,6 @@ export const polygonsSeChevauchent = (
       }
     }
 
-    // ================================================
-    // 2. Vérifier si A est dans B
-    // ================================================
 
     if (
       pointDansPolygone(
@@ -271,9 +254,6 @@ export const polygonsSeChevauchent = (
       return true;
     }
 
-    // ================================================
-    // 3. Vérifier si B est dans A
-    // ================================================
 
     if (
       pointDansPolygone(

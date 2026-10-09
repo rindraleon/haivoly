@@ -1,7 +1,3 @@
-/**
- * Vocabulaire du domaine « intervention » : les sélecteurs n'affichent que des
- * libellés, l'API ne reçoit que des valeurs techniques.
- */
 import {
   PRODUITS_INTERVENTION,
   TYPES_INTERVENTION,

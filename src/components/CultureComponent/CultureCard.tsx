@@ -1,9 +1,3 @@
-/**
- * Sous-composant `CultureCard` extrait de `CultureListScreen`.
- *
- * Regroupe la présentation d'un élément de liste et ses interactions
- * locales, ce qui allège nettement le composant principal.
- */
 
 
 
@@ -13,13 +7,6 @@ import { CultureToutesParcelles, formaterDate } from '@/screens/CultureScreen/Cu
 
 
 import { CultureCard1 } from '@/components/CultureComponent/CultureCard1';
-/**
- * Progression associée à chaque statut de culture.
- *
- * Le statut est calculé par le serveur : l'écran ne fait que le traduire en
- * progression lisible. Table de correspondance au niveau du module pour ne pas
- * la recréer à chaque rendu.
- */
 const CYCLE: Record<
   string,
   { progression: number; label: string; active: boolean }
@@ -59,9 +46,6 @@ export function CultureCard({
       culture.modifieA,
     );
 
-  // ===================================================
-  // PROGRESSION DU CYCLE
-  // ===================================================
 
   const cycle = CYCLE[culture.statut] ?? {
     progression: 0,

@@ -1,9 +1,3 @@
-/**
- * Échelle typographique (familles, tailles, interlignes, graisses).
- *
- * Extrait de `src/design/tokens.ts` : un fichier par famille de jetons
- * (l'ancien module reste utilisable via `@/theme`).
- */
 export const typography = {
   // Famille — system + Inter fallback
   fontFamily: {

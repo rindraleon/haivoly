@@ -1,6 +1,3 @@
-/**
- * Écritures sur les interventions (création, modification, suppression).
- */
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
 import { interventionsApi } from '@/services';
 import type { InterventionPayload } from '@/services';

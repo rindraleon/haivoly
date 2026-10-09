@@ -1,10 +1,3 @@
-/**
- * Lectures partagées de l'écran des observations.
- *
- * Même rôle que `interventionsCulturesApi` : fournir des listes complètes
- * (cultures d'une parcelle, observations d'une culture) sans dupliquer
- * `asItems` dans l'écran.
- */
 import { culturesApi, observationsApi } from '@/services';
 import { asItems } from '@/utils/api';
 import type { Culture, Observation } from '@/types';

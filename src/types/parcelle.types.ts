@@ -1,11 +1,3 @@
-/**
- * Types du domaine `parcelle` — contrat partagé avec l'API.
- *
- * Contrat de dates :
- *   • date calendaire → `YYYY-MM-DD` (jamais convertie en `Date`)
- *   • horodatage      → ISO-8601 UTC
- *   • affichage       → `JJ/MM/AAAA` (voir `@/utils/date`)
- */
 import type { PointGPS } from './common.types';
 
 export type StatutParcelle = 'ACTIVE' | 'ABANDONNEE' | 'ARCHIVEE' | 'SUPPRIMEE';

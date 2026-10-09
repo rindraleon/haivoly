@@ -1,9 +1,3 @@
-/**
- * CultureListScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
  
 
 import {
@@ -57,13 +51,7 @@ import { VueToutesParcelles } from '@/components/CultureComponent/VueToutesParce
 import { culturesApi } from '@/services';
 import { asItems } from '@/utils/api';
 import { logger } from '@/utils/logger';
-// =====================================================
-// TYPES
-// =====================================================
 
-// =====================================================
-// CONSTANTES
-// =====================================================
 
 const FILTRES: FiltreCulture[] = [
   'TOUTES',
@@ -74,23 +62,11 @@ const FILTRES: FiltreCulture[] = [
   'SUPPRIMEE',
 ];
 
-// =====================================================
-// OUTILS
-// =====================================================
 
-// =====================================================
-// CARTE CULTURE
-// =====================================================
 
-// =====================================================
-// ÉCRAN
-// =====================================================
 
 export default function CulturesScreen() {
 
-  // ===================================================
-  // PARAMÈTRES
-  // ===================================================
 
   const {
     parcelleId,
@@ -101,9 +77,6 @@ export default function CulturesScreen() {
       parcelleNom?: string;
     }>();
 
-  // ===================================================
-  // PARCELLE
-  // ===================================================
 
   const {
     data: parcelle,
@@ -118,9 +91,6 @@ export default function CulturesScreen() {
       parcelleId ?? '',
     );
 
-  // ===================================================
-  // CULTURES DE LA PARCELLE
-  // ===================================================
 
   const {
     data: cultures,
@@ -135,9 +105,6 @@ export default function CulturesScreen() {
       parcelleId,
     );
 
-  // ===================================================
-  // PARCELLES
-  // ===================================================
 
   const {
     data: parcellesPage,
@@ -156,9 +123,6 @@ export default function CulturesScreen() {
     [parcellesPage],
   );
 
-  // ===================================================
-  // CULTURES DE TOUTES LES PARCELLES
-  // ===================================================
 
   const culturesToutesParcellesQueries =
     useQueries({
@@ -178,10 +142,6 @@ export default function CulturesScreen() {
         ),
     });
 
-  // useQueries retourne un nouveau tableau de résultats à chaque rendu.
-  // On ne doit donc pas utiliser directement ce tableau comme dépendance
-  // du useMemo, sinon toutesLesCultures peut être recalculée à chaque rendu
-  // et relancer en cascade l'effet de chargement GPS.
   const culturesQueriesVersion =
     culturesToutesParcellesQueries
       .map(
@@ -243,10 +203,6 @@ export default function CulturesScreen() {
 
       return resultat;
 
-    // `culturesToutesParcellesQueries` est volontairement remplacé par une
-    // version stable (`culturesQueriesVersion`) : le tableau renvoyé par
-    // `useQueries` change d'identité à chaque rendu.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
       parcelles,
       culturesQueriesVersion,
@@ -269,9 +225,6 @@ export default function CulturesScreen() {
         query.isError,
     );
 
-  // ===================================================
-  // AJOUT CULTURE
-  // ===================================================
 
   const [
     ajoutCultureModalOuvert,
@@ -302,9 +255,6 @@ export default function CulturesScreen() {
       parcelleId,
     ]);
 
-  // ===================================================
-  // CHOISIR PARCELLE
-  // ===================================================
 
   const choisirParcellePourAjout =
     useCallback(
@@ -347,9 +297,6 @@ export default function CulturesScreen() {
       ],
     );
 
-  // ===================================================
-  // GPS CULTURES
-  // ===================================================
 
   const [
     culturesAvecPoints,
@@ -371,9 +318,6 @@ export default function CulturesScreen() {
   ] =
     useState(0);
 
-  // ===================================================
-  // RECHERCHE
-  // ===================================================
 
   const [
     recherche,
@@ -381,9 +325,6 @@ export default function CulturesScreen() {
   ] =
     useState('');
 
-  // ===================================================
-  // FILTRE
-  // ===================================================
 
   const [
     filtreOuvert,
@@ -399,9 +340,6 @@ export default function CulturesScreen() {
       'TOUTES',
     );
 
-  // ===================================================
-  // REFRESH
-  // ===================================================
 
   const [
     refreshing,
@@ -461,9 +399,6 @@ export default function CulturesScreen() {
       ],
     );
 
-  // ===================================================
-  // REFRESH FOCUS
-  // ===================================================
 
   useFocusEffect(
     useCallback(() => {
@@ -487,9 +422,6 @@ export default function CulturesScreen() {
     ]),
   );
 
-  // ===================================================
-  // CHARGEMENT DES POINTS GPS
-  // ===================================================
 
   useEffect(() => {
 
@@ -504,9 +436,6 @@ export default function CulturesScreen() {
             true,
           );
 
-          // =================================================
-          // CAS 1 : UNE SEULE PARCELLE
-          // =================================================
 
           if (parcelleId) {
 
@@ -599,9 +528,6 @@ export default function CulturesScreen() {
             return;
           }
 
-          // =================================================
-          // CAS 2 : TOUTES LES PARCELLES
-          // =================================================
 
           if (
             toutesLesCultures.length ===
@@ -738,9 +664,6 @@ export default function CulturesScreen() {
     refreshKey,
   ]);
 
-  // ===================================================
-  // CENTRE CARTE
-  // ===================================================
 
   const centreCarte =
     useMemo(() => {
@@ -799,9 +722,6 @@ export default function CulturesScreen() {
       parcelle,
     ]);
 
-  // ===================================================
-  // CULTURES DÉLIMITÉES
-  // ===================================================
 
   const nombreCulturesDelimitees =
     culturesAvecPoints.filter(
@@ -810,9 +730,6 @@ export default function CulturesScreen() {
         3,
     ).length;
 
-  // ===================================================
-  // SOURCE CULTURES
-  // ===================================================
 
   const culturesSource =
     useMemo<
@@ -881,9 +798,6 @@ export default function CulturesScreen() {
       toutesLesCultures,
     ]);
 
-  // ===================================================
-  // RECHERCHE + FILTRE + TRI AUTOMATIQUE
-  // ===================================================
 
   const culturesFiltrees =
     useMemo(() => {
@@ -940,9 +854,6 @@ export default function CulturesScreen() {
       statutFiltre,
     ]);
 
-  // ===================================================
-  // STATISTIQUES
-  // ===================================================
 
   const statistiques =
     useMemo(() => {
@@ -974,9 +885,6 @@ export default function CulturesScreen() {
       culturesSource,
     ]);
 
-  // ===================================================
-  // WEBVIEW CARTE
-  // ===================================================
 
   const webViewRef =
     useRef<WebView>(
@@ -989,9 +897,6 @@ export default function CulturesScreen() {
   ] =
     useState(false);
 
-  // ===================================================
-  // DONNÉES CULTURES POUR LEAFLET
-  // ===================================================
 
   const culturesCarte =
     useMemo<CultureCarte[]>(() => {
@@ -1043,9 +948,6 @@ export default function CulturesScreen() {
       culturesAvecPoints,
     ]);
 
-  // ===================================================
-  // ENVOI DES CULTURES VERS LEAFLET
-  // ===================================================
 
   const envoyerCulturesVersCarte =
     useCallback(() => {
@@ -1075,9 +977,6 @@ export default function CulturesScreen() {
       culturesCarte,
     ]);
 
-  // ===================================================
-  // SYNCHRONISATION AUTOMATIQUE
-  // ===================================================
 
   useEffect(() => {
 
@@ -1087,9 +986,6 @@ export default function CulturesScreen() {
     envoyerCulturesVersCarte,
   ]);
 
-  // ===================================================
-  // MAP HTML
-  // ===================================================
 
   const mapHtml =
     useMemo(() => {
@@ -1708,9 +1604,6 @@ if (
       centreCarte,
     ]);
 
-  // ===================================================
-  // MODAL CHOIX PARCELLE
-  // ===================================================
 
   const modalChoixParcelle = (
     <VueCultureParcelle
@@ -1724,9 +1617,6 @@ if (
     />
   );
 
-  // ===================================================
-  // VUE GLOBALE
-  // ===================================================
 
   if (!parcelleId) {
 
@@ -1752,9 +1642,6 @@ if (
     );
   }
 
-  // ===================================================
-  // CHARGEMENT PARCELLE
-  // ===================================================
 
   if (
     isLoadingParcelle ||
@@ -1787,9 +1674,6 @@ if (
     );
   }
 
-  // ===================================================
-  // ERREUR PARCELLE
-  // ===================================================
 
   if (
     isErrorParcelle ||
@@ -1834,9 +1718,6 @@ if (
     );
   }
 
-  // ===================================================
-  // VUE D'UNE PARCELLE
-  // ===================================================
 
   return (
     <ModalChoixParcelle
@@ -1865,6 +1746,3 @@ if (
   );
 }
 
-// =====================================================
-// STYLES
-// =====================================================

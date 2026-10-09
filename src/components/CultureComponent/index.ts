@@ -1,6 +1,3 @@
-/**
- * Composants `CultureComponent`.
- */
 export * from './ButtonNext';
 export * from './CultureCheckItem';
 export * from './CultureCard';

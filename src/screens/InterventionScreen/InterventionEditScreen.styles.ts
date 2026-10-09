@@ -1,9 +1,3 @@
-/**
- * Feuilles de style de `InterventionEditScreen`.
- *
- * Extraites du composant pour garder des fichiers courts et lisibles :
- * le composant décrit l'interface, ce module décrit son apparence.
- */
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({

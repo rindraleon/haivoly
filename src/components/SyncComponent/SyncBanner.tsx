@@ -5,16 +5,6 @@ import { CloudOff, RefreshCw, AlertTriangle, CheckCircle2 } from 'lucide-react-n
 import { colors, radius } from '@/theme';
 import { useSyncContext } from '@/providers/AppProviders';
 
-/**
- * Bandeau d'état de synchronisation — rend visible la file hors-ligne.
- *
- *   • hors connexion           → « Hors connexion » (les actions sont mises en file)
- *   • actions en attente       → « N modification(s) en attente de synchronisation »
- *   • échecs (dont conflits)   → « Échec de synchronisation » + bouton « Réessayer »
- *
- * Aucun conflit n'est écrasé silencieusement : le serveur renvoie un statut
- * `CONFLICT` et l'utilisateur doit décider de réessayer.
- */
 export function SyncBanner() {
   const { isOnline, isSyncing, pendingCount, failedCount, lastError, retry } =
     useSyncContext();

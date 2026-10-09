@@ -1,10 +1,3 @@
-/**
- * Utilitaires de réponse d'API.
- *
- * Le backend renvoie soit une **page** (`{ items, total, page, ... }`) soit un
- * **tableau** selon la route. Les écrans ne doivent pas s'en préoccuper :
- * `asItems` normalise les deux formes en tableau.
- */
 import type { Paginated } from '@/types';
 
 /** Vrai si la valeur est une page paginée. */

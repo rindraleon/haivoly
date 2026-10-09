@@ -1,9 +1,3 @@
-/**
- * Substitut de `expo-secure-store` pour les tests unitaires (module natif).
- *
- * Stockage en mémoire : suffisant pour vérifier la logique qui dépend du jeton
- * (client HTTP, file de synchronisation) sans appareil ni Keychain.
- */
 const memoire = new Map<string, string>();
 
 export async function setItemAsync(cle: string, valeur: string): Promise<void> {

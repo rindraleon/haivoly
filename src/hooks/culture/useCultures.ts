@@ -1,6 +1,3 @@
-/**
- * Lecture des cultures.
- */
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { culturesApi } from '@/services';
 import type { Culture } from '@/types';
@@ -33,12 +30,6 @@ export function useCulture(parcelleId?: string, cultureId?: string) {
 
 /** Normalise une réponse d'API qui peut être un tableau ou une page. */
 
-/**
- * Cultures d'une parcelle sous forme de **tableau**.
- *
- * Même contrat que le hook historique (`data` = `Culture[]`) : les écrans de
- * liste filtrent, trient et comptent sans se soucier de la pagination.
- */
 export function useCulturesDeParcelle(parcelleId?: string) {
   return useQuery({
     queryKey: queryKeys.culturesParcelle(parcelleId ?? ''),
@@ -56,12 +47,6 @@ export type CultureAvecParcelle = Culture & {
   parcelleNom: string;
 };
 
-/**
- * Cultures de **toutes** les parcelles fournies.
- *
- * Chaque parcelle garde sa propre entrée de cache (et donc son propre
- * chargement) ; l'agrégat est reconstruit à chaque rendu.
- */
 export function useToutesLesCultures(
   parcelles: { id: string; nom: string }[] | undefined,
 ) {

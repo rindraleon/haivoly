@@ -1,7 +1,3 @@
-/**
- * Offline Queue — enqueue / list / update / remove
- * Utilise AsyncStorage via storage/database.ts
- */
 import * as Crypto from 'expo-crypto';
 import { getItem, setItem, StorageKeys } from '@/storage/database';
 import type { OfflineAction, EnqueueOptions, SyncStatus } from '@/types/offline.types';

@@ -1,6 +1,3 @@
-/**
- * Marquage d’une recommandation comme lue.
- */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { recommendationsApi } from '@/services';
 import { queryKeys } from '../queryKeys';

@@ -1,21 +1,3 @@
-/**
- * Règles de préparation des images — **logique pure**, sans API native.
- *
- * Séparées de `image.ts` (qui, lui, appelle `expo-image-manipulator` et
- * `expo-file-system`) pour deux raisons : elles sont testables hors appareil, et
- * la règle métier « faut-il recompresser ? » se lit sans dépendance.
- *
- * Objectif : **occuper moins d'espace sans dégrader l'image perçue**. On ne
- * compresse donc jamais « à l'aveugle » :
- *
- *   • une photo déjà JPEG, ≤ 1920 px de côté et ≤ 300 Ko est envoyée **telle
- *     quelle** — aucune ré-encodage, donc **aucune perte** (une photo déjà
- *     optimisée par l'appareil ne doit pas être dégradée une seconde fois) ;
- *   • tout le reste (photo de capteur 3–8 Mo, PNG, HEIC, très grand format) est
- *     ramené à 1920 px de côté maximum et enregistré en JPEG qualité 0,82 —
- *     réglage visuellement transparent pour une photo, qui divise typiquement
- *     le poids par 5 à 15.
- */
 export const DIMENSION_MAX_PX = 1920;
 export const QUALITE_JPEG = 0.82;
 /** En dessous de ce poids, une JPEG n'est pas ré-encodée. */
@@ -50,10 +32,6 @@ export function extensionDuFichier(uri: string): string {
   return nom.slice(point + 1).toLowerCase();
 }
 
-/**
- * Dimensions cibles : on **réduit** seulement, jamais on n'agrandit.
- * Le ratio est conservé ; le côté le plus long vaut `max`.
- */
 export function calculerDimensions(
   largeur: number,
   hauteur: number,
@@ -71,14 +49,6 @@ export function calculerDimensions(
   };
 }
 
-/**
- * Faut-il passer l'image par le compresseur ?
- *
- *   • format non JPEG (PNG/HEIC…) → oui, on normalise en JPEG (gain important) ;
- *   • dimensions inconnues ou trop grandes → oui ;
- *   • poids inconnu ou au-dessus du seuil → oui ;
- *   • sinon → non, on envoie l'original intact.
- */
 export function doitRecompresser(meta: MetaImage): boolean {
   const estJpeg = EXTENSIONS_JPEG.includes(meta.extension);
 

@@ -1,6 +1,3 @@
-/**
- * Lecture des recommandations.
- */
 import { useQuery } from '@tanstack/react-query';
 import { recommendationsApi } from '@/services';
 import { queryKeys } from '../queryKeys';

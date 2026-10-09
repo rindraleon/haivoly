@@ -1,13 +1,4 @@
 #!/usr/bin/env node
-/**
- * Supprime les composants orphelins (issus d'itérations de découpage).
- *
- * Un composant généré n'est conservé que s'il est réellement importé par un
- * autre module : un nom de section modifié lors d'une itération ultérieure
- * laisse un fichier derrière lui, que ce script retire.
- *
- * Usage : node scripts/nettoyer-composants.js
- */
 const fs = require('fs');
 const path = require('path');
 

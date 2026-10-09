@@ -1,9 +1,3 @@
-/**
- * Sous-composant `ObservationCard` extrait de `ObservationListScreen`.
- *
- * Regroupe la présentation d'un élément de liste et ses interactions
- * locales, ce qui allège nettement le composant principal.
- */
 import { Alert, Pressable } from 'react-native';
 
 

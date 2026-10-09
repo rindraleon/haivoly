@@ -1,10 +1,3 @@
-/**
- * Section `VueHistoriqueCultures1` extraite de `VueHistoriqueCultures`.
- *
- * Le rendu est repris à l’identique : seules les valeurs et les actions
- * du composant parent sont reçues en props, ce qui évite de faire
- * transiter toute la logique de l’écran dans un seul fichier.
- */
 import type { CultureAvecPoints } from '@/screens/CultureScreen/CultureHistoryScreen';
 import { styles } from '@/screens/CultureScreen/CultureHistoryScreen.styles';
 

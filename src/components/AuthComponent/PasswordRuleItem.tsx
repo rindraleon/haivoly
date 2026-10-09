@@ -1,9 +1,3 @@
-/**
- * Sous-composant `CultureCheckItem` extrait de `ResetPasswordScreen`.
- *
- * Regroupe la présentation d'un élément de liste et ses interactions
- * locales, ce qui allège nettement le composant principal.
- */
 import { Check } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 import { colors } from '@/theme';

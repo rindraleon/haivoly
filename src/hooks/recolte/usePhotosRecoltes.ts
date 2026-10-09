@@ -1,9 +1,3 @@
-/**
- * Photos d'une récolte : lecture, téléversement, modification et suppression.
- *
- * Le serveur n'accepte une photo que si la culture est `RECOLTEE` : une erreur
- * explicite remonte donc jusqu'à l'écran (message du serveur).
- */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { recoltePhotosApi } from '@/services';

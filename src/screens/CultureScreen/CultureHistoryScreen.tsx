@@ -1,9 +1,3 @@
-/**
- * CultureHistoryScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 /* eslint-disable react/no-unescaped-entities */
 import {
   useCallback,
@@ -39,23 +33,14 @@ import {
 import { VueHistoriqueCultures } from '@/components/CultureComponent/VueHistoriqueCultures';
 import { culturesApi } from '@/services';
 import { logger } from '@/utils/logger';
-// =====================================================
-// TYPES
-// =====================================================
 
 export interface CultureAvecPoints extends Culture {
   pointsGPS: PointGPS[];
 }
 
-// =====================================================
-// ÉCRAN
-// =====================================================
 
 export default function HistoriqueCulturesScreen() {
 
-  // ===================================================
-  // PARAMÈTRES
-  // ===================================================
 
   const {
     parcelleId,
@@ -65,9 +50,6 @@ export default function HistoriqueCulturesScreen() {
     parcelleNom?: string;
   }>();
 
-  // ===================================================
-  // PARCELLE
-  // ===================================================
 
   const {
     data: parcelle,
@@ -78,9 +60,6 @@ export default function HistoriqueCulturesScreen() {
     parcelleId ?? '',
   );
 
-  // ===================================================
-  // CULTURES
-  // ===================================================
 
   const {
     data: cultures,
@@ -91,9 +70,6 @@ export default function HistoriqueCulturesScreen() {
     parcelleId,
   );
 
-  // ===================================================
-  // CULTURES AVEC POINTS GPS
-  // ===================================================
 
   const [
     culturesAvecPoints,
@@ -110,9 +86,6 @@ export default function HistoriqueCulturesScreen() {
     setRefreshKey,
   ] = useState(0);
 
-  // ===================================================
-  // RECHERCHE / FILTRE / TRI
-  // ===================================================
 
   const [
     recherche,
@@ -149,9 +122,6 @@ export default function HistoriqueCulturesScreen() {
     setTri,
   ] = useState('NOM_ASC');
 
-  // ===================================================
-  // TYPES DISPONIBLES
-  // ===================================================
 
   const typesDisponibles = useMemo(() => {
 
@@ -180,9 +150,6 @@ export default function HistoriqueCulturesScreen() {
     cultures,
   ]);
 
-  // ===================================================
-  // RAFRAÎCHISSEMENT
-  // ===================================================
 
   useFocusEffect(
     useCallback(() => {
@@ -209,9 +176,6 @@ export default function HistoriqueCulturesScreen() {
     ]),
   );
 
-  // ===================================================
-  // RÉCUPÉRER LES POINTS GPS
-  // ===================================================
 
   useEffect(() => {
 
@@ -357,9 +321,6 @@ export default function HistoriqueCulturesScreen() {
     refreshKey,
   ]);
 
-  // ===================================================
-  // CENTRE DE LA CARTE
-  // ===================================================
 
   const centreCarte = useMemo(() => {
 
@@ -410,9 +371,6 @@ export default function HistoriqueCulturesScreen() {
     parcelle,
   ]);
 
-  // ===================================================
-  // NOMBRE DE CULTURES DÉLIMITÉES
-  // ===================================================
 
   const nombreCulturesDelimitees =
     culturesAvecPoints.filter(
@@ -420,9 +378,6 @@ export default function HistoriqueCulturesScreen() {
         culture.pointsGPS.length >= 3,
     ).length;
 
-  // ===================================================
-  // CULTURES HISTORIQUES
-  // ===================================================
 
   const culturesHistorique =
     useMemo(() => {
@@ -442,9 +397,6 @@ export default function HistoriqueCulturesScreen() {
       cultures,
     ]);
 
-  // ===================================================
-  // RECHERCHE + FILTRE + TRI
-  // ===================================================
 
   const culturesFiltreesEtTriees =
     useMemo(() => {
@@ -452,9 +404,6 @@ export default function HistoriqueCulturesScreen() {
       let resultat =
         [...culturesHistorique];
 
-      // -----------------------------------------------
-      // RECHERCHE
-      // -----------------------------------------------
 
       const rechercheNormalisee =
         recherche
@@ -506,9 +455,6 @@ export default function HistoriqueCulturesScreen() {
 
       }
 
-      // -----------------------------------------------
-      // FILTRE STATUT
-      // -----------------------------------------------
 
       if (
         statutFiltre !== 'TOUS'
@@ -523,9 +469,6 @@ export default function HistoriqueCulturesScreen() {
 
       }
 
-      // -----------------------------------------------
-      // FILTRE TYPE
-      // -----------------------------------------------
 
       if (
         typeFiltre !== 'TOUS'
@@ -540,9 +483,6 @@ export default function HistoriqueCulturesScreen() {
 
       }
 
-      // -----------------------------------------------
-      // FILTRE DÉLIMITATION
-      // -----------------------------------------------
 
       if (
         delimitationFiltre !==
@@ -584,9 +524,6 @@ export default function HistoriqueCulturesScreen() {
 
       }
 
-      // -----------------------------------------------
-      // TRI
-      // -----------------------------------------------
 
       resultat.sort(
         (a, b) => {
@@ -672,9 +609,6 @@ export default function HistoriqueCulturesScreen() {
       tri,
     ]);
 
-  // ===================================================
-  // CARTE HTML
-  // ===================================================
 
   const mapHtml = useMemo(() => {
 
@@ -1197,9 +1131,6 @@ legend.addTo(map);
     centreCarte,
   ]);
 
-  // ===================================================
-  // CHARGEMENT
-  // ===================================================
 
   if (
     isLoadingParcelle ||
@@ -1230,9 +1161,6 @@ legend.addTo(map);
 
   }
 
-  // ===================================================
-  // ERREUR
-  // ===================================================
 
   if (
     isErrorParcelle ||
@@ -1280,9 +1208,6 @@ legend.addTo(map);
 
   }
 
-  // ===================================================
-  // AFFICHAGE
-  // ===================================================
 
   return (
 
@@ -1317,6 +1242,3 @@ legend.addTo(map);
 
 }
 
-// =====================================================
-// STYLES
-// =====================================================

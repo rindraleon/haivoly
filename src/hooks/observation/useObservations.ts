@@ -1,6 +1,3 @@
-/**
- * Lecture des observations d’une culture.
- */
 import { useQuery } from '@tanstack/react-query';
 import { observationsApi } from '@/services';
 import { asItems } from '@/utils/api';

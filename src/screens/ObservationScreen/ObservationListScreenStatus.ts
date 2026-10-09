@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ObservationListScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 
 
-/**
- * Styles `STATUS` — extraits de `ObservationListScreen`.
- */
 export const stylesStatus = StyleSheet.create({
 statusBox: {
       padding: 14,

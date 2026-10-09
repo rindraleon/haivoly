@@ -1,9 +1,3 @@
-/**
- * ParcelleEditScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 import React from 'react';
 import { Alert } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -14,13 +8,6 @@ import { ParcelleWizard } from '@/components/ParcelleComponent/ParcelleWizard';
 import { useParcelle, useUpdateParcelle } from '@/hooks';
 import { ApiError } from '@/services/http';
 
-/**
- * Modification d'une parcelle.
- *
- * Le formulaire est **le même composant** que la création : même fond, même
- * structure `SafeAreaView` / `ScrollView`, même en-tête. Seul l'intitulé et le
- * pré-remplissage changent (correctif demandé).
- */
 export default function ModifierParcelleScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const parcelle = useParcelle(id);

@@ -1,13 +1,3 @@
-/**
- * Conteneur d'écran (`ScreenContainer`) — structure commune des écrans.
- *
- * Il porte ce qui doit être identique partout : **fond applicatif**, marges
- * sûres (`SafeAreaView` haut/bas), clavier (`KeyboardAvoidingView`), défilement
- * du contenu et zone d'action fixée en bas.
- *
- * C'est ce composant qui garantit qu'un écran de modification a exactement le
- * même fond et la même structure qu'un écran de création.
- */
 import React from 'react';
 import {
   KeyboardAvoidingView,

@@ -1,14 +1,7 @@
-/**
- * Feuilles de style de `ParcelleListScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 import { colors, radius } from '@/theme';
 
 export const styles = StyleSheet.create({
-  /* =====================================================
-     ROOT
-  ====================================================== */
 
   root: {
     flex: 1,
@@ -16,9 +9,6 @@ export const styles = StyleSheet.create({
       colors.background.app,
   },
 
-  /* =====================================================
-     TOP BAR
-  ====================================================== */
 
   topBar: {
     paddingHorizontal: 16,
@@ -127,9 +117,6 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
 
-  /* =====================================================
-     FOND AGRICOLE
-  ====================================================== */
 
   listArea: {
     flex: 1,
@@ -144,9 +131,6 @@ export const styles = StyleSheet.create({
     paddingBottom: 120,
   },
 
-  /* =====================================================
-     DÉCOR AGRICOLE
-  ====================================================== */
 
   fieldShape: {
     position: 'absolute',
@@ -223,19 +207,11 @@ export const styles = StyleSheet.create({
     ],
   },
 
-  /* =====================================================
-     CARTE PARCELLE
-     CONTENU INTERNE CONSERVÉ
-  ====================================================== */
 
   card: {
     gap: 12,
     padding: 14,
 
-    /*
-     * Transparence légère pour laisser apparaître
-     * le fond agricole derrière la carte.
-     */
     backgroundColor:
       'rgba(255,255,255,0.82)',
 
@@ -362,9 +338,6 @@ export const styles = StyleSheet.create({
       'center',
   },
 
-  /* =====================================================
-     FAB +
-  ====================================================== */
 
   fab: {
     position: 'absolute',

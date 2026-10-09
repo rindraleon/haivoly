@@ -1,10 +1,3 @@
-/**
- * Section `RegisterFormFields` extraite de `Card`.
- *
- * Le rendu est repris à l’identique : seules les valeurs et les actions
- * du composant parent sont reçues en props, ce qui évite de faire
- * transiter toute la logique de l’écran dans un seul fichier.
- */
 import { PwdCheck } from '@/components/AuthComponent/PwdCheck';
 import { Button } from '@/components/CommonComponent/Button';
 import { Input } from '@/components/CommonComponent/Input';

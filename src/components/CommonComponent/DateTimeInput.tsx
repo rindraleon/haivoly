@@ -1,15 +1,3 @@
-/**
- * Champ de saisie d'une **date ET d'une heure** (instant ISO-8601).
- *
- * L'utilisateur ne tape jamais un format technique : un appui ouvre le
- * sélecteur natif (`@react-native-community/datetimepicker`) — d'abord la date,
- * puis l'heure sur Android — et la valeur transmise est toujours un instant
- * ISO-8601 complet (`date.toISOString()`), seul format accepté par l'API pour
- * les interventions et les observations.
- *
- * Aucune conversion « maison » : la date locale saisie devient un instant
- * absolu, ce qui évite les `Invalid Date` et les décalages de fuseau.
- */
 import DateTimePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker';

@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ObservationListScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 import { colors, radius, } from '@/theme';
 
-/**
- * Styles `STATS` — extraits de `ObservationListScreen`.
- */
 export const stylesStats = StyleSheet.create({
 statsBar: {
       flexDirection:

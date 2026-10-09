@@ -1,10 +1,3 @@
-/**
- * Contrat d'action du `POST /sync`.
- *
- * Le serveur n'accepte que `CREATE|UPDATE|DELETE` sur une ressource métier :
- * une action hors contrat ne doit jamais être mise en file (elle finirait
- * `INVALID` à chaque session et fausserait le compteur d'éléments en attente).
- */
 import { ACTION_TYPES, ENTITY_TYPES, estActionSynchronisable } from '@/types/offline.types';
 
 describe('estActionSynchronisable', () => {

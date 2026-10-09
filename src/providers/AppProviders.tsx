@@ -20,19 +20,6 @@ import {
   type SyncState,
 } from '@/services/offline/syncEngine';
 
-/**
- * Composition unique des providers de l'application.
- *
- * `src/app/_layout.tsx` ne fait que monter ce composant : les écrans de route
- * restent ainsi de simples redirections, sans logique d'infrastructure.
- *
- *   • `GestureHandlerRootView` / `SafeAreaProvider` : socle natif ;
- *   • TanStack Query est **la seule couche d'état serveur** (un seul client,
- *     partagé avec `src/services/http.ts` pour la purge sur session expirée) ;
- *   • `ConfirmProvider` : dialogues de confirmation globaux ;
- *   • `SyncProvider` : file hors-ligne (en attente, échecs, dernière synchro)
- *     et synchronisation immédiate au retour du réseau.
- */
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -73,11 +60,6 @@ function SyncProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => onSyncState(setState), []);
 
   useEffect(() => {
-    // Session perdue (jeton expiré, révoqué ou compte supprimé) :
-    //   1. purge du cache — aucune donnée du compte ne doit rester visible ;
-    //   2. message compréhensible, jamais « 401 Unauthorized » ;
-    //   3. retour à l'écran de connexion : l'utilisateur n'est jamais laissé
-    //      sur un écran protégé devenu incohérent (listes vides, erreurs).
     setUnauthorizedHandler(() => {
       queryClient.clear();
 

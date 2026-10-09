@@ -1,9 +1,3 @@
-/**
- * Utilitaires et types de `InterventionListScreen`.
- *
- * Extraits de l'écran : ces fonctions ne dépendent pas de l'état de
- * l'interface et peuvent donc être testées ou réutilisées isolément.
- */
 
 import { formatDateTime } from '@/utils/date';
 import type {Culture } from '@/types';

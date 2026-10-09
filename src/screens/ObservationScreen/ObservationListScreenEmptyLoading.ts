@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ObservationListScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 import { colors } from '@/theme';
 
-/**
- * Styles `EMPTY / LOADING` — extraits de `ObservationListScreen`.
- */
 export const stylesEmptyLoading = StyleSheet.create({
 loadingInline: {
       paddingVertical: 45,

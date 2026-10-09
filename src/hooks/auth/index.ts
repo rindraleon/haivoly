@@ -1,6 +1,3 @@
-/**
- * Hooks `auth`.
- */
 export * from './useForgotPassword';
 export * from './useLogin';
 export * from './useMe';

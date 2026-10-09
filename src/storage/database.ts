@@ -1,7 +1,3 @@
-/**
- * Storage — AsyncStorage wrapper
- * Persistance locale pour queue offline, actions, notifications
- */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const StorageKeys = {

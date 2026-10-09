@@ -1,9 +1,3 @@
-/**
- * ParcelleListScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 import { useMemo, useState } from 'react';
 
 import { router } from 'expo-router';

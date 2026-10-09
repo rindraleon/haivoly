@@ -1,6 +1,3 @@
-/**
- * Substitut d'`expo-file-system` pour les tests unitaires (module natif).
- */
 export class File {
   readonly uri: string;
   size: number | null = 1024 * 1024;

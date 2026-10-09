@@ -1,30 +1,4 @@
 #!/usr/bin/env node
-/**
- * Vérificateur des composants réutilisables.
- *
- * Répond à une question simple, sur **tout** le projet : « les composants
- * réutilisables existent-ils, et sont-ils réellement réutilisés ? »
- *
- * Un fichier de `src/components/` n'est pas réutilisable par nature. Deux
- * familles coexistent :
- *
- *   • **composants réutilisables** — ils ne dépendent ni d'un écran, ni des
- *     styles d'un écran, ni d'une autre section : ils reçoivent tout par
- *     propriétés et peuvent être posés dans n'importe quel écran ;
- *   • **sections d'écran** — extraites d'un écran par `scripts/extraire-sections.js`
- *     pour l'alléger ; elles importent `@/screens/...` et ne sont donc
- *     utilisables que par leur écran d'origine (libellés `Card1`, `Vue…1`).
- *
- * Contrôles bloquants (code de sortie 1) :
- *   1. composant réutilisable jamais importé (code mort) ;
- *   2. nom exporté défini par deux fichiers (collision silencieuse dans un baril) ;
- *   3. fichier cité par un baril mais absent du disque ;
- *   4. section d'écran exposée par le **design system** (`CommonComponent`) ;
- *   5. primitive du design system attendue mais absente ;
- *   6. composant réutilisable qui importe du code d'écran (il ne l'est plus).
- *
- * Usage :  node scripts/verifier-composants.mjs   (alias `npm run verifier:composants`)
- */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -60,9 +34,6 @@ const PRIMITIVES_DESIGN_SYSTEM = [
 /** Motifs importés depuis un écran : signature d'une section, pas d'un composant. */
 const DEPENDANCE_ECRAN = /from\s+'@\/screens\//;
 
-// ─────────────────────────────────────────────────────────────────────────
-// 1. Inventaire
-// ─────────────────────────────────────────────────────────────────────────
 
 /** Tous les fichiers .ts/.tsx du projet, hors dépendances et artefacts. */
 function fichiersSource(dossier) {
@@ -141,9 +112,6 @@ const inventaire = composants.map((fichier) => {
   };
 });
 
-// ─────────────────────────────────────────────────────────────────────────
-// 2. Contrôles
-// ─────────────────────────────────────────────────────────────────────────
 
 const erreurs = [];
 const reutilisables = inventaire.filter((c) => !c.estSection);
@@ -204,9 +172,6 @@ for (const c of reutilisableDependant) {
   erreurs.push(`Composant marqué réutilisable mais dépendant d’un écran : ${c.relatif}`);
 }
 
-// ─────────────────────────────────────────────────────────────────────────
-// 3. Rapport
-// ─────────────────────────────────────────────────────────────────────────
 
 const classement = [...reutilisables].sort(
   (a, b) => b.consommateurs.length - a.consommateurs.length,

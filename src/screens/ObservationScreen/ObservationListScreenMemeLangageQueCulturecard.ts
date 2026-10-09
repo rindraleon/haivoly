@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ObservationListScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 import { colors } from '@/theme';
 
-/**
- * Styles `même langage que CultureCard` — extraits de `ObservationListScreen`.
- */
 export const stylesMemeLangageQueCulturecard = StyleSheet.create({
 observationCard: {
       padding: 15,

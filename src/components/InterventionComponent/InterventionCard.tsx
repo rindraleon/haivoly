@@ -1,9 +1,3 @@
-/**
- * Sous-composant `InterventionCard` extrait de `InterventionListScreen`.
- *
- * Regroupe la présentation d'un élément de liste et ses interactions
- * locales, ce qui allège nettement le composant principal.
- */
 import { Badge } from '@/components/CommonComponent/Badge';
 import { CalendarDays, ChevronRight, Clock3, FileText, FlaskConical, MapPin, Package, Pencil, Sprout, Trash2 } from 'lucide-react-native';
 import { Card } from '@/components/CommonComponent/Card';

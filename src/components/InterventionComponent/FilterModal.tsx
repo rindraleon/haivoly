@@ -1,9 +1,3 @@
-/**
- * Sous-composant `FilterModal` extrait de `InterventionListScreen`.
- *
- * Regroupe la présentation d'un élément de liste et ses interactions
- * locales, ce qui allège nettement le composant principal.
- */
 import { ActivityIndicator, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Check, ChevronDown, ChevronRight, MapPin, Sprout, X } from 'lucide-react-native';
 import { libelleStatut } from '@/screens/InterventionScreen/InterventionListScreen.helpers';

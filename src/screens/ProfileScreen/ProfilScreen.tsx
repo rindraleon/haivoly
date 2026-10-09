@@ -1,9 +1,3 @@
-/**
- * ProfilScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 import React from 'react';
 
 import {
@@ -28,17 +22,12 @@ import { queryClient } from '@/providers/AppProviders';
 
 import { colors } from '@/theme';
 
-import { AppBottomBar } from '@/components/CommonComponent/AppBottomBar';
-
 import { styles } from './ProfilScreen.styles';
 import { AgricultureBackground } from '@/components/ProfileComponent/AgricultureBackground';
 
 
 import { VueProfil } from '@/components/ProfileComponent/VueProfil';
 import { logger } from '@/utils/logger';
-// =====================================================
-// ÉCRAN PROFIL
-// =====================================================
 
 export default function ProfilScreen() {
   const insets = useSafeAreaInsets();
@@ -51,9 +40,6 @@ export default function ProfilScreen() {
     isFetching,
   } = useProfile();
 
-  // ===================================================
-  // DÉCONNEXION
-  // ===================================================
 
   const handleLogout = () => {
     Alert.alert(
@@ -97,9 +83,6 @@ export default function ProfilScreen() {
     );
   };
 
-  // ===================================================
-  // LOADING
-  // ===================================================
 
   if (isLoading) {
     return (
@@ -146,15 +129,10 @@ export default function ProfilScreen() {
             Chargement du profil...
           </Text>
         </View>
-
-        <AppBottomBar />
       </View>
     );
   }
 
-  // ===================================================
-  // ERREUR
-  // ===================================================
 
   if (isError || !profile) {
     return (
@@ -236,19 +214,14 @@ export default function ProfilScreen() {
                 styles.retryButtonText
               }
             >
-              Réessayer
-            </Text>
-          </Pressable>
-        </ScrollView>
-
-        <AppBottomBar />
+Réessayer
+          </Text>
+        </Pressable>
+      </ScrollView>
       </View>
     );
   }
 
-  // ===================================================
-  // DONNÉES PROFIL
-  // ===================================================
 
   const fullName = [
     profile.prenom,
@@ -268,9 +241,6 @@ export default function ProfilScreen() {
     `${profile.prenom?.charAt(0) ?? ''}${profile.nom?.charAt(0) ?? ''}`
       .toUpperCase() || 'U';
 
-  // ===================================================
-  // RENDER
-  // ===================================================
 
   return (
     <VueProfil
@@ -286,18 +256,6 @@ export default function ProfilScreen() {
   );
 }
 
-// =====================================================
-// HEADER SECTION
-// =====================================================
 
-// =====================================================
-// INFO ROW
-// =====================================================
 
-// =====================================================
-// FOND AGRICOLE
-// =====================================================
 
-// =====================================================
-// STYLES
-// =====================================================

@@ -1,6 +1,3 @@
-/**
- * Écran(s) du domaine `ParcelleScreen`.
- */
 export { default as ParcelleCreateScreen } from './ParcelleCreateScreen';
 export { default as ParcelleDelimiterScreen } from './ParcelleDelimiterScreen';
 export { default as ParcelleDetailScreen } from './ParcelleDetailScreen';

@@ -1,6 +1,3 @@
-/**
- * Écritures sur les cultures.
- */
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
 import { culturesApi } from '@/services';
 import type { CulturePayload } from '@/services';

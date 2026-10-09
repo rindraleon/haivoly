@@ -1,11 +1,3 @@
-/**
- * Types du domaine `recolte` — contrat partagé avec l'API.
- *
- * Contrat de dates :
- *   • date calendaire → `YYYY-MM-DD` (jamais convertie en `Date`)
- *   • horodatage      → ISO-8601 UTC
- *   • affichage       → `JJ/MM/AAAA` (voir `@/utils/date`)
- */
 export interface Recolte {
   id: string;
   /** `YYYY-MM-DD` */

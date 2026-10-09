@@ -1,9 +1,3 @@
-/**
- * Couleurs du design system Haivoly (marque, neutres, sémantiques).
- *
- * Extrait de `src/design/tokens.ts` : un fichier par famille de jetons
- * (l'ancien module reste utilisable via `@/theme`).
- */
 export const colors = {
   // Brand — Vert agriculture, profond et rassurant
   primary: {

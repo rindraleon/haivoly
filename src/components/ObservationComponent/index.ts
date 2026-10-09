@@ -1,6 +1,3 @@
-/**
- * Composants `ObservationComponent`.
- */
 export * from './Fermerajoutglobal';
 export * from './Fermerajoutglobal2';
 export * from './Fermerajoutglobal21';

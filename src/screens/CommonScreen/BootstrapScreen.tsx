@@ -1,11 +1,3 @@
-/**
- * Écran d'entrée de l'application.
- *
- * Il ne fait qu'une chose : décider où envoyer l'utilisateur le temps du
- * démarrage — session restaurée → accueil, sinon → connexion. Cette logique
- * vivait dans le fichier de route (`src/app/index.tsx`) : la route redevient
- * une simple redirection, et l'écran de démarrage reste testable isolément.
- */
 import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';

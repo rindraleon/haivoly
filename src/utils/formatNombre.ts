@@ -1,13 +1,3 @@
-/**
- * Nombres et montants côté mobile.
- *
- * L'affichage est centralisé ici pour que toutes les surfaces (cartes, listes,
- * détails, résumés) montrent les mêmes séparateurs et la même unité monétaire
- * (`Ar`, ariary malgache).
- *
- * `Intl` peut être incomplet sur certains moteurs (Hermes sans ICU) : on
- * retombe alors sur un regroupement manuel par milliers.
- */
 
 /** Valeur brute acceptée (nombre, chaîne numérique, absence). */
 type NombreBrut = number | string | null | undefined;

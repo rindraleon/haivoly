@@ -1,6 +1,3 @@
-/**
- * Composants `ParcelleComponent`.
- */
 export * from './ParcelleCard';
 export * from './ParcelleFormShell';
 export * from './ParcelleMap';

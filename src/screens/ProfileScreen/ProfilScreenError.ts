@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ProfilScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 import { colors } from '@/theme';
 
-/**
- * Styles `ERROR` — extraits de `ProfilScreen`.
- */
 export const stylesError = StyleSheet.create({
 errorContainer: {
     flexGrow: 1,

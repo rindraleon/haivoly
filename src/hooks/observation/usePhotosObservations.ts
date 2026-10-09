@@ -1,9 +1,3 @@
-/**
- * Photos d'une observation : lecture, téléversement et suppression.
- *
- * Les mutations invalident la clé de liste, ce qui rafraîchit la carte
- * d'observation sans rechargement manuel.
- */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { observationPhotosApi } from '@/services';

@@ -1,6 +1,3 @@
-/**
- * Photos d'une intervention : lecture, téléversement et suppression.
- */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { interventionPhotosApi } from '@/services';
@@ -27,9 +24,6 @@ export function useUploadPhotoIntervention(
   const queryClient = useQueryClient();
 
   return useMutation({
-    // `FichierPhoto` (et non une URI) : la compression est faite par l'écran
-    // via `preparerFichierPhoto`, qui peut ainsi afficher l'étape en cours
-    // (« Compression… » puis « Envoi… »).
     mutationFn: (fichier: FichierPhoto) =>
       interventionPhotosApi.upload(
         parcelleId,

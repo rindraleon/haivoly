@@ -1,9 +1,3 @@
-/**
- * Sous-composant `DateField` extrait de `CultureCreateScreen`.
- *
- * Regroupe la présentation d'un élément de liste et ses interactions
- * locales, ce qui allège nettement le composant principal.
- */
 import { CalendarDays, ChevronRight } from 'lucide-react-native';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { colors } from '@/theme';

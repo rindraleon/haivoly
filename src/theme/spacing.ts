@@ -1,9 +1,3 @@
-/**
- * Échelle d'espacement commune à toute l'interface.
- *
- * Extrait de `src/design/tokens.ts` : un fichier par famille de jetons
- * (l'ancien module reste utilisable via `@/theme`).
- */
 export const spacing = {
   xs: 4,
   sm: 8,

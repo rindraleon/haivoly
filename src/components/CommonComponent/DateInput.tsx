@@ -1,11 +1,3 @@
-/**
- * Champ de saisie d'une **date calendaire** (`AAAA-MM-JJ`).
- *
- * L'utilisateur ne tape jamais le format : un appui ouvre le sélecteur natif
- * (`@react-native-community/datetimepicker`) et la valeur renvoyée est toujours
- * une date locale convertie en `AAAA-MM-JJ` par `toDateOnly` — donc sans le
- * décalage d'un jour qu'introduisait `toISOString()` dans un fuseau positif.
- */
 import DateTimePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker';

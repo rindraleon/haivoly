@@ -1,14 +1,3 @@
-/**
- * Vocabulaire partagé du domaine « intervention ».
- *
- * Les listes ci-dessous alimentent les sélecteurs (`AppSelect`) des
- * formulaires de création **et** de modification : l'utilisateur ne voit que
- * des libellés lisibles, l'application n'envoie que la valeur technique.
- *
- * Le statut n'est jamais saisi : il est calculé par le serveur à partir de la
- * date. `statutInterventionPrevu` ne sert qu'à l'**aperçu** affiché pendant la
- * saisie — la valeur faisant foi vient toujours de l'API.
- */
 import type { SelectOption } from '@/components/CommonComponent/AppSelect';
 import { isDateOnly } from '@/utils/date';
 
@@ -53,12 +42,6 @@ export function libelleOption(
   return options.find((option) => option.value === valeur)?.label ?? valeur;
 }
 
-/**
- * Aperçu local du statut déduit d'une date sans heure.
- *
- * Reproduit la règle serveur (date future → `PLANIFIEE`, sinon `EN_COURS`)
- * uniquement pour informer l'utilisateur pendant la saisie.
- */
 export function statutInterventionPrevu(
   valeur: string,
 ): 'PLANIFIEE' | 'EN_COURS' | null {

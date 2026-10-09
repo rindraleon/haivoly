@@ -1,7 +1,3 @@
-/**
- * Feuilles de style de `ObservationEditScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -16,9 +12,6 @@ export const styles = StyleSheet.create({
     paddingBottom: 36,
   },
 
-  // ===================================================
-  // ETATS
-  // ===================================================
 
   center: {
     flex: 1,
@@ -82,9 +75,6 @@ export const styles = StyleSheet.create({
     fontWeight: '800',
   },
 
-  // ===================================================
-  // HEADER
-  // ===================================================
 
   header: {
     flexDirection: 'row',
@@ -132,9 +122,6 @@ export const styles = StyleSheet.create({
     color: '#6B7280',
   },
 
-  // ===================================================
-  // CONTEXTE
-  // ===================================================
 
   contextCard: {
     position: 'relative',
@@ -241,9 +228,6 @@ export const styles = StyleSheet.create({
     color: '#166534',
   },
 
-  // ===================================================
-  // SECTION
-  // ===================================================
 
   sectionHeader: {
     flexDirection: 'row',
@@ -280,9 +264,6 @@ export const styles = StyleSheet.create({
     color: '#6B7280',
   },
 
-  // ===================================================
-  // OBSERVATION EXISTANTE
-  // ===================================================
 
   existingCard: {
     flexDirection: 'row',
@@ -323,9 +304,6 @@ export const styles = StyleSheet.create({
     color: '#374151',
   },
 
-  // ===================================================
-  // DESCRIPTION
-  // ===================================================
 
   descriptionCard: {
     backgroundColor: '#FFFFFF',
@@ -399,9 +377,6 @@ export const styles = StyleSheet.create({
     color: '#9CA3AF',
   },
 
-  // ===================================================
-  // CONSEIL
-  // ===================================================
 
   tipCard: {
     flexDirection: 'row',
@@ -441,9 +416,6 @@ export const styles = StyleSheet.create({
     color: '#4B5563',
   },
 
-  // ===================================================
-  // DATE
-  // ===================================================
 
   dateCard: {
     minHeight: 72,
@@ -496,9 +468,6 @@ export const styles = StyleSheet.create({
     color: '#9CA3AF',
   },
 
-  // ===================================================
-  // ACTION
-  // ===================================================
 
   saveButton: {
     minHeight: 58,

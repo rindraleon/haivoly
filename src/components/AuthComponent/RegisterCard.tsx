@@ -1,10 +1,3 @@
-/**
- * Section `Card` extraite de `Keyboard1`.
- *
- * Le rendu est repris à l’identique : seules les valeurs et les actions
- * du composant parent sont reçues en props, ce qui évite de faire
- * transiter toute la logique de l’écran dans un seul fichier.
- */
 
 
 

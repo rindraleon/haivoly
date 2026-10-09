@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ObservationListScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 import { colors } from '@/theme';
 
-/**
- * Styles `même fond que cultures.tsx` — extraits de `ObservationListScreen`.
- */
 export const stylesMemeFondQueCulturesTsx = StyleSheet.create({
 listArea: {
       flex: 1,

@@ -1,9 +1,3 @@
-/**
- * ParcelleDetailScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 import React from 'react';
 import { Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -25,15 +19,9 @@ import type { StatutCulture } from '@/types';
 
 
 import { styles } from './ParcelleDetailScreen.styles';
-/**
- * Détail d'une parcelle.
- *
- * Correctif principal : la carte se centre **sur les coordonnées enregistrées**
- * de la parcelle (marqueur + `animateToRegion`, ou `fitToCoordinates` dès qu'il
- * y a plusieurs sommets). La position de l'utilisateur n'est jamais utilisée ici.
- */
 export default function DetailParcelleScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{ id?: string; parcelleId?: string }>();
+  const id = params.id ?? params.parcelleId;
   const parcelle = useParcelle(id);
   const cultures = useCultures({ parcelleId: id as string, limit: 50 });
 

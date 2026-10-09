@@ -1,17 +1,4 @@
 #!/usr/bin/env node
-/**
- * Échappe les apostrophes des textes JSX (`react/no-unescaped-entities`).
- *
- * Les écrans d'origine comportent du texte français non échappé
- * (`<Text>Sélectionnez d'abord la parcelle</Text>`). Le déplacement de ces
- * blocs vers des sections s'accompagne donc de l'échappement attendu par
- * ESLint, sans toucher aux chaînes de caractères JavaScript.
- *
- * Le script s'appuie sur les positions signalées par ESLint lui-même : seules
- * les apostrophes réellement litigieuses sont modifiées.
- *
- * Usage : node scripts/echapper-entites.js
- */
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');

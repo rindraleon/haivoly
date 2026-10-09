@@ -1,9 +1,3 @@
-/**
- * CultureEditScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 /* eslint-disable react-hooks/set-state-in-effect, react/no-unescaped-entities */
 import { useEffect, useState } from 'react';
 
@@ -33,9 +27,6 @@ import type {
 import { logger } from '@/utils/logger';
 export default function ModifierCultureScreen() {
 
-  // =====================================================
-  // PARAMÈTRES
-  // =====================================================
 
   const {
     parcelleId,
@@ -47,9 +38,6 @@ export default function ModifierCultureScreen() {
     parcelleNom?: string;
   }>();
 
-  // =====================================================
-  // CULTURE
-  // =====================================================
 
   const {
     data: culture,
@@ -63,9 +51,6 @@ export default function ModifierCultureScreen() {
   const updateCulture =
     useUpdateCulture();
 
-  // =====================================================
-  // ÉTATS
-  // =====================================================
 
   const [nom, setNom] =
     useState('');
@@ -98,9 +83,6 @@ export default function ModifierCultureScreen() {
       'PLANIFIEE',
     );
 
-  // =====================================================
-  // CHARGER LES DONNÉES DE LA CULTURE
-  // =====================================================
 
   useEffect(() => {
 
@@ -132,9 +114,6 @@ export default function ModifierCultureScreen() {
       culture.statut,
     );
 
-    // ---------------------------------------------------
-    // DATE PLANTATION
-    // ---------------------------------------------------
 
     if (
       culture.datePlantation
@@ -153,9 +132,6 @@ export default function ModifierCultureScreen() {
 
     }
 
-    // ---------------------------------------------------
-    // DATE RÉCOLTE
-    // ---------------------------------------------------
 
     if (
       culture.datePrevueRecolte
@@ -175,9 +151,6 @@ export default function ModifierCultureScreen() {
 
   }, [culture]);
 
-  // =====================================================
-  // FORMAT DATE
-  // =====================================================
 
   const formaterDate = (
     date: Date | null,
@@ -190,15 +163,9 @@ export default function ModifierCultureScreen() {
     return formatDate(date);
   };
 
-  // =====================================================
-  // ENREGISTRER
-  // =====================================================
 
   const enregistrer = () => {
 
-    // ---------------------------------------------------
-    // NOM
-    // ---------------------------------------------------
 
     if (!nom.trim()) {
 
@@ -210,9 +177,6 @@ export default function ModifierCultureScreen() {
       return;
     }
 
-    // ---------------------------------------------------
-    // DATES
-    // ---------------------------------------------------
 
     if (
       datePlantation &&
@@ -229,9 +193,6 @@ export default function ModifierCultureScreen() {
       return;
     }
 
-    // ---------------------------------------------------
-    // MODIFICATION
-    // ---------------------------------------------------
 
     updateCulture.mutate(
       {
@@ -274,9 +235,6 @@ export default function ModifierCultureScreen() {
       },
 
       {
-        // ------------------------------------------------
-        // SUCCÈS
-        // ------------------------------------------------
 
         onSuccess: () => {
 
@@ -296,9 +254,6 @@ export default function ModifierCultureScreen() {
 
         },
 
-        // ------------------------------------------------
-        // ERREUR
-        // ------------------------------------------------
 
         onError: (
           error: any,
@@ -321,9 +276,6 @@ export default function ModifierCultureScreen() {
 
   };
 
-  // =====================================================
-  // CHARGEMENT
-  // =====================================================
 
   if (isLoading) {
 
@@ -353,9 +305,6 @@ export default function ModifierCultureScreen() {
 
   }
 
-  // =====================================================
-  // ERREUR
-  // =====================================================
 
   if (
     isError ||
@@ -413,9 +362,6 @@ export default function ModifierCultureScreen() {
 
   }
 
-  // =====================================================
-  // AFFICHAGE
-  // =====================================================
 
   return (
 
@@ -448,6 +394,3 @@ export default function ModifierCultureScreen() {
   );
 }
 
-// =======================================================
-// STYLES
-// =======================================================

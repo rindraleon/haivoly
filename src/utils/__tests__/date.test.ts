@@ -1,9 +1,3 @@
-/**
- * Contrat de dates du mobile.
- *
- * C'est la zone la plus fragile de l'application (décalage d'un jour en fuseau
- * positif, `Invalid Date`) : ces tests figent les règles vérifiées côté serveur.
- */
 import {
   dateOnlyToUtcDate,
   dateOnlyVersDateLocale,

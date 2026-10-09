@@ -1,6 +1,3 @@
-/**
- * Composants `InterventionComponent`.
- */
 export * from './FilterModal';
 export * from './InterventionCard';
 export * from './PhotosIntervention';

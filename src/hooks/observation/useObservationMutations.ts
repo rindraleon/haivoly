@@ -1,6 +1,3 @@
-/**
- * Écritures sur les observations.
- */
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
 import { observationsApi } from '@/services';
 import type { Observation, ObservationPayload } from '@/types';

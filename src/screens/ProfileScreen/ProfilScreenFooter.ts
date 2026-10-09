@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ProfilScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 import { colors } from '@/theme';
 
-/**
- * Styles `FOOTER` — extraits de `ProfilScreen`.
- */
 export const stylesFooter = StyleSheet.create({
 footer: {
     alignItems: 'center',

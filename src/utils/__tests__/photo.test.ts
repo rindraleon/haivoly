@@ -1,10 +1,3 @@
-/**
- * Préparation des photos avant envoi : nom, type MIME, libellés d'étape.
- *
- * Ces règles sont partagées par tous les écrans d'upload (intervention,
- * observation, récolte) : elles doivent rester cohérentes pour que le retour
- * visuel et l'en-tête `multipart` soient identiques partout.
- */
 import { fichierDepuisUri, LIBELLE_ETAPE_ENVOI } from '../photo';
 
 describe('fichierDepuisUri', () => {

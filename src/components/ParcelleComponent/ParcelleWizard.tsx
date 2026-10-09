@@ -1,15 +1,3 @@
-/**
- * Assistant de création / modification de parcelle.
- *
- * Étapes : **Informations → Localisation → Délimitation → Résumé →
- * Enregistrement**. Chaque étape affiche son titre, sa validation et ses
- * boutons Précédent / Suivant ; « Suivant » reste désactivé tant que l'étape
- * n'est pas valide. En mode modification, toutes les valeurs sont pré-remplies.
- *
- * Aucune règle métier n'est calculée localement : la superficie affichée est
- * une estimation d'interface, le serveur la recalcule à partir du polygone
- * réellement envoyé.
- */
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {
@@ -17,7 +5,6 @@ import {
   ArrowRight,
   Check,
   Layers,
-  MapPin,
   Save,
   Sprout,
   Trash2,
@@ -68,7 +55,7 @@ const TYPES_SOL = [
   { value: 'AUTRE', label: 'Autre' },
 ];
 
-const ETAPES = ['Informations', 'Localisation', 'Délimitation', 'Résumé', 'Enregistrement'];
+const ETAPES = ['Informations', 'Délimitation', 'Résumé', 'Enregistrement'];
 
 export function ParcelleWizard({
   mode,
@@ -77,7 +64,7 @@ export function ParcelleWizard({
   errorMessage,
   onCancel,
   onSubmit,
-}: ParcelleWizardProps) {
+}: Readonly<ParcelleWizardProps>) {
   const creation = mode === 'create';
   const [etape, setEtape] = useState(0);
   const [nom, setNom] = useState(initialValues?.nom ?? '');
@@ -86,7 +73,6 @@ export function ParcelleWizard({
   const [points, setPoints] = useState<PointGPS[]>(
     () => polishPolygon(initialValues?.pointsGPS ?? []) ?? [],
   );
-  const [pointCarte, setPointCarte] = useState<PointGPS | null>(null);
 
   const centre = centroid(points);
   const superficie = formatSuperficie(points);
@@ -94,15 +80,13 @@ export function ParcelleWizard({
   // ── Validation de chaque étape ──
   const etapeValide = (index: number): boolean => {
     if (index === 0) return nom.trim().length >= 2;
-    if (index === 1) return pointCarte !== null || points.length > 0;
-    if (index === 2) return points.length >= 3;
+    if (index === 1) return points.length >= 3;
     return true;
   };
 
   const motifBlocage = (index: number): string | null => {
     if (index === 0) return 'Renseignez un nom de parcelle (2 caractères minimum).';
-    if (index === 1) return 'Placez au moins un point sur la carte.';
-    if (index === 2) return 'Ajoutez au moins 3 sommets pour former un polygone.';
+    if (index === 1) return 'Ajoutez au moins 3 sommets pour former un polygone.';
     return null;
   };
 
@@ -133,7 +117,6 @@ export function ParcelleWizard({
 
   const reinitialiser = () => {
     setPoints([]);
-    setPointCarte(null);
   };
 
   return (
@@ -253,53 +236,8 @@ export function ParcelleWizard({
         </Card>
       ) : null}
 
-      {/* Étape 2 — Localisation --------------------------------------- */}
+      {/* Étape 2 — Délimitation --------------------------------------- */}
       {etape === 1 ? (
-        <Card style={styles.carte}>
-          <View style={styles.entete}>
-            <MapPin size={16} color={colors.primary[700]} />
-            <Text style={styles.titre}>Localisation</Text>
-          </View>
-
-          <Text style={styles.aide}>
-            Touchez la carte pour positionner la parcelle. En création, votre position
-            courante sert de repère initial ; une parcelle existante reste centrée sur ses
-            coordonnées enregistrées.
-          </Text>
-
-          <View style={styles.carteMap}>
-            <ParcelleMap
-              points={points}
-              center={centre ?? pointCarte}
-              showUserLocation={creation && points.length === 0}
-              onPress={ajouterPoint}
-              style={styles.map}
-            />
-          </View>
-
-          <View style={styles.rangee}>
-            <Badge
-              label={`${points.length} point(s)`}
-              variant={points.length > 0 ? 'primary' : 'neutral'}
-            />
-            <Button
-              size="sm"
-              variant="ghost"
-              onPress={reinitialiser}
-              disabled={points.length === 0}
-            >
-              Réinitialiser
-            </Button>
-          </View>
-
-          {!etapeValide(1) && motifBlocage(1) ? (
-            <Text style={styles.aide}>{motifBlocage(1)}</Text>
-          ) : null}
-        </Card>
-      ) : null}
-
-      {/* Étape 3 — Délimitation --------------------------------------- */}
-      {etape === 2 ? (
         <Card style={styles.carte}>
           <View style={styles.entete}>
             <Layers size={16} color={colors.primary[700]} />
@@ -322,8 +260,9 @@ export function ParcelleWizard({
           <View style={styles.carteMap}>
             <ParcelleMap
               points={points}
-              center={centre ?? pointCarte}
+              center={centre}
               editable
+              defaultToNearestCity={creation && points.length === 0}
               onPointMove={deplacerPoint}
               onPress={ajouterPoint}
               style={styles.map}
@@ -359,14 +298,14 @@ export function ParcelleWizard({
             </View>
           </View>
 
-          {!etapeValide(2) && motifBlocage(2) ? (
-            <Text style={styles.aide}>{motifBlocage(2)}</Text>
+          {!etapeValide(1) && motifBlocage(1) ? (
+            <Text style={styles.aide}>{motifBlocage(1)}</Text>
           ) : null}
         </Card>
       ) : null}
 
-      {/* Étape 4 — Résumé --------------------------------------------- */}
-      {etape === 3 ? (
+      {/* Étape 3 — Résumé --------------------------------------------- */}
+      {etape === 2 ? (
         <Card style={styles.carte}>
           <View style={styles.entete}>
             <Check size={16} color={colors.primary[700]} />
@@ -403,8 +342,8 @@ export function ParcelleWizard({
         </Card>
       ) : null}
 
-      {/* Étape 5 — Enregistrement ------------------------------------- */}
-      {etape === 4 ? (
+      {/* Étape 4 — Enregistrement ------------------------------------- */}
+      {etape === 3 ? (
         <Card style={styles.carte}>
           <View style={styles.entete}>
             <Save size={16} color={colors.primary[700]} />
@@ -434,7 +373,7 @@ export function ParcelleWizard({
         </Card>
       ) : null}
 
-      {errorMessage && etape !== 4 ? <Text style={styles.erreur}>{errorMessage}</Text> : null}
+      {errorMessage && etape !== 3 ? <Text style={styles.erreur}>{errorMessage}</Text> : null}
     </ParcelleFormShell>
   );
 }

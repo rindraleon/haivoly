@@ -1,21 +1,5 @@
-/**
- * Section `ModalChoixParcelle` extraite de `CultureListScreen`.
- *
- * Le rendu est repris à l’identique : seules les valeurs et les actions
- * du composant parent sont reçues en props, ce qui évite de faire
- * transiter toute la logique de l’écran dans un seul fichier.
- */
-import { AppBottomBar } from '@/components/CommonComponent/AppBottomBar';
-
-
-
-
-
 import { CultureToutesParcelles, FiltreCulture } from '@/screens/CultureScreen/CultureListScreen.helpers';
 import { styles } from '@/screens/CultureScreen/CultureListScreen.styles';
-
-
-
 
 import { Plus } from 'lucide-react-native';
 import type { Dispatch, RefObject, SetStateAction } from 'react';
@@ -133,8 +117,6 @@ export function ModalChoixParcelle({
           />
 
         </Pressable>
-
-        <AppBottomBar />
 
         {modalChoixParcelle}
 

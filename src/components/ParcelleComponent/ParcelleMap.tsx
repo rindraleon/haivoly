@@ -1,39 +1,47 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
-import MapView, {
-  Marker,
-  Polygon,
-  PROVIDER_DEFAULT,
-  type LatLng,
-  type Region,
-} from 'react-native-maps';
-import * as Location from 'expo-location';
+import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
-import { colors } from '@/theme';
+import { villeLaPlusProche } from '@/data/madagascar-cities';
+import { getCurrentLocation } from '@/services/location.service';
+
+/** Coordonnée géographique simple (latitude/longitude en degrés décimaux). */
+export interface LatLng {
+  latitude: number;
+  longitude: number;
+}
 
 export interface ParcelleMapProps {
   /** Polygone enregistré (sommets ordonnés). */
   points?: LatLng[];
   /** Centroïde enregistré de la parcelle. */
   center?: LatLng | null;
-  /** Position courante de l'utilisateur — **uniquement** en création. */
+  /** Affiche la position courante de l'utilisateur — **uniquement** en création. */
   showUserLocation?: boolean;
-  /** Autorise le déplacement des sommets (mode délimitation). */
+  /** Autorise le déplacement des sommets et l'ajout par appui (mode délimitation). */
   editable?: boolean;
   onPointMove?: (index: number, position: LatLng) => void;
   onPress?: (position: LatLng) => void;
+  /**
+   * Centrage par défaut sur la ville de Madagascar la plus proche de la
+   * position GPS de l'utilisateur (utilisé à la création d'une parcelle).
+   */
+  defaultToNearestCity?: boolean;
   style?: StyleProp<ViewStyle>;
-  /** Zoom appliqué quand un seul point est disponible. */
-  singlePointDelta?: number;
+}
+
+const DEFAULT_CENTER: LatLng = { latitude: -18.8792, longitude: 47.5079 };
+
+interface MapMessage {
+  type?: string;
+  latitude?: number;
+  longitude?: number;
+  index?: number;
 }
 
 /**
- * Carte des parcelles.
- *
- * Règle centrale (correctif) : pour une parcelle **existante**, la carte se
- * centre **toujours sur ses coordonnées enregistrées** (centroïde ou polygone)
- * et jamais sur la position de l'utilisateur. La position courante n'est
- * utilisée que lors de la création d'une nouvelle parcelle.
+ * Carte Leaflet + OpenStreetMap rendue dans une WebView.
+ * Aucune dépendance Google Maps : tuiles OSM (standard) et Esri (satellite).
  */
 export function ParcelleMap({
   points = [],
@@ -42,12 +50,15 @@ export function ParcelleMap({
   editable = false,
   onPointMove,
   onPress,
+  defaultToNearestCity = false,
   style,
-  singlePointDelta = 0.0035,
 }: ParcelleMapProps) {
-  const mapRef = useRef<MapView | null>(null);
+  const webViewRef = useRef<WebView<object> | null>(null);
+  const [ready, setReady] = useState(false);
+  const centeredOnCityRef = useRef(false);
+  const normalizedCountRef = useRef(0);
 
-  const polygon = useMemo<LatLng[]>(
+  const normalized = useMemo<LatLng[]>(
     () =>
       points
         .filter(
@@ -61,147 +72,336 @@ export function ParcelleMap({
     [points],
   );
 
-  const initialRegion = useMemo<Region>(() => {
-    const reference = center ?? polygon[0] ?? null;
+  const centerLatitude = center?.latitude ?? null;
+  const centerLongitude = center?.longitude ?? null;
 
-    return {
-      latitude: reference?.latitude ?? -18.8792, // Antananarivo par défaut
-      longitude: reference?.longitude ?? 47.5079,
-      latitudeDelta: singlePointDelta,
-      longitudeDelta: singlePointDelta,
-    };
-  }, [center, polygon, singlePointDelta]);
+  // Le HTML est construit une seule fois : les mises à jour passent par
+  // `renderPoints`, ce qui évite de recharger la WebView à chaque déplacement.
+  const [html] = useState(() => {
+    const reference = center ?? points[0] ?? DEFAULT_CENTER;
 
-  /**
-   * Recul/zoom automatique à chaque changement de géométrie :
-   *   • ≥ 2 sommets → `fitToCoordinates` (tout le polygone est visible)
-   *   • 1 sommet    → `animateToRegion` centré sur ce point
-   *   • 0 sommet    → rien (la région initiale s'applique)
-   */
+    return buildMapHtml({
+      editable,
+      showUserLocation,
+      latitude: reference.latitude,
+      longitude: reference.longitude,
+    });
+  });
+
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
+    if (!ready) return;
 
-    if (polygon.length >= 2) {
-      map.fitToCoordinates(polygon, {
-        edgePadding: { top: 60, right: 60, bottom: 60, left: 60 },
-        animated: true,
-      });
-      return;
-    }
+    webViewRef.current?.injectJavaScript(
+      `window.renderPoints(${JSON.stringify(normalized)}, ${JSON.stringify(
+        centerLatitude,
+      )}, ${JSON.stringify(centerLongitude)}); true;`,
+    );
+  }, [ready, normalized, centerLatitude, centerLongitude]);
 
-    if (polygon.length === 1) {
-      map.animateToRegion(
-        {
-          latitude: polygon[0].latitude,
-          longitude: polygon[0].longitude,
-          latitudeDelta: singlePointDelta,
-          longitudeDelta: singlePointDelta,
-        },
-        450,
-      );
-      return;
-    }
-
-    if (center) {
-      map.animateToRegion(
-        {
-          latitude: center.latitude,
-          longitude: center.longitude,
-          latitudeDelta: singlePointDelta,
-          longitudeDelta: singlePointDelta,
-        },
-        450,
-      );
-    }
-  }, [polygon, center, singlePointDelta]);
-
-  // La position de l'utilisateur n'est affichée qu'en création explicite.
+  // Mémorise le nombre de sommets pour ne pas recentrer une carte déjà utilisée.
   useEffect(() => {
-    if (!showUserLocation) return;
+    normalizedCountRef.current = normalized.length;
+  });
 
+  // À la création, centre la carte sur la ville la plus proche de l'utilisateur.
+  useEffect(() => {
+    if (!ready || !defaultToNearestCity || centeredOnCityRef.current) return;
+
+    centeredOnCityRef.current = true;
     let cancelled = false;
 
-    void (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (cancelled || status !== 'granted') return;
+    getCurrentLocation()
+      .then((position) => villeLaPlusProche(position))
+      .then((ville) => {
+        if (cancelled || normalizedCountRef.current > 0) return;
 
-      const position = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
+        webViewRef.current?.injectJavaScript(
+          `window.setMapView(${ville.latitude}, ${ville.longitude}, 15); true;`,
+        );
+      })
+      .catch(() => {
+        // Permission refusée ou GPS indisponible : on garde la vue par défaut.
       });
-
-      if (cancelled) return;
-
-      mapRef.current?.animateToRegion(
-        {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          latitudeDelta: singlePointDelta,
-          longitudeDelta: singlePointDelta,
-        },
-        600,
-      );
-    })();
 
     return () => {
       cancelled = true;
     };
-  }, [showUserLocation, singlePointDelta]);
+  }, [ready, defaultToNearestCity]);
 
-  const hasPolygon = polygon.length >= 3;
+  const handleMessage = (event: WebViewMessageEvent) => {
+    let data: MapMessage;
+
+    try {
+      data = JSON.parse(event.nativeEvent.data) as MapMessage;
+    } catch {
+      return;
+    }
+
+    if (data.type === 'READY') {
+      setReady(true);
+      return;
+    }
+
+    const latitude = Number(data.latitude);
+    const longitude = Number(data.longitude);
+
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      return;
+    }
+
+    if (data.type === 'ADD_POINT') {
+      onPress?.({ latitude, longitude });
+      return;
+    }
+
+    if (data.type === 'UPDATE_POINT') {
+      onPointMove?.(Number(data.index), { latitude, longitude });
+    }
+  };
 
   return (
     <View style={[styles.container, style]}>
-      <MapView
-        ref={mapRef}
-        provider={PROVIDER_DEFAULT}
-        style={StyleSheet.absoluteFill}
-        initialRegion={initialRegion}
-        showsUserLocation={showUserLocation}
-        showsMyLocationButton={showUserLocation}
-        rotateEnabled={false}
-        onPress={(event) => onPress?.(event.nativeEvent.coordinate)}
-      >
-        {hasPolygon ? (
-          <Polygon
-            coordinates={polygon}
-            strokeColor={colors.primary[600]}
-            strokeWidth={2.5}
-            fillColor="rgba(46, 125, 50, 0.22)"
-            tappable={false}
-          />
-        ) : null}
-
-        {polygon.map((point, index) => (
-          <Marker
-            key={`${point.latitude}-${point.longitude}-${index}`}
-            coordinate={point}
-            draggable={editable}
-            anchor={{ x: 0.5, y: 0.5 }}
-            onDragEnd={(event) =>
-              onPointMove?.(index, event.nativeEvent.coordinate)
-            }
-            pinColor={colors.primary[600]}
-            title={`Point ${index + 1}`}
-          />
-        ))}
-
-        {!hasPolygon && center ? (
-          <Marker
-            coordinate={center}
-            title="Position enregistrée"
-            pinColor={colors.primary[600]}
-          />
-        ) : null}
-      </MapView>
+      <WebView
+        ref={webViewRef}
+        originWhitelist={['*']}
+        javaScriptEnabled
+        scrollEnabled={false}
+        onMessage={handleMessage}
+        style={styles.webview}
+        source={{ html }}
+      />
     </View>
   );
+}
+
+interface BuildMapOptions {
+  editable: boolean;
+  showUserLocation: boolean;
+  latitude: number;
+  longitude: number;
+}
+
+function buildMapHtml({
+  editable,
+  showUserLocation,
+  latitude,
+  longitude,
+}: BuildMapOptions): string {
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+html, body, #map { margin: 0; padding: 0; width: 100%; height: 100%; }
+.point-label {
+  background: #2e7d32;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  font-weight: bold;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+}
+.center-label {
+  background: #1565c0;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  font-size: 12px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+}
+.user-label {
+  background: #1565c0;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  font-size: 13px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+const editable = ${editable ? 'true' : 'false'};
+const showUserLocation = ${showUserLocation ? 'true' : 'false'};
+
+const map = L.map('map', {
+  zoomControl: true,
+  scrollWheelZoom: true,
+  doubleClickZoom: true,
+  touchZoom: true,
+  minZoom: 5,
+  maxZoom: 22,
+}).setView([${latitude}, ${longitude}], 18);
+
+const standard = L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19 },
+);
+
+const satellite = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  { attribution: 'Tiles &copy; Esri', maxZoom: 19 },
+);
+
+standard.addTo(map);
+
+L.control.layers(
+  { '🗺️ Standard': standard, '🛰️ Satellite': satellite },
+  null,
+  { position: 'topright' },
+).addTo(map);
+
+const layerGroup = L.layerGroup().addTo(map);
+
+function post(payload) {
+  if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(JSON.stringify(payload));
+  }
+}
+
+let lastKey = '';
+
+window.renderPoints = function (points, centerLatitude, centerLongitude) {
+  layerGroup.clearLayers();
+
+  const coordinates = points.map(function (point) {
+    return [Number(point.latitude), Number(point.longitude)];
+  });
+
+  if (coordinates.length >= 3) {
+    L.polygon(coordinates, {
+      color: '#2e7d32',
+      fillColor: '#2e7d32',
+      fillOpacity: 0.22,
+      weight: 3,
+    }).addTo(layerGroup);
+  }
+
+  points.forEach(function (point, index) {
+    const marker = L.marker(
+      [Number(point.latitude), Number(point.longitude)],
+      {
+        draggable: editable,
+        icon: L.divIcon({
+          className: 'point-label',
+          html: 'P' + (index + 1),
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+        }),
+      },
+    ).addTo(layerGroup);
+
+    if (editable) {
+      marker.on('dragend', function () {
+        const position = marker.getLatLng();
+        post({
+          type: 'UPDATE_POINT',
+          index: index,
+          latitude: position.lat,
+          longitude: position.lng,
+        });
+      });
+    }
+
+    marker.on('click', function (event) {
+      L.DomEvent.stopPropagation(event);
+    });
+  });
+
+  const hasCenter =
+    Number.isFinite(centerLatitude) && Number.isFinite(centerLongitude);
+
+  if (coordinates.length < 3 && hasCenter) {
+    L.marker([centerLatitude, centerLongitude], {
+      icon: L.divIcon({
+        className: 'center-label',
+        html: 'P',
+        iconSize: [22, 22],
+        iconAnchor: [11, 11],
+      }),
+      title: 'Position enregistrée',
+    }).addTo(layerGroup);
+  }
+
+  // Ne recadre la carte que lorsque la structure change réellement
+  // (nombre de sommets), afin de ne pas interrompre un déplacement.
+  const key = coordinates.length + ':' + (hasCenter ? 'c' : '-');
+  if (key === lastKey) return;
+  lastKey = key;
+
+  if (coordinates.length >= 2) {
+    map.fitBounds(L.latLngBounds(coordinates), { padding: [50, 50] });
+  } else if (coordinates.length === 1) {
+    map.setView(coordinates[0], Math.max(map.getZoom(), 18));
+  } else if (hasCenter) {
+    map.setView([centerLatitude, centerLongitude], Math.max(map.getZoom(), 18));
+  }
+};
+
+window.setMapView = function (lat, lng, zoom) {
+  map.setView([Number(lat), Number(lng)], zoom);
+};
+
+map.on('click', function (event) {
+  if (!editable) return;
+  post({
+    type: 'ADD_POINT',
+    latitude: event.latlng.lat,
+    longitude: event.latlng.lng,
+  });
+});
+
+if (showUserLocation && navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    function (position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: 'user-label',
+          html: '\\uD83D\\uDCCD',
+          iconSize: [22, 22],
+          iconAnchor: [11, 11],
+        }),
+      }).addTo(map);
+
+      map.setView([lat, lng], 18);
+    },
+    function () {},
+    { enableHighAccuracy: true },
+  );
+}
+
+post({ type: 'READY' });
+</script>
+</body>
+</html>`;
 }
 
 const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
-    backgroundColor: colors.neutral[150],
+    backgroundColor: '#e8ece9',
+  },
+  webview: {
+    flex: 1,
+    backgroundColor: 'transparent',
   },
 });
 

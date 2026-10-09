@@ -1,15 +1,4 @@
 #!/usr/bin/env node
-/**
- * Supprime les imports devenus inutiles après un déplacement de code.
- *
- * Le découpage déplace des blocs vers d'autres modules : l'écran d'origine
- * conserve alors des imports qui ne servent plus qu'aux sections extraites.
- * Le script s'appuie sur les avertissements d'ESLint
- * (`@typescript-eslint/no-unused-vars`) et reconstruit les déclarations
- * d'imports concernées, sans toucher au reste du fichier.
- *
- * Usage : node scripts/nettoyer-imports.js
- */
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');

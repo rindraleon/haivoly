@@ -1,9 +1,3 @@
-/**
- * ObservationListScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
  
 
 import { useCallback, useMemo, useState, } from 'react';
@@ -50,24 +44,10 @@ import type {
 } from '@/types';
 import { observationsCulturesApi } from './observationsCulturesApi';
 import { logger } from '@/utils/logger';
-/**
- * Instant de référence du rendu.
- * Capturé une fois au chargement du module afin de garder le rendu **pur**
- * (les règles React interdisent `Date.now()` pendant le rendu).
- */
 const maintenant = Date.now();
 
-// ======================================================
-// TYPES
-// ======================================================
 
-// ======================================================
-// OUTILS
-// ======================================================
 
-// ======================================================
-// ECRAN
-// ======================================================
 
 export default function ObservationsScreen() {
   const params =
@@ -104,9 +84,6 @@ export default function ObservationsScreen() {
       ? (params.statut as StatutCulture)
       : undefined;
 
-  // ====================================================
-  // FILTRE
-  // ====================================================
 
   const [
     filtreOuvert,
@@ -150,9 +127,6 @@ export default function ObservationsScreen() {
   ] =
     useState(false);
 
-  // ====================================================
-  // AJOUT GLOBAL
-  // ====================================================
 
   const [
     ajoutOuvert,
@@ -190,9 +164,6 @@ export default function ObservationsScreen() {
   ] =
     useState('');
 
-  // ====================================================
-  // PARCELLES
-  // ====================================================
 
   const parcellesQuery =
     useParcelles({ limit: 200 });
@@ -203,9 +174,6 @@ export default function ObservationsScreen() {
     [parcellesQuery.data],
   );
 
-  // ====================================================
-  // CULTURES FILTRE
-  // ====================================================
 
   const culturesQuery =
     useCulturesDeParcelle(
@@ -217,9 +185,6 @@ export default function ObservationsScreen() {
     [culturesQuery.data],
   );
 
-  // ====================================================
-  // CULTURES AJOUT
-  // ====================================================
 
   const culturesAjoutQuery =
     useCulturesDeParcelle(
@@ -229,9 +194,6 @@ export default function ObservationsScreen() {
   const culturesAjout =
     culturesAjoutQuery.data ?? [];
 
-  // ====================================================
-  // CULTURES GLOBALES
-  // ====================================================
 
   const culturesGlobalesQueries =
     useQueries({
@@ -296,9 +258,6 @@ export default function ObservationsScreen() {
       culturesGlobalesQueries,
     ]);
 
-  // ====================================================
-  // OBSERVATIONS GLOBALES
-  // ====================================================
 
   const observationsGlobalesQueries =
     useQueries({
@@ -374,9 +333,6 @@ export default function ObservationsScreen() {
       observationsGlobalesQueries,
     ]);
 
-  // ====================================================
-  // FILTRE GLOBAL
-  // ====================================================
 
   const observationsGlobalesFiltrees =
     useMemo(() => {
@@ -427,9 +383,6 @@ export default function ObservationsScreen() {
     !!parcelleSelectionnee ||
     !!cultureSelectionnee;
 
-  // ====================================================
-  // STATISTIQUES
-  // ====================================================
 
   const statistiquesGlobales =
     useMemo(() => {
@@ -470,9 +423,6 @@ export default function ObservationsScreen() {
       observationsGlobales,
     ]);
 
-  // ====================================================
-  // CHARGEMENT GLOBAL
-  // ====================================================
 
   const chargementGlobal =
     parcellesQuery.isLoading ||
@@ -496,9 +446,6 @@ export default function ObservationsScreen() {
         query.isError,
     );
 
-  // ====================================================
-  // REGLES CULTURE
-  // ====================================================
 
   const cultureSupprimee =
     statut === 'SUPPRIMEE';
@@ -511,9 +458,6 @@ export default function ObservationsScreen() {
     !cultureSupprimee &&
     !lectureSeule;
 
-  // ====================================================
-  // REFRESH
-  // ====================================================
 
   const [
     refreshing,
@@ -521,9 +465,6 @@ export default function ObservationsScreen() {
   ] =
     useState(false);
 
-  // ====================================================
-  // OBSERVATIONS CULTURE
-  // ====================================================
 
   const observationsQuery =
     useObservations(cultureId);
@@ -555,16 +496,10 @@ export default function ObservationsScreen() {
       recherche,
     ]);
 
-  // ====================================================
-  // DELETE
-  // ====================================================
 
   const deleteMutation =
     useDeleteObservation();
 
-  // ====================================================
-  // CHARGEMENT
-  // ====================================================
 
   const chargerObservations =
     useCallback(
@@ -605,9 +540,6 @@ export default function ObservationsScreen() {
     ),
   );
 
-  // ====================================================
-  // REFRESH
-  // ====================================================
 
   const actualiser =
     useCallback(
@@ -640,9 +572,6 @@ export default function ObservationsScreen() {
       ],
     );
 
-  // ====================================================
-  // FILTRE
-  // ====================================================
 
   const ouvrirFiltre =
     () => {
@@ -715,9 +644,6 @@ export default function ObservationsScreen() {
       );
     };
 
-  // ====================================================
-  // SELECTION FILTRE
-  // ====================================================
 
   const parcellePourSelection =
     useMemo(() => {
@@ -743,9 +669,6 @@ export default function ObservationsScreen() {
       cultureTemporaire,
     ]);
 
-  // ====================================================
-  // VOIR SUIVI
-  // ====================================================
 
   const voirSuivi =
     () => {
@@ -822,9 +745,6 @@ export default function ObservationsScreen() {
       });
     };
 
-  // ====================================================
-  // AJOUT DEPUIS CULTURE
-  // ====================================================
 
   const ouvrirAjout =
     () => {
@@ -860,9 +780,6 @@ export default function ObservationsScreen() {
       });
     };
 
-  // ====================================================
-  // AJOUT GLOBAL
-  // ====================================================
 
   const ouvrirAjoutGlobal =
     () => {
@@ -981,9 +898,6 @@ export default function ObservationsScreen() {
       });
     };
 
-  // ====================================================
-  // MODIFICATION
-  // ====================================================
 
   const ouvrirModification =
     (
@@ -1011,9 +925,6 @@ export default function ObservationsScreen() {
       });
     };
 
-  // ====================================================
-  // SUPPRESSION
-  // ====================================================
 
   const confirmerSuppression =
     (
@@ -1154,9 +1065,6 @@ export default function ObservationsScreen() {
       );
     };
 
-  // ====================================================
-  // MODE GLOBAL
-  // ====================================================
 
   if (
     !parcelleId ||
@@ -1215,9 +1123,6 @@ export default function ObservationsScreen() {
     );
   }
 
-  // ====================================================
-  // CULTURE SUPPRIMEE
-  // ====================================================
 
   if (cultureSupprimee) {
     return (
@@ -1271,9 +1176,6 @@ export default function ObservationsScreen() {
     );
   }
 
-  // ====================================================
-  // LOADING
-  // ====================================================
 
   if (
     observationsQuery.isLoading
@@ -1302,9 +1204,6 @@ export default function ObservationsScreen() {
     );
   }
 
-  // ====================================================
-  // ERROR
-  // ====================================================
 
   if (
     observationsQuery.isError
@@ -1344,9 +1243,6 @@ export default function ObservationsScreen() {
     );
   }
 
-  // ====================================================
-  // MODE CULTURE
-  // ====================================================
 
   return (
     <ModeCulture
@@ -1367,10 +1263,4 @@ export default function ObservationsScreen() {
   );
 }
 
-// ======================================================
-// CARTE OBSERVATION
-// ======================================================
 
-// ======================================================
-// STYLES
-// ======================================================

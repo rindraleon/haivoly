@@ -1,9 +1,3 @@
-/**
- * CultureDetailScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 import React from 'react';
 import { Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -23,17 +17,19 @@ import { formatDate } from '@/utils/date';
 
 import { styles } from './CultureDetailScreen.styles';
 
-/**
- * Détail d'une culture.
- *
- * Affiche le **cycle de vie** (étape actuelle, précédente, suivante, dates et
- * progression). Le statut provient exclusivement du serveur : aucun calcul de
- * règle métier n'est fait ici.
- */
 export default function DetailCultureScreen() {
-  const { id, parcelleId } = useLocalSearchParams<{ id: string; parcelleId: string }>();
-  const culture = useCulture(parcelleId, id);
-  const interventions = useInterventions(id);
+  const {
+    id,
+    cultureId,
+    parcelleId,
+  } = useLocalSearchParams<{
+    id?: string;
+    cultureId?: string;
+    parcelleId: string;
+  }>();
+  const idCulture = id ?? cultureId;
+  const culture = useCulture(parcelleId, idCulture);
+  const interventions = useInterventions(idCulture);
 
   if (culture.isLoading) {
     return <LoadingState message="Chargement de la culture…" />;

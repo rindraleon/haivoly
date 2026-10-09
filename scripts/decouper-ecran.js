@@ -1,21 +1,4 @@
 #!/usr/bin/env node
-/**
- * Découpe un écran volumineux en modules courts.
- *
- * L'analyse s'appuie sur l'**AST TypeScript** (et non sur des expressions
- * régulières) : les bornes des fonctions de premier niveau sont donc exactes,
- * y compris dans du JSX complexe.
- *
- *   • fonctions utilitaires déclarées avant le composant principal
- *   • déclarations annexes (types, constantes, fonctions fléchées) utilisées
- *     par le code extrait
- *       → `src/screens/<domaine>/<Nom>Screen.helpers.ts`
- *   • sous-composants (autres fonctions de premier niveau)
- *       → `src/components/<domaine>/<Nom>.tsx`
- *   • chaque module reçoit **uniquement les imports dont il a besoin**.
- *
- * Usage : node scripts/decouper-ecran.js src/screens/<domaine>/<Nom>Screen.tsx
- */
 const fs = require('fs');
 const path = require('path');
 
@@ -131,13 +114,6 @@ function declarations(source, contenu) {
   return { fonctions, annexes };
 }
 
-/**
- * Identifiants réellement référencés dans un fragment de code.
- *
- * Le fragment est analysé par l'AST TypeScript : les commentaires, les chaînes
- * de caractères et les textes JSX (qui contiennent souvent des apostrophes en
- * français) ne peuvent donc pas produire de faux positifs.
- */
 function identifiantsUtilises(texte) {
   const numero = { n: 0 };
   const sf = ts.createSourceFile(
@@ -258,11 +234,6 @@ function decouper(cheminRelatif) {
     .map((f) => textes.get(f.nom))
     .join('\n\n');
 
-  // ── Déclarations annexes ──
-  // Toutes les déclarations de portée module (constantes, types, tableaux de
-  // filtres…) sont déplacées : elles ne dépendent d'aucun état d'interface et
-  // leur place est dans le module d'utilitaires, pas dans l'écran.
-  // Celles qui portent du JSX deviennent de vrais sous-composants.
   const annexesNecessaires = annexes;
   const annexesSimples = annexesNecessaires.filter((a) => !a.jsx);
   const annexesJsx = annexesNecessaires.filter((a) => a.jsx);

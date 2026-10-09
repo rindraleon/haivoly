@@ -1,6 +1,3 @@
-/**
- * useNetwork — détection connexion (expo-network) + hook
- */
 import { useEffect, useState, useCallback } from 'react';
 import * as Network from 'expo-network';
 
@@ -38,10 +35,6 @@ export async function getIsOnline(): Promise<boolean> {
   }
 }
 
-/**
- * Vrai si l'appareil dispose d'une connexion exploitable.
- * Raccourci de `useNetwork()` pour les composants qui n'affichent qu'un état.
- */
 export function useNetworkStatus(): boolean {
   const { isOnline } = useNetwork();
   return isOnline === true;

@@ -1,14 +1,4 @@
-/**
- * HomeScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 /* eslint-disable react-hooks/set-state-in-effect, react/no-unescaped-entities */
-/**
- * HomeScreen — composition (un écran = assemblage de composants)
- * Orchestre navigation + hooks, UI déléguée aux features
- */
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
@@ -24,7 +14,6 @@ import { Card } from '@/components/CommonComponent/Card';
 import { Badge } from '@/components/CommonComponent/Badge';
 import { LoadingState } from '@/components/CommonComponent/LoadingState';
 import { ErrorState } from '@/components/CommonComponent/ErrorState';
-import { AppBottomBar } from '@/components/CommonComponent/AppBottomBar';
 
 // Feature components
 import { HomeHeader } from '@/components/HomeComponent/Header';
@@ -77,9 +66,6 @@ export default function HomeScreen() {
 
   useEffect(() => {
     refreshPending();
-    // Une synchronisation à l'ouverture, puis rafraîchissement des compteurs.
-    // La boucle périodique est celle du provider (`AppProviders`) : en démarrer
-    // une ici coupait celle de l'application en quittant l'écran.
     void syncOnce();
     const id = setInterval(refreshPending, 3000);
     return () => clearInterval(id);
@@ -299,8 +285,6 @@ export default function HomeScreen() {
 
         <Text style={styles.footer}>Haivoly — Plateforme de gestion agricole • Antananarivo</Text>
       </ScrollView>
-
-      <AppBottomBar />
     </View>
   );
 }

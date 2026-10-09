@@ -1,9 +1,3 @@
-/**
- * CultureCreateScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
  
 
 import { useState } from 'react';
@@ -47,9 +41,6 @@ export default function AjouterCultureScreen() {
   const createCulture =
     useCreateCulture();
 
-  // =====================================================
-  // INFORMATIONS CULTURE
-  // =====================================================
 
   const [nom, setNom] =
     useState('');
@@ -77,27 +68,18 @@ export default function AjouterCultureScreen() {
   const [description, setDescription] =
     useState('');
 
-  // =====================================================
-  // DÉLIMITATION
-  // =====================================================
 
   const [
     demanderDelimitation,
     setDemanderDelimitation,
   ] = useState(false);
 
-  // =====================================================
-  // NAVIGATION UX
-  // =====================================================
 
   const [
     currentStep,
     setCurrentStep,
   ] = useState(1);
 
-  // =====================================================
-  // FORMAT DATE
-  // =====================================================
 
   const formaterDate =
     (date: Date | null) => {
@@ -108,9 +90,6 @@ export default function AjouterCultureScreen() {
       return formatDate(date);
     };
 
-  // =====================================================
-  // ENREGISTRER
-  // =====================================================
 
   const enregistrer = () => {
     if (!parcelleId) {
@@ -180,9 +159,6 @@ export default function AjouterCultureScreen() {
       // à venir, EN_COURS sinon) — le mobile ne fait qu'afficher ce qu'il reçoit.
     };
 
-    // ===================================================
-    // CRÉATION DE LA CULTURE
-    // ===================================================
 
     createCulture.mutate(
       {
@@ -191,9 +167,6 @@ export default function AjouterCultureScreen() {
       },
       {
         onSuccess: (culture) => {
-          // =================================================
-          // SI L'UTILISATEUR VEUT DÉLIMITER
-          // =================================================
 
           if (
             demanderDelimitation
@@ -215,9 +188,6 @@ export default function AjouterCultureScreen() {
             return;
           }
 
-          // =================================================
-          // SINON RETOUR AUX CULTURES
-          // =================================================
 
           Alert.alert(
             'Succès',
@@ -249,9 +219,6 @@ export default function AjouterCultureScreen() {
     );
   };
 
-  // =====================================================
-  // NAVIGATION ENTRE ÉTAPES
-  // =====================================================
 
   const goToStep2 = () => {
     if (!nom.trim()) {
@@ -293,9 +260,6 @@ export default function AjouterCultureScreen() {
     );
   };
 
-  // =====================================================
-  // ÉTATS POUR LE REVIEW
-  // =====================================================
 
   const hasDates =
     !!datePlantation ||
@@ -307,9 +271,6 @@ export default function AjouterCultureScreen() {
     'Vérification',
   ];
 
-  // =====================================================
-  // RENDER
-  // =====================================================
 
   return (
     <VueCreationCulture
@@ -347,10 +308,4 @@ export default function AjouterCultureScreen() {
   );
 }
 
-// =======================================================
-// COMPOSANTS UX RÉUTILISABLES
-// =======================================================
 
-// =======================================================
-// STYLES
-// =======================================================

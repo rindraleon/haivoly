@@ -1,9 +1,3 @@
-/**
- * CultureDelimiterScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 /* eslint-disable react-hooks/set-state-in-effect, react-hooks/immutability, react/no-unescaped-entities */
 import { useEffect, useState } from 'react';
 
@@ -40,9 +34,6 @@ interface ParcelleGPSPoint {
 }
 
 export default function DelimiterCultureScreen() {
-  // =====================================================
-  // PARAMÈTRES
-  // =====================================================
 
   const {
     parcelleId,
@@ -54,9 +45,6 @@ export default function DelimiterCultureScreen() {
     cultureNom?: string;
   }>();
 
-  // =====================================================
-  // PARCELLE
-  // =====================================================
 
   const {
     data: parcelle,
@@ -64,9 +52,6 @@ export default function DelimiterCultureScreen() {
     isError: isErrorParcelle,
   } = useParcelle(parcelleId ?? '');
 
-  // =====================================================
-  // ÉTATS
-  // =====================================================
 
   const [pointsGPS, setPointsGPS] = useState<PointGPS[]>(
     [],
@@ -99,9 +84,6 @@ export default function DelimiterCultureScreen() {
 
   const [mapKey, setMapKey] = useState(0);
 
-  // =====================================================
-  // RÉCUPÉRER LES POINTS DE LA PARCELLE
-  // =====================================================
 
   useEffect(() => {
     if (!parcelle) {
@@ -133,10 +115,6 @@ export default function DelimiterCultureScreen() {
     }
   }, [parcelle]);
 
-  // =====================================================
-  // RÉCUPÉRER LA CULTURE ACTUELLE
-  // + LES CULTURES EXISTANTES
-  // =====================================================
 
   useEffect(() => {
     const chargerDonnees = async () => {
@@ -148,9 +126,6 @@ export default function DelimiterCultureScreen() {
       try {
         setLoadingCulture(true);
 
-        // ================================================
-        // CULTURE ACTUELLE
-        // ================================================
 
         const points =
           await culturesApi.pointsGPS(
@@ -186,9 +161,6 @@ export default function DelimiterCultureScreen() {
           nouveauxPoints,
         );
 
-        // ================================================
-        // RÉCUPÉRER TOUTES LES CULTURES
-        // ================================================
 
         const cultures =
           await culturesApi.listByParcelle(parcelleId, { limit: 200 }).then(asItems);
@@ -200,9 +172,6 @@ export default function DelimiterCultureScreen() {
               culture.statut !== 'SUPPRIMEE',
           );
 
-        // ================================================
-        // RÉCUPÉRER LES POINTS DE CHAQUE CULTURE
-        // ================================================
 
         const polygons: CulturePolygon[] = [];
 
@@ -295,9 +264,6 @@ if (
     chargerDonnees();
   }, [parcelleId, cultureId]);
 
-  // =====================================================
-  // CALCUL SUPERFICIE
-  // =====================================================
 
   const calculerSuperficie = (
     points: PointGPS[],
@@ -332,13 +298,7 @@ if (
     }
   };
 
-  // =====================================================
-  // POINT DANS POLYGONE
-  // =====================================================
 
-  // =====================================================
-  // POINT DANS PARCELLE
-  // =====================================================
 
   const pointDansParcelle = (
     latitude: number,
@@ -351,9 +311,6 @@ if (
     );
   };
 
-  // =====================================================
-  // POINT DANS UNE CULTURE EXISTANTE
-  // =====================================================
 
   const pointDansCultureExistante = (
     latitude: number,
@@ -376,33 +333,15 @@ if (
     return null;
   };
 
-  // =====================================================
-  // ORIENTATION
-  // =====================================================
 
-  // =====================================================
-  // POINT SUR SEGMENT
-  // =====================================================
 
-  // =====================================================
-  // SEGMENTS QUI SE TOUCHENT
-  // =====================================================
 
-  // =====================================================
-  // POLYGONES SE TOUCHENT OU SE CHEVAUCHENT
-  // =====================================================
 
-  // =====================================================
-  // VÉRIFIER UN POINT
-  // =====================================================
 
   const verifierPointAutorise = (
     latitude: number,
     longitude: number,
   ): boolean => {
-    // ================================================
-    // PARCELLE
-    // ================================================
 
     if (
       !pointDansParcelle(
@@ -418,9 +357,6 @@ if (
       return false;
     }
 
-    // ================================================
-    // CULTURES EXISTANTES
-    // ================================================
 
     const culture =
       pointDansCultureExistante(
@@ -440,9 +376,6 @@ if (
     return true;
   };
 
-  // =====================================================
-  // AJOUT POINT GPS
-  // =====================================================
 
   const handleAddPointGPS = async () => {
     try {
@@ -533,9 +466,6 @@ if (
     }
   };
 
-  // =====================================================
-  // MESSAGE WEBVIEW
-  // =====================================================
 
   const handleMapMessage = (
     event: any,
@@ -546,9 +476,6 @@ if (
           event.nativeEvent.data,
         );
 
-      // ================================================
-      // AJOUT MANUEL
-      // ================================================
 
       if (
         data.type ===
@@ -600,9 +527,6 @@ if (
         return;
       }
 
-      // ================================================
-      // DÉPLACEMENT
-      // ================================================
 
       if (
         data.type ===
@@ -659,9 +583,6 @@ if (
         return;
       }
 
-      // ================================================
-      // SUPPRESSION
-      // ================================================
 
       if (
         data.type ===
@@ -737,9 +658,6 @@ if (
     }
   };
 
-  // =====================================================
-  // VÉRIFICATION FINALE
-  // =====================================================
 
   const verifierTracageFinal =
     (): boolean => {
@@ -766,9 +684,6 @@ if (
         return false;
       }
 
-      // ================================================
-      // TOUS LES POINTS DANS LA PARCELLE
-      // ================================================
 
       for (
         const point of pointsGPS
@@ -788,9 +703,6 @@ if (
         }
       }
 
-      // ================================================
-      // CULTURE ACTUELLE VS CULTURES EXISTANTES
-      // ================================================
 
       for (
         const culture of culturesExistantes
@@ -813,9 +725,6 @@ if (
       return true;
     };
 
-  // =====================================================
-  // TERMINER
-  // =====================================================
 
   const handleFinish = async () => {
     if (!parcelleId) {
@@ -910,9 +819,6 @@ if (
     }
   };
 
-  // =====================================================
-  // CHARGEMENT
-  // =====================================================
 
   if (
     isLoadingParcelle ||
@@ -936,9 +842,6 @@ if (
     );
   }
 
-  // =====================================================
-  // ERREUR PARCELLE
-  // =====================================================
 
   if (
     isErrorParcelle ||
@@ -978,9 +881,6 @@ if (
     );
   }
 
-  // =====================================================
-  // PARCELLE NON DÉLIMITÉE
-  // =====================================================
 
   if (
     pointsParcelle.length <
@@ -1030,9 +930,6 @@ if (
     );
   }
 
-  // =====================================================
-  // HTML LEAFLET
-  // =====================================================
 
   const mapHtml = `
 <!DOCTYPE html>
@@ -1765,9 +1662,6 @@ if (
 </html>
 `;
 
-  // =====================================================
-  // AFFICHAGE
-  // =====================================================
 
   return (
     <VueDelimitation
@@ -1787,6 +1681,3 @@ if (
   );
 }
 
-// =======================================================
-// STYLES
-// =======================================================

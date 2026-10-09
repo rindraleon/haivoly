@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ObservationListScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 import { colors, radius, } from '@/theme';
 
-/**
- * Styles `FILTRE RAPIDE` — extraits de `ObservationListScreen`.
- */
 export const stylesFiltreRapide = StyleSheet.create({
 filterPanel: {
       backgroundColor:

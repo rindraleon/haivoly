@@ -1,19 +1,4 @@
 #!/usr/bin/env node
-/**
- * Vérificateur du contrat API ↔ mobile.
- *
- * Le backend est la source de vérité : ce script lit les routes réellement
- * déclarées par les contrôleurs NestJS (`../backend/src/**\/*.controller.ts`)
- * et les compare aux appels sortants du mobile (`src/services/**\/*.service.ts`).
- *
- * Usage :  node scripts/verifier-api.mjs   (alias `npm run verifier:api`)
- *
- * Sortie :
- *   • ❌  appel mobile sans route serveur  → code de sortie 1 ;
- *   • ⚠️   route serveur jamais appelée     → informatif (routes publiques,
- *         administration, exploration) ;
- *   • ✅  contrat aligné.
- */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -46,9 +31,6 @@ function fichiers(racine, motif) {
   return trouves;
 }
 
-// ─────────────────────────────────────────────────────────────
-// 1. Routes du backend
-// ─────────────────────────────────────────────────────────────
 function routesBackend() {
   const routes = new Map();
   const controllers = fichiers(join(racineBackend, 'src'), /\.controller\.ts$/);
@@ -67,9 +49,6 @@ function routesBackend() {
   return routes;
 }
 
-// ─────────────────────────────────────────────────────────────
-// 2. Appels du mobile
-// ─────────────────────────────────────────────────────────────
 /** Lit le premier argument d'un appel, en respectant les chaînes imbriquées. */
 function premierArgument(source, depart) {
   let profondeur = 0;
@@ -109,10 +88,6 @@ function appelsMobile() {
     const source = readFileSync(fichier, 'utf8');
     const motif = /http\s*\.\s*(get|post|put|patch|delete)\b/g;
     for (const correspondance of source.matchAll(motif)) {
-      // Le générique TypeScript peut contenir `>` imbriqués :
-      // `http.get<Paginated<Culture> | Culture[]>(…)` — on avance jusqu'à la
-      // parenthèse ouvrante en équilibrant les chevrons.
-      // `http\n  .get(…)` (appel réparti sur plusieurs lignes) reste détecté.
       let curseur = correspondance.index + correspondance[0].length;
       while (curseur < source.length && /\s/.test(source[curseur])) curseur += 1;
       if (source[curseur] === '<') {
@@ -143,9 +118,6 @@ function appelsMobile() {
   return appels;
 }
 
-// ─────────────────────────────────────────────────────────────
-// 3. Comparaison
-// ─────────────────────────────────────────────────────────────
 const backend = routesBackend();
 const mobile = appelsMobile();
 

@@ -1,10 +1,3 @@
-/**
- * Inscription, connexion, session, profil et mot de passe.
- *
- * Aucun écran n'appelle `axios` directement : tout passe par `http` puis par
- * ces fonctions. Les identifiants (`parcelleId`, `cultureId`…) sont envoyés
- * tels quels ; c'est le serveur qui valide la propriété et les règles métier.
- */
 import { http } from '@/services/http';
 import type { Utilisateur } from '@/types';
 

@@ -1,6 +1,3 @@
-/**
- * Lecture de la récolte d’une culture.
- */
 import { useQuery } from '@tanstack/react-query';
 import { recoltesApi } from '@/services';
 import { queryKeys } from '../queryKeys';

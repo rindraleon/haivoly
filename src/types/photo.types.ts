@@ -1,11 +1,3 @@
-/**
- * Photos (observations, interventions, récoltes).
- *
- * Une seule forme d'entité côté API : `{ id, url, dateAjout }`, la ressource
- * parente étant portée par la relation (`observationId`, `interventionId`,
- * `recolteId`). Les alias ci-dessous gardent le vocabulaire des écrans tout en
- * n'ayant qu'**une** définition.
- */
 
 /** Photo renvoyée par l'API. */
 export interface Photo {

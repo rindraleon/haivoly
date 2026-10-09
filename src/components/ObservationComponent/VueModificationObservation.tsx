@@ -1,10 +1,3 @@
-/**
- * Section `VueModificationObservation` extraite de `ObservationEditScreen`.
- *
- * Le rendu est repris à l’identique : seules les valeurs et les actions
- * du composant parent sont reçues en props, ce qui évite de faire
- * transiter toute la logique de l’écran dans un seul fichier.
- */
 import { formaterDate } from '@/screens/ObservationScreen/ObservationEditScreen.helpers';
 import { DateTimeInput } from '@/components/CommonComponent/DateTimeInput';
 import { styles } from '@/screens/ObservationScreen/ObservationEditScreen.styles';

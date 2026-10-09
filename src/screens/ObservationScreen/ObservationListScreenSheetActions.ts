@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ObservationListScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 
 
-/**
- * Styles `SHEET ACTIONS` — extraits de `ObservationListScreen`.
- */
 export const stylesSheetActions = StyleSheet.create({
 sheetActions: {
       flexDirection:

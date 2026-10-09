@@ -1,11 +1,3 @@
-/**
- * Section `VueInterventionsCulture` extraite de `InterventionListScreen`.
- *
- * Le rendu est repris à l’identique : seules les valeurs et les actions
- * du composant parent sont reçues en props, ce qui évite de faire
- * transiter toute la logique de l’écran dans un seul fichier.
- */
-import { AppBottomBar } from '@/components/CommonComponent/AppBottomBar';
 import { ScreenHeader } from '@/components/CommonComponent/ScreenHeader';
 import { FilterModal } from '@/components/InterventionComponent/FilterModal';
 import type { ContexteFormulaire, CultureGlobale, InterventionGlobale } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
@@ -393,8 +385,6 @@ export function VueInterventionsCulture({
             modeAjout={modeAjoutGlobal}
             onContinueAjout={continuerAjoutGlobal}
           />
-
-          <AppBottomBar />
         </View>
   );
 }

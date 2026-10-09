@@ -1,9 +1,3 @@
-/**
- * RecolteListScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 
 import { formatMontant } from '@/utils/formatNombre';
 import { formatDate } from '@/utils/date';

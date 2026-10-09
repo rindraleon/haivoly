@@ -2,13 +2,6 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { queryKeys } from '../queryKeys';
 
-/**
- * Invalidation de cache, appelée après chaque mutation.
- *
- * Une parcelle invalide ses cultures ; une culture invalide ses interventions
- * et sa récolte — ce qui suffit à faire apparaître les statuts recalculés par
- * le serveur (culture `RECOLTEE`, intervention `EN_COURS`…).
- */
 export function useInvalidateDomain() {
   const client = useQueryClient();
 

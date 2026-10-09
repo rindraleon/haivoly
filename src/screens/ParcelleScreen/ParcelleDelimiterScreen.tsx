@@ -1,9 +1,3 @@
-/**
- * ParcelleDelimiterScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 import React, { useState } from 'react';
 import { Alert, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -23,24 +17,11 @@ import type { PointGPS } from '@/types';
 
 
 import { styles } from './ParcelleDelimiterScreen.styles';
-/**
- * Mode délimitation d'une parcelle.
- *
- * L'écran expose un **état « mode délimitation » visible** (bandeau + compteur
- * de sommets) et permet d'ajouter, déplacer ou retirer des sommets. La carte
- * est centrée sur les coordonnées **enregistrées** de la parcelle, jamais sur
- * la position de l'utilisateur.
- */
 export default function DelimiterParcelleScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const parcelle = useParcelle(id);
   const delimitation = useDelimiterParcelle();
 
-  /**
-   * `points === null` = « aucune modification locale » : on affiche alors la
-   * délimitation enregistrée. Dès la première interaction, l'état local prend
-   * le relais. Aucun `useEffect` n'est nécessaire (pas de rendu en cascade).
-   */
   const [points, setPoints] = useState<PointGPS[] | null>(null);
 
   const latitude = parcelle.data?.latitude ?? null;

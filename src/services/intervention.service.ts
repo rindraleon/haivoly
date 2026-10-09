@@ -1,11 +1,3 @@
-/**
- * Interventions : le statut (`PLANIFIEE` / `EN_COURS` / `TERMINEE`) est calculé
- * par le serveur à partir de la date.
- *
- * Aucun écran n'appelle `axios` directement : tout passe par `http` puis par
- * ces fonctions. Les identifiants (`parcelleId`, `cultureId`…) sont envoyés
- * tels quels ; c'est le serveur qui valide la propriété et les règles métier.
- */
 import { http } from '@/services/http';
 import type { FichierPhoto, Photo , Intervention, Paginated , InterventionPayload } from '@/types';
 
@@ -26,11 +18,6 @@ export const interventionsApi = {
   remove: (id: string) => http.delete<{ id: string }>(`/interventions/${id}`),
 };
 
-/**
- * Photos rattachées à une intervention (`/parcelles/${parcelleId}/cultures/${cultureId}/interventions/${interventionId}/photos`, `.../photos/upload`, `.../photos/:id`).
- * Les fichiers sont téléversés en `multipart/form-data` ; le serveur normalise
- * l'URL publique avant de la stocker.
- */
 export const interventionPhotosApi = {
   list: (parcelleId: string, cultureId: string, interventionId: string) => http.get<Photo[]>(`/parcelles/${parcelleId}/cultures/${cultureId}/interventions/${interventionId}/photos`),
   /** `fichier` est préparé par l'appelant (`preparerFichierPhoto` : compressé). */

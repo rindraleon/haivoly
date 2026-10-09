@@ -1,17 +1,4 @@
 #!/usr/bin/env node
-/**
- * Génère les barils (`index.ts`) de l'arborescence.
- *
- *   src/screens/<Domaine>Screen/index.ts   réexporte les écrans du domaine
- *   src/screens/index.ts                   API publique des écrans
- *   src/components/<Domaine>Component/…    idem pour les composants
- *   src/hooks/<domaine>/index.ts           idem pour les hooks
- *
- * Les écrans sont exportés par leur nom (`export { default as XScreen }`) ;
- * les composants et les hooks gardent leurs exports nommés.
- *
- * Usage : node scripts/generer-barils.js
- */
 const fs = require('fs');
 const path = require('path');
 

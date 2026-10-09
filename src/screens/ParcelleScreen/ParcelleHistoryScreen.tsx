@@ -1,9 +1,3 @@
-/**
- * ParcelleHistoryScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 /* eslint-disable react/no-unescaped-entities */
 import {
   ActivityIndicator,
@@ -75,21 +69,6 @@ export default function HistoriqueParcellesScreen() {
   const [tri, setTri] =
     useState<TypeTri>('DEFAUT');
 
-  /*
-   * ==========================================
-   * PARCELLES HISTORIQUES
-   * ==========================================
-   *
-   * On ne garde PAS :
-   *
-   * ACTIVE
-   *
-   * L'historique contient :
-   *
-   * ABANDONNEE
-   * ARCHIVEE
-   * SUPPRIMEE
-   */
 
   const parcellesHistoriques = (parcelles ?? [])
     .filter((parcelle) => {
@@ -100,11 +79,6 @@ export default function HistoriqueParcellesScreen() {
       );
     })
     .filter((parcelle) => {
-      /*
-       * ==========================================
-       * RECHERCHE
-       * ==========================================
-       */
 
       const rechercheNormalisee =
         recherche.trim().toLowerCase();
@@ -129,11 +103,6 @@ export default function HistoriqueParcellesScreen() {
       );
     })
     .filter((parcelle) => {
-      /*
-       * ==========================================
-       * FILTRE STATUT
-       * ==========================================
-       */
 
       if (statutFiltre === 'TOUS') {
         return true;
@@ -142,11 +111,6 @@ export default function HistoriqueParcellesScreen() {
       return parcelle.statut === statutFiltre;
     })
     .sort((a, b) => {
-      /*
-       * ==========================================
-       * TRI
-       * ==========================================
-       */
 
       switch (tri) {
         case 'DATE_CREATION_RECENTE':
@@ -197,11 +161,6 @@ export default function HistoriqueParcellesScreen() {
       }
     });
 
-  /*
-   * ==========================================
-   * CHARGEMENT
-   * ==========================================
-   */
 
   if (isLoading) {
     return (
@@ -215,11 +174,6 @@ export default function HistoriqueParcellesScreen() {
     );
   }
 
-  /*
-   * ==========================================
-   * ERREUR
-   * ==========================================
-   */
 
   if (isError) {
     return (

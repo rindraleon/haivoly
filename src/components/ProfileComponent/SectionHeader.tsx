@@ -1,9 +1,3 @@
-/**
- * Sous-composant `SectionHeader` extrait de `ProfilScreen`.
- *
- * Regroupe la présentation d'un élément de liste et ses interactions
- * locales, ce qui allège nettement le composant principal.
- */
 import { Text, View } from 'react-native';
 import { styles } from '@/screens/ProfileScreen/ProfilScreen.styles';
 

@@ -10,24 +10,7 @@ import { env } from '@/config/env';
 import type { FichierPhoto } from '@/types';
 import { clearToken, getToken } from '@/storage/authStorage';
 
-/**
- * Client HTTP unique de l'application.
- *
- * Responsabilités :
- *   • URL de base issue de la configuration (jamais codée en dur) ;
- *   • injection du jeton JWT ;
- *   • **déballage de l'enveloppe** `{ success, data, message }` : les services
- *     ne manipulent que la charge utile ;
- *   • normalisation des erreurs en `ApiError` (message lisible + statut) ;
- *   • déconnexion automatique sur 401.
- */
 
-/**
- * Champ de formulaire fautif, tel que renvoyé par le backend.
- *
- * `path` est le chemin structuré (`['pointsGPS', 0, 'latitude']`) : il permet de
- * rattacher l'erreur **au bon élément** d'une liste, sans re-parser une chaîne.
- */
 export interface ChampInvalide {
   field: string;
   path?: (string | number)[];
@@ -109,13 +92,6 @@ export function setUnauthorizedHandler(handler: (() => void) | null): void {
   onUnauthorized = handler;
 }
 
-/**
- * Vrai si le 401 signifie que la session est perdue (jeton absent, invalide ou
- * expiré) — et non un simple mot de passe erroné lors d'une connexion.
- *
- * Sans cette distinction, un utilisateur qui se trompe de mot de passe
- * déclencherait le message « session expirée ».
- */
 export function estExpirationDeSession(
   statut: number,
   code?: string,
@@ -129,9 +105,6 @@ export function reinitialiserExpirationSession(): void {
   sessionPerdueSignalee = false;
 }
 
-// `axios.create` est bien l'instance par défaut d'axios (`import axios from
-// 'axios'`) : la règle signale un faux positif lié aux exports nommés d'axios.
-// eslint-disable-next-line import/no-named-as-default-member
 export const httpClient: AxiosInstance = axios.create({
   baseURL: env.apiUrl,
   timeout: env.apiTimeout,
@@ -183,9 +156,6 @@ export function toApiError(error: unknown): ApiError {
     details?: unknown;
   }>;
 
-  // Erreur JavaScript quelconque (et non une erreur HTTP) : elle n'est pas
-  // exploitable par l'utilisateur, on la classe « inconnue » pour que l'écran
-  // affiche son propre message.
   if (!isAxiosError(error)) {
     return new ApiError('Une erreur inattendue est survenue.', 0, 'UNKNOWN');
   }
@@ -253,13 +223,6 @@ export const http = {
     request<T>({ ...config, method: 'PATCH', url, data: body }),
   delete: <T>(url: string, config?: AxiosRequestConfig) =>
     request<T>({ ...config, method: 'DELETE', url, ...config }),
-  /**
-   * Téléversement de fichier (`multipart/form-data`).
-   *
-   * On ne fixe **pas** `Content-Type` à la main : dans React Native, c'est la
-   * couche réseau qui ajoute la frontière (`boundary`) ; l'imposer casserait
-   * l'analyse côté serveur.
-   */
   upload: <T>(url: string, fichier: FichierPhoto, champ = 'file') => {
     const donnees = new FormData();
     donnees.append(champ, {

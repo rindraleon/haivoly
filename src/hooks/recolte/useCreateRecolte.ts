@@ -1,6 +1,3 @@
-/**
- * Création d’une récolte : le serveur bascule la culture en `RECOLTEE`.
- */
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
 import { recoltesApi } from '@/services';
 import type { RecoltePayload } from '@/services';

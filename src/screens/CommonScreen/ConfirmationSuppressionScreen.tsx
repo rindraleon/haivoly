@@ -1,9 +1,3 @@
-/**
- * ConfirmationSuppressionScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 import { useConfirm } from '@/components/CommonComponent/ConfirmProvider';
 import {
   ActivityIndicator,

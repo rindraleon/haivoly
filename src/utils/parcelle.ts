@@ -1,11 +1,5 @@
 import type { PointGPS } from '@/types';
 
-/**
- * Utilitaires d'affichage et de calcul liés aux parcelles.
- *
- * ⚠️ La superficie affichée est **indicative** : la valeur de référence est
- * celle calculée et renvoyée par le serveur après enregistrement.
- */
 
 const EARTH_RADIUS_M = 6_378_137;
 

@@ -1,9 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
 
-/**
- * Stockage sécurisé du jeton d'authentification.
- * Le jeton n'est jamais écrit en clair dans AsyncStorage.
- */
 const TOKEN_KEY = 'haivoly_access_token';
 
 export async function saveToken(token: string): Promise<void> {

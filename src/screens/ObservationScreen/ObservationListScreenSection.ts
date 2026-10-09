@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ObservationListScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 import { colors } from '@/theme';
 
-/**
- * Styles `SECTION` — extraits de `ObservationListScreen`.
- */
 export const stylesSection = StyleSheet.create({
 sectionHeader: {
       paddingHorizontal: 16,

@@ -1,6 +1,3 @@
-/**
- * Lecture des interventions d’une culture.
- */
 import { useQuery } from '@tanstack/react-query';
 import { interventionsApi } from '@/services';
 import { asItems } from '@/utils/api';

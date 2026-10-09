@@ -1,9 +1,3 @@
-/**
- * Feuille de styles de `RegisterScreen`.
- *
- * Extraite du composant pour garder des fichiers courts et lisibles : le
- * composant décrit l'interface, ce module décrit son apparence.
- */
 import { StyleSheet } from 'react-native';
 import {
   colors,
@@ -13,9 +7,6 @@ import {
 export const styles =
   StyleSheet.create({
 
-    // =================================================
-    // ROOT
-    // =================================================
 
     root: {
       flex: 1,
@@ -35,9 +26,6 @@ export const styles =
     },
 
 
-    // =================================================
-    // DECORATIONS
-    // =================================================
 
     backgroundDecor: {
       ...StyleSheet.absoluteFill,
@@ -105,9 +93,6 @@ export const styles =
     },
 
 
-    // =================================================
-    // HERO
-    // =================================================
 
     hero: {
       paddingTop: 54,
@@ -222,9 +207,6 @@ export const styles =
     },
 
 
-    // =================================================
-    // CARD
-    // =================================================
 
     cardWrap: {
       paddingHorizontal: 14,
@@ -254,9 +236,6 @@ export const styles =
     },
 
 
-    // =================================================
-    // CARD HEADER
-    // =================================================
 
     cardHeader: {
       gap: 7,
@@ -308,9 +287,6 @@ export const styles =
     },
 
 
-    // =================================================
-    // ERROR
-    // =================================================
 
     banner: {
       flexDirection: 'row',
@@ -354,9 +330,6 @@ export const styles =
     },
 
 
-    // =================================================
-    // SECTION
-    // =================================================
 
     section: {
       marginBottom: 24,
@@ -420,9 +393,6 @@ export const styles =
     },
 
 
-    // =================================================
-    // PASSWORD
-    // =================================================
 
     passwordPanel: {
       marginTop: -2,
@@ -543,9 +513,6 @@ export const styles =
     },
 
 
-    // =================================================
-    // TRUST
-    // =================================================
 
     trustBox: {
       flexDirection: 'row',
@@ -600,9 +567,6 @@ export const styles =
     },
 
 
-    // =================================================
-    // LOGIN
-    // =================================================
 
     loginRow: {
       flexDirection: 'row',
@@ -637,9 +601,6 @@ export const styles =
     },
 
 
-    // =================================================
-    // FOOTER
-    // =================================================
 
     footer: {
       alignItems: 'center',

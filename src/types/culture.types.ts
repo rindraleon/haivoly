@@ -1,11 +1,3 @@
-/**
- * Types du domaine `culture` — contrat partagé avec l'API.
- *
- * Contrat de dates :
- *   • date calendaire → `YYYY-MM-DD` (jamais convertie en `Date`)
- *   • horodatage      → ISO-8601 UTC
- *   • affichage       → `JJ/MM/AAAA` (voir `@/utils/date`)
- */
 import type { PointGPS } from './common.types';
 import type { Parcelle } from './parcelle.types';
 import type { Recolte } from './recolte.types';
@@ -41,12 +33,6 @@ export interface Culture {
   modifieA: string;
 }
 
-/**
- * Charge utile d'écriture d'une culture.
- *
- * `statut` n'est accepté que pour les transitions explicites : le passage à
- * `RECOLTEE` est décidé par le serveur lors de la création d'une récolte.
- */
 export interface CulturePayload {
   nom: string;
   type?: string | null;

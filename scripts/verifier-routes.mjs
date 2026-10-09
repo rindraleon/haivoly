@@ -1,22 +1,4 @@
 #!/usr/bin/env node
-/**
- * Vérificateur de la couche de routage (expo-router).
- *
- * Règles vérifiées :
- *   1. chaque fichier de `src/app/**` reste **une couche de routage courte**
- *      (≤ 12 lignes utiles, aucune logique : pas de `useState`, `useEffect`,
- *      hook métier, appel HTTP ni feuille de style) ;
- *   2. chaque import de ces fichiers **résout** vers un module existant ;
- *   3. inventaire des routes et détection des écrans jamais atteints
- *      (informatif : signale un écran orphelin après un renommage) ;
- *   4. **joignabilité** : une route qui n'est ciblée par aucune navigation
- *      (`router.push` / `replace` / `navigate`, `pathname:`, `href=`) n'est
- *      atteignable que par lien profond — donc, en pratique, morte. Elles sont
- *      listées : c'est ainsi qu'a été repéré `/modifier-culture`, seul chemin
- *      d'édition d'une culture et pourtant relié à rien.
- *
- * Usage :  node scripts/verifier-routes.mjs   (alias `npm run verifier:routes`)
- */
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -71,10 +53,6 @@ function cheminRoute(fichier) {
   return `/${morceaux.join('/')}`;
 }
 
-/**
- * Cibles de navigation écrites hors de `src/app` : littéraux de `router.*`,
- * `pathname:` des appels par objet, `href=` des redirections.
- */
 function ciblesNavigation() {
   const cibles = new Map();
   const racineSrc = join(racine, 'src');

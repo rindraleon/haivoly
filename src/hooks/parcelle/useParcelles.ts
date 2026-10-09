@@ -1,6 +1,3 @@
-/**
- * Lecture des parcelles.
- */
 import { useQuery } from '@tanstack/react-query';
 import { parcellesApi } from '@/services';
 import { queryKeys } from '../queryKeys';

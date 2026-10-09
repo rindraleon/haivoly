@@ -1,7 +1,3 @@
-/**
- * Clés de cache : elles garantissent que les invalidations après mutation
- * touchent bien les écrans concernés (jamais deux clés pour la même donnée).
- */
 import { queryKeys } from '@/hooks/queryKeys';
 
 describe('queryKeys', () => {

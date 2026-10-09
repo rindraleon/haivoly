@@ -1,11 +1,3 @@
-/**
- * Section `VueParcelles` extraite de `ParcelleListScreen`.
- *
- * Le rendu est repris à l’identique : seules les valeurs et les actions
- * du composant parent sont reçues en props, ce qui évite de faire
- * transiter toute la logique de l’écran dans un seul fichier.
- */
-import { AppBottomBar } from '@/components/CommonComponent/AppBottomBar';
 import { Chip } from '@/components/CommonComponent/Chip';
 import { EmptyState } from '@/components/CommonComponent/EmptyState';
 import { ScreenHeader } from '@/components/CommonComponent/ScreenHeader';
@@ -309,11 +301,6 @@ export function VueParcelles({
             strokeWidth={2.7}
           />
         </Pressable>
-
-        {/* =================================================
-            BOTTOM BAR
-        ================================================== */}
-        <AppBottomBar />
       </View>
   );
 }

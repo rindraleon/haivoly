@@ -1,9 +1,3 @@
-/**
- * ObservationEditScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 /* eslint-disable react/no-unescaped-entities */
 
 import { useMemo, useState } from 'react';
@@ -74,9 +68,6 @@ export default function ModifierObservationScreen() {
   const updateMutation =
     useUpdateObservation();
 
-  // ====================================================
-  // STATUT AFFICHÉ
-  // ====================================================
 
   const statutLabel = useMemo(() => {
     switch (statut) {
@@ -100,17 +91,7 @@ export default function ModifierObservationScreen() {
     }
   }, [statut]);
 
-  // ====================================================
-  // CHARGER OBSERVATION
-  // ====================================================
 
-  /**
-   * Initialisation du formulaire à partir de l'observation chargée.
-   *
-   * L'état est **dérivé** de la donnée serveur (aucun `setState` synchrone dans
-   * un effet, ce qui évite les rendus en cascade et respecte les règles React).
-   * Dès que l'utilisateur modifie un champ, l'édition locale prend le relais.
-   */
   const observationInitiale = observationsQuery.data?.find(
     (item) => item.id === observationId,
   );
@@ -131,18 +112,12 @@ export default function ModifierObservationScreen() {
     setEditionLocale((precedent) => ({ ...precedent, date: valeur }));
 
   
-  // ====================================================
-  // VALIDATION / DROITS
-  // ====================================================
 
   const modificationAutorisee =
     statut !== 'SUPPRIMEE' &&
     statut !== 'RECOLTEE' &&
     statut !== 'ABANDONNEE';
 
-  // ====================================================
-  // ENREGISTRER
-  // ====================================================
 
   const enregistrer =
     async () => {
@@ -215,9 +190,6 @@ export default function ModifierObservationScreen() {
       }
     };
 
-  // ====================================================
-  // ERREUR PARAMETRES
-  // ====================================================
 
   if (
     !parcelleId ||
@@ -279,9 +251,6 @@ export default function ModifierObservationScreen() {
     );
   }
 
-  // ====================================================
-  // LOADING
-  // ====================================================
 
   if (observationsQuery.isLoading) {
     return (
@@ -318,9 +287,6 @@ export default function ModifierObservationScreen() {
     );
   }
 
-  // ====================================================
-  // ERROR
-  // ====================================================
 
   if (
     observationsQuery.isError
@@ -379,9 +345,6 @@ export default function ModifierObservationScreen() {
     );
   }
 
-  // ====================================================
-  // OBSERVATION INTROUVABLE
-  // ====================================================
 
   const observation =
     observationsQuery.data?.find(
@@ -446,9 +409,6 @@ export default function ModifierObservationScreen() {
     );
   }
 
-  // ====================================================
-  // ECRAN
-  // ====================================================
 
   return (
     <VueModificationObservation
@@ -467,10 +427,4 @@ export default function ModifierObservationScreen() {
   );
 }
 
-// ======================================================
-// DATE
-// ======================================================
 
-// ======================================================
-// STYLES
-// ======================================================

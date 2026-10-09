@@ -1,11 +1,3 @@
-/**
- * Règles de compression d'image — vérifiées hors appareil.
- *
- * Ces tests protègent la promesse faite à l'utilisateur : **moins d'espace sans
- * perte visible**. Ils garantissent qu'on ne recompresse jamais inutilement une
- * image déjà optimisée, qu'on n'agrandit jamais une image, et que le ratio est
- * conservé.
- */
 import {
   calculerDimensions,
   doitRecompresser,

@@ -1,9 +1,3 @@
-/**
- * InterventionCreateScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 import React, { useMemo, useState } from 'react';
 import { Alert, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -30,18 +24,6 @@ import { dateOnlyVersIso, formatDate, isDateOnly, todayDateOnly } from '@/utils/
 import { styles } from './InterventionCreateScreen.styles';
 
 import { formatNombre } from '@/utils/formatNombre';
-/**
- * Formulaire d'intervention.
- *
- * Correctif : tous les champs de sélection utilisent `AppSelect` (liste
- * déroulante en feuille modale). L'utilisateur ne voit **que des libellés
- * lisibles** ; l'application transmet les valeurs techniques (identifiants,
- * codes de type, unités).
- *
- * Le **statut n'est jamais saisi** : il est calculé par le serveur à partir de
- * la date (future → « Planifiée », passée → « En cours »). On l'affiche en
- * aperçu, à titre informatif uniquement.
- */
 
 export default function AjoutInterventionScreen() {
   const params = useLocalSearchParams<{
@@ -77,12 +59,6 @@ export default function AjoutInterventionScreen() {
     [parcelles.data],
   );
 
-  /**
-   * Aperçu local du statut (jamais envoyé à l'API).
-   *
-   * Il est calculé dans le gestionnaire de saisie — et non pendant le rendu —
-   * pour rester une fonction pure au regard de React.
-   */
   const [apercuStatut, setApercuStatut] = useState<'PLANIFIEE' | 'EN_COURS' | null>(
     () => statutInterventionPrevu(todayDateOnly()),
   );

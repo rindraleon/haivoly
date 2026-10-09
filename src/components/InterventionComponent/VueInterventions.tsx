@@ -1,10 +1,3 @@
-/**
- * Section `VueInterventions` extraite de `InterventionListScreen`.
- *
- * Le rendu est repris à l’identique : seules les valeurs et les actions
- * du composant parent sont reçues en props, ce qui évite de faire
- * transiter toute la logique de l’écran dans un seul fichier.
- */
 import type { Intervention } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
 import { styles } from '@/screens/InterventionScreen/InterventionListScreen.styles';
 import type { InterventionPayload, Intervention as InterventionInterventions, UpdateInterventionPayload } from '@/types';
@@ -78,9 +71,6 @@ export function VueInterventions({
   unite,
   updateMutation,
 }: Props) {
-  // Listes du domaine : l'utilisateur choisit un libellé lisible, l'application
-  // envoie la valeur technique. Une valeur historique absente de la liste est
-  // ajoutée afin de ne jamais la perdre lors d'une modification.
   const optionsType = useMemo(
     () => avecValeurCourante(TYPES_INTERVENTION, type),
     [type],

@@ -1,6 +1,3 @@
-/**
- * Utilisateur connecté.
- */
 import { useQuery } from '@tanstack/react-query';
 import { authApi } from '@/services';
 import { queryKeys } from '../queryKeys';

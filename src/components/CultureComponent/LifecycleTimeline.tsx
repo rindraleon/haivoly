@@ -1,10 +1,3 @@
-/**
- * Cycle de vie d'une culture.
- *
- * Le statut est une **règle métier du serveur** : le mobile ne fait que
- * l'afficher. Le composant met en évidence l'étape courante, l'étape
- * précédente, l'étape suivante, les dates du cycle et la progression.
- */
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { CalendarDays, Check, Clock3, Leaf, Sprout, Wheat, XCircle } from 'lucide-react-native';

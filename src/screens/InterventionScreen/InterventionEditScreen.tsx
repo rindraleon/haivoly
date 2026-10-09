@@ -1,9 +1,3 @@
-/**
- * InterventionEditScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 /* eslint-disable react-hooks/set-state-in-effect, react/no-unescaped-entities */
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native';
 
@@ -60,10 +54,6 @@ export default function ModifierInterventionScreen() {
   const [initialise, setInitialise] =
     useState(false);
 
-  /**
-   * Préremplit le formulaire lorsque
-   * l'intervention est récupérée.
-   */
   useEffect(() => {
     if (!intervention || initialise) {
       return;
@@ -106,9 +96,6 @@ export default function ModifierInterventionScreen() {
     setInitialise(true);
   }, [intervention, initialise]);
 
-  /**
-   * Vérification des paramètres.
-   */
   if (
     !parcelleId ||
     !cultureId ||
@@ -137,9 +124,6 @@ export default function ModifierInterventionScreen() {
     );
   }
 
-  /**
-   * Chargement.
-   */
   if (isLoading) {
     return (
       <View style={styles.center}>
@@ -154,9 +138,6 @@ export default function ModifierInterventionScreen() {
     );
   }
 
-  /**
-   * Erreur de récupération.
-   */
   if (isError || !intervention) {
     const errorMessage =
       (error as any)?.response?.data
@@ -187,9 +168,6 @@ export default function ModifierInterventionScreen() {
     );
   }
 
-  /**
-   * Enregistrement des modifications.
-   */
   const handleSubmit = async () => {
     const typeValue = type.trim();
     const dateValue = date.trim();

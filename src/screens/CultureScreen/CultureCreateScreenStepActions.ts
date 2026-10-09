@@ -1,15 +1,6 @@
-/**
- * Feuilles de style de `CultureCreateScreen`.
- *
- * Extraites du composant pour garder des fichiers courts et lisibles :
- * le composant décrit l'interface, ce module décrit son apparence.
- */
 import { StyleSheet } from 'react-native';
 
 
-/**
- * Styles `STEP ACTIONS` — extraits de `CultureCreateScreen`.
- */
 export const stylesStepActions = StyleSheet.create({
 stepActionsRow: {
       flexDirection: 'row',

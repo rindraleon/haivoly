@@ -2,16 +2,6 @@ import Constants from 'expo-constants';
 
 import { retirerBarreFinale } from '@/utils/url';
 
-/**
- * Configuration d'environnement mobile.
- *
- * Priorité de résolution de l'URL de l'API :
- *   1. `EXPO_PUBLIC_API_URL` (production / tunnel / build EAS)
- *   2. hôte du serveur de développement Expo (mode LAN, `Constants.hostUri`)
- *   3. fallback localhost
- *
- * Aucune URL de production n'est codée en dur dans les composants.
- */
 function resolveApiUrl(): string {
   const fromEnv = process.env.EXPO_PUBLIC_API_URL?.trim();
   if (fromEnv) {

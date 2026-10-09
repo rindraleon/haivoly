@@ -5,14 +5,6 @@ import { useColorScheme } from 'react-native';
 import { AppProviders } from '@/providers/AppProviders';
 import { colors } from '@/theme';
 
-/**
- * Layout racine : **couche de routage uniquement**.
- *
- * Les providers applicatifs (TanStack Query, confirmation, synchronisation
- * hors-ligne, gestes, zones sûres) vivent dans `@/providers/AppProviders` —
- * une seule composition pour toute l'application, donc un seul client de
- * cache et **un seul** moteur de synchronisation.
- */
 export default function RootLayout() {
   const scheme = useColorScheme();
 

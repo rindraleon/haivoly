@@ -1,6 +1,3 @@
-/**
- * Écritures sur les parcelles (création, modification, suppression, délimitation).
- */
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
 import { parcellesApi } from '@/services';
 import type { ParcellePayload } from '@/services';

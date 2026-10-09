@@ -1,9 +1,3 @@
-/**
- * InterventionListScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
  
 
 import { useCallback, useMemo, useState } from 'react';
@@ -33,16 +27,6 @@ import {
   useUpdateIntervention,
 } from '@/hooks';
 
-import { AppBottomBar } from '@/components/CommonComponent/AppBottomBar';
-
-
-
-
-
-
-
-
-
 import { styles } from './InterventionListScreen.styles';
 
 import { ContexteFormulaire, CultureGlobale, Intervention, InterventionGlobale, StatutCulture, interventionDate, normaliserErreur } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
@@ -53,36 +37,13 @@ import { VueInterventions } from '@/components/InterventionComponent/VueInterven
 import { VueInterventionsCulture } from '@/components/InterventionComponent/VueInterventionsCulture';
 import { interventionsCulturesApi } from './interventionsCulturesApi';
 import { logger } from '@/utils/logger';
-/**
- * Instant de référence du rendu.
- * Capturé une fois au chargement du module afin de garder le rendu **pur**
- * (les règles React interdisent `Date.now()` pendant le rendu).
- */
 const maintenant = Date.now();
 
-// ======================================================
-// TYPES
-// ======================================================
 
-// ======================================================
-// OUTILS
-// ======================================================
 
-// ======================================================
-// PHOTOS INTERVENTION
-// ======================================================
 
-// ======================================================
-// CARTE INTERVENTION
-// ======================================================
 
-// ======================================================
-// FILTRE
-// ======================================================
 
-// ======================================================
-// ÉCRAN PRINCIPAL
-// ======================================================
 
 export default function InterventionsCultureScreen() {
   const params = useLocalSearchParams<{
@@ -120,9 +81,6 @@ export default function InterventionsCultureScreen() {
 
   const modeGlobal = !parcelleId || !cultureId;
 
-  // ====================================================
-  // SÉLECTION GLOBALE
-  // ====================================================
 
   const [parcelleSelectionnee, setParcelleSelectionnee] =
     useState('');
@@ -161,9 +119,6 @@ export default function InterventionsCultureScreen() {
     useCulturesDeParcelle(parcelleTemporaire);
   const culturesFiltre = culturesFiltreQuery.data ?? [];
 
-  // ====================================================
-  // CULTURES DE TOUTES LES PARCELLES
-  // ====================================================
 
   const culturesGlobalesQueries = useQueries({
     queries: parcelles.map(parcelle => ({
@@ -195,9 +150,6 @@ export default function InterventionsCultureScreen() {
     return resultat;
   }, [culturesGlobalesQueries, parcelles]);
 
-  // ====================================================
-  // INTERVENTIONS DE TOUTES LES CULTURES
-  // ====================================================
 
   const interventionsGlobalesQueries = useQueries({
     queries: culturesGlobales.map(culture => ({
@@ -313,9 +265,6 @@ export default function InterventionsCultureScreen() {
     !!parcelleSelectionnee ||
     !!cultureSelectionnee;
 
-  // ====================================================
-  // INTERVENTIONS CULTURE COURANTE
-  // ====================================================
 
   const interventionsQuery = useInterventions(cultureId);
 
@@ -373,9 +322,6 @@ export default function InterventionsCultureScreen() {
     return { total, recentes };
   }, [interventions]);
 
-  // ====================================================
-  // RÈGLES STATUT
-  // ====================================================
 
   const cultureSupprimee = statut === 'SUPPRIMEE';
   const lectureSeule =
@@ -384,9 +330,6 @@ export default function InterventionsCultureScreen() {
   const modificationAutorisee =
     !cultureSupprimee && !lectureSeule;
 
-  // ====================================================
-  // FORMULAIRE INLINE — CONSERVÉ
-  // ====================================================
 
   const [formOuvert, setFormOuvert] = useState(false);
 
@@ -404,9 +347,6 @@ export default function InterventionsCultureScreen() {
   const [unite, setUnite] = useState('');
   const [cout, setCout] = useState('');
 
-  // ====================================================
-  // REFRESH
-  // ====================================================
 
   const chargerInterventions = useCallback(async () => {
     if (parcelleId && cultureId) {
@@ -447,9 +387,6 @@ export default function InterventionsCultureScreen() {
     cultureId,
   ]);
 
-  // ====================================================
-  // FILTRE
-  // ====================================================
 
   const ouvrirFiltre = () => {
     setModeAjoutGlobal(false);
@@ -691,7 +628,7 @@ export default function InterventionsCultureScreen() {
 
         Alert.alert(
           'Succès',
-          'L’intervention a été modifiée avec succès.',
+          'L�?Tintervention a été modifiée avec succès.',
         );
       } else {
         await createMutation.mutateAsync({
@@ -701,7 +638,7 @@ export default function InterventionsCultureScreen() {
 
         Alert.alert(
           'Succès',
-          'L’intervention a été enregistrée avec succès.',
+          'L�?Tintervention a été enregistrée avec succès.',
         );
       }
 
@@ -720,7 +657,7 @@ export default function InterventionsCultureScreen() {
         ),
       );
     } catch (error: any) {
-      logger.warn('InterventionListScreen', 'Échec du chargement des interventions');
+      logger.warn('InterventionListScreen', '�?chec du chargement des interventions');
 
       Alert.alert(
         'Erreur',
@@ -749,7 +686,7 @@ export default function InterventionsCultureScreen() {
     }
 
     Alert.alert(
-      'Supprimer l’intervention',
+      'Supprimer l�?Tintervention',
       'Voulez-vous vraiment supprimer cette intervention ?',
       [
         {
@@ -774,7 +711,7 @@ export default function InterventionsCultureScreen() {
                 ),
               );
             } catch (error: any) {
-              logger.warn('InterventionListScreen', "Échec de la suppression de l'intervention");
+              logger.warn('InterventionListScreen', "�?chec de la suppression de l'intervention");
 
               Alert.alert(
                 'Erreur',
@@ -804,7 +741,7 @@ export default function InterventionsCultureScreen() {
     }
 
     Alert.alert(
-      'Supprimer l’intervention',
+      'Supprimer l�?Tintervention',
       'Voulez-vous vraiment supprimer cette intervention ?',
       [
         { text: 'Annuler', style: 'cancel' },
@@ -824,7 +761,7 @@ export default function InterventionsCultureScreen() {
                 ),
               );
             } catch (error: any) {
-              logger.warn('InterventionListScreen', 'Échec de la suppression groupée');
+              logger.warn('InterventionListScreen', '�?chec de la suppression groupée');
               Alert.alert('Erreur', normaliserErreur(error));
             }
           },
@@ -993,9 +930,6 @@ export default function InterventionsCultureScreen() {
     });
   };
 
-  // ====================================================
-  // COMPOSANTS INTERNES
-  // ====================================================
 
   const renderCarteIntervention = (
     item: InterventionGlobale,
@@ -1018,15 +952,12 @@ export default function InterventionsCultureScreen() {
     />
   );
 
-  // ====================================================
-  // ETAT BLOQUÉ
-  // ====================================================
 
   if (cultureSupprimee) {
     return (
       <View style={styles.root}>
         <View style={styles.center}>
-          <Text style={styles.blockedIcon}>🚫</Text>
+          <Text style={styles.blockedIcon}>�Ys�</Text>
           <Text style={styles.blockedTitle}>
             Culture supprimée
           </Text>
@@ -1042,14 +973,10 @@ export default function InterventionsCultureScreen() {
             <Text style={styles.backButtonText}>Retour</Text>
           </TouchableOpacity>
         </View>
-        <AppBottomBar />
       </View>
     );
   }
 
-  // ====================================================
-  // MODE GLOBAL
-  // ====================================================
 
   if (modeGlobal) {
     return (
@@ -1096,9 +1023,6 @@ export default function InterventionsCultureScreen() {
     );
   }
 
-  // ====================================================
-  // MODE CULTURE
-  // ====================================================
 
   return (
     <ResumeInterventions
@@ -1124,6 +1048,3 @@ export default function InterventionsCultureScreen() {
   );
 }
 
-// ======================================================
-// STYLES
-// ======================================================

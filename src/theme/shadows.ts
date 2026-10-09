@@ -1,9 +1,3 @@
-/**
- * Ombres (iOS `shadow*` + `elevation` Android).
- *
- * Extrait de `src/design/tokens.ts` : un fichier par famille de jetons
- * (l'ancien module reste utilisable via `@/theme`).
- */
 export const shadows = {
   none: {
     shadowColor: 'transparent',

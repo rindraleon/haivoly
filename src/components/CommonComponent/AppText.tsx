@@ -1,14 +1,3 @@
-/**
- * Texte du design system (`AppText`).
- *
- * Un seul composant pour tous les textes de l'application : les variantes et les
- * teintes sont **dérivées des jetons** (`@/theme`) au lieu d'être recopiées en
- * styles locaux. Un écran qui a besoin d'une nuance ponctuelle garde la main via
- * la prop `style`, appliquée en dernier.
- *
- * Aucun interligne n'est imposé par les variantes : le rendu reste identique à
- * celui des `Text` stylés à la main qu'il remplace.
- */
 import React from 'react';
 import { StyleSheet, Text, type TextProps, type TextStyle } from 'react-native';
 

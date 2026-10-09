@@ -1,9 +1,3 @@
-/**
- * API publique des types métier.
- *
- * Un fichier par domaine (`<domaine>.types.ts`) ; ce baril permet d'importer
- * depuis `@/types` sans connaître le découpage interne.
- */
 export * from './common.types';
 export * from './user.types';
 export * from './parcelle.types';

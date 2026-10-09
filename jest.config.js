@@ -1,14 +1,3 @@
-/**
- * Tests unitaires du mobile (logique pure).
- *
- * Le dépôt n'embarque pas de tests de composants : `jest-expo` entre en conflit
- * de versions avec `react-native@0.86.2` (`@react-native/jest-preset`). On
- * vérifie donc ici ce qui ne dépend pas du rendu natif — contrats de dates,
- * vocabulaire métier, file de synchronisation, clés de cache — avec
- * `babel-preset-expo` (déjà fourni par Expo) comme transformateur.
- *
- * Lancer : `npm test`.
- */
 module.exports = {
   rootDir: __dirname,
   roots: ['<rootDir>/src'],

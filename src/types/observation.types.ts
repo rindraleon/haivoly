@@ -1,11 +1,3 @@
-/**
- * Types du domaine `observation` — contrat partagé avec l'API.
- *
- * Contrat de dates :
- *   • date calendaire → `YYYY-MM-DD` (jamais convertie en `Date`)
- *   • horodatage      → ISO-8601 UTC
- *   • affichage       → `JJ/MM/AAAA` (voir `@/utils/date`)
- */
 export interface Observation {
   id: string;
   description: string;

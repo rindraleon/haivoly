@@ -1,9 +1,3 @@
-/**
- * Feuilles de style de `CultureCreateScreen`.
- *
- * Extraites du composant pour garder des fichiers courts et lisibles :
- * le composant décrit l'interface, ce module décrit son apparence.
- */
 import { stylesRoot } from './CultureCreateScreenRoot';
 import { stylesHeader } from './CultureCreateScreenHeader';
 import { stylesStepper } from './CultureCreateScreenStepper';
@@ -22,13 +16,6 @@ import { stylesStatus } from './CultureCreateScreenStatus';
 import { stylesSave } from './CultureCreateScreenSave';
 import { stylesFooter } from './CultureCreateScreenFooter';
 
-/**
- * Feuille de styles de `CultureCreateScreen` — agrégat des groupes.
- *
- * Les clés restent identiques à celles d'origine (`styles.xxx`) : seul le
- * rangement a changé, ce qui évite d'avoir un fichier de plusieurs milliers de
- * lignes.
- */
 export const styles = {
   ...stylesRoot,
   ...stylesHeader,

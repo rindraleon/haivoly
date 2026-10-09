@@ -159,7 +159,7 @@ fond, les mêmes marges, le même en-tête et l'action fixée en bas.
 | 1 | **Carte centrée sur la parcelle enregistrée** (`animateToRegion` avec un point, `fitToCoordinates` au-delà), jamais sur la position de l'utilisateur ; position courante **uniquement** à la création | `ParcelleComponent/ParcelleMap.tsx` |
 | 2 | Bouton **« Modifier »** explicite (icône Lucide) sur le détail de parcelle | `ParcelleScreen/ParcelleDetailScreen.tsx` |
 | 3 | **Même fond et même structure** pour création et modification (shell partagé : fond applicatif, `SafeAreaView`, `KeyboardAvoidingView`, en-tête, barre d'actions) | `ParcelleComponent/ParcelleFormShell.tsx` |
-| 4 | **Assistant en étapes** Informations → Localisation → Délimitation → Résumé → Enregistrement, titres par étape, validation, « Suivant » désactivé si l'étape est invalide, pré-remplissage en modification | `ParcelleComponent/ParcelleWizard.tsx` |
+| 4 | **Assistant en étapes** Informations → Délimitation → Résumé → Enregistrement, titres par étape, validation, « Suivant » désactivé si l'étape est invalide, pré-remplissage en modification | `ParcelleComponent/ParcelleWizard.tsx` |
 | 5 | **Délimitation** : mode visible, `Polygon`, sommets déplaçables, action « Délimiter » avec icône et libellé | `ParcelleScreen/ParcelleDelimiterScreen.tsx`, `CultureScreen/CultureDelimiterScreen.tsx` |
 | 6 | **Cycle de vie de la culture** : étape courante / précédente / suivante, dates, progression | `CultureComponent/LifecycleTimeline.tsx` |
 | 7 | **Dates fiables** : `YYYY-MM-DD` envoyé tel quel, instants ISO-8601, aucune conversion manuelle | `utils/date.ts`, `CommonComponent/DateInput.tsx` |

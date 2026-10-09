@@ -1,11 +1,3 @@
-/**
- * Section `ResumeInterventions` extraite de `InterventionListScreen`.
- *
- * Le rendu est repris à l’identique : seules les valeurs et les actions
- * du composant parent sont reçues en props, ce qui évite de faire
- * transiter toute la logique de l’écran dans un seul fichier.
- */
-import { AppBottomBar } from '@/components/CommonComponent/AppBottomBar';
 import { ScreenHeader } from '@/components/CommonComponent/ScreenHeader';
 import { InterventionCard } from '@/components/InterventionComponent/InterventionCard';
 import { Intervention, StatutCulture, libelleStatut } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
@@ -277,8 +269,6 @@ export function ResumeInterventions({
             />
           </Pressable>
         ) : null}
-
-        <AppBottomBar />
       </View>
   );
 }

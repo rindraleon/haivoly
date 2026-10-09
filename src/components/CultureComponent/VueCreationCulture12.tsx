@@ -1,10 +1,3 @@
-/**
- * Section `VueCreationCulture12` extraite de `VueCreationCulture1`.
- *
- * Le rendu est repris à l’identique : seules les valeurs et les actions
- * du composant parent sont reçues en props, ce qui évite de faire
- * transiter toute la logique de l’écran dans un seul fichier.
- */
 import { CultureCheckItem } from '@/components/CultureComponent/CultureCheckItem';
 import { ReviewRow } from '@/components/CultureComponent/ReviewRow';
 import { styles } from '@/screens/CultureScreen/CultureCreateScreen.styles';

@@ -1,15 +1,6 @@
-/**
- * Feuilles de style de `CultureListScreen`.
- *
- * Extraites du composant pour garder des fichiers courts et lisibles :
- * le composant décrit l'interface, ce module décrit son apparence.
- */
 import { StyleSheet } from 'react-native';
 import { colors, radius } from '@/theme';
 
-/**
- * Styles `STATS` — extraits de `CultureListScreen`.
- */
 export const stylesStats = StyleSheet.create({
 statsBar: {
     flexDirection: 'row',

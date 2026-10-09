@@ -1,9 +1,3 @@
-/**
- * Sous-composant `PhotosIntervention` extrait de `InterventionListScreen`.
- *
- * Regroupe la présentation d'un élément de liste et ses interactions
- * locales, ce qui allège nettement le composant principal.
- */
 import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Camera, Plus, X } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -61,10 +55,6 @@ export function PhotosIntervention({
   // libellé affiché (« Compression… », « Envoi… »).
   const [etapeEnvoi, setEtapeEnvoi] = useState<EtapeEnvoiPhoto>('inactif');
 
-  // Les photos sont chargées directement par React Native <Image>.
-  // Contrairement à Axios, <Image> ne récupère pas automatiquement
-  // le JWT ajouté par l'interceptor Axios. On lui transmet donc le
-  // token lorsque le backend protège également l'accès aux fichiers.
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
@@ -93,11 +83,6 @@ export function PhotosIntervention({
     };
   }, []);
 
-  /**
-   * Envoi d'une photo, en deux étapes visibles par l'utilisateur :
-   * compression locale, puis téléversement. L'état sert aussi de verrou :
-   * un second appui pendant l'envoi n'ajoute pas de photo en double.
-   */
   const envoyerPhoto = async (uri: string) => {
     if (!modificationAutorisee || etapeEnvoi !== 'inactif') {
       return;

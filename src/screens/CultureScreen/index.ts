@@ -1,6 +1,3 @@
-/**
- * Écran(s) du domaine `CultureScreen`.
- */
 export { default as CultureCreateScreen } from './CultureCreateScreen';
 export { default as CultureDelimiterScreen } from './CultureDelimiterScreen';
 export { default as CultureDetailScreen } from './CultureDetailScreen';

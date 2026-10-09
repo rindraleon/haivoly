@@ -1,11 +1,3 @@
-/**
- * Section `VueProfil` extraite de `ProfilScreen`.
- *
- * Le rendu est repris à l’identique : seules les valeurs et les actions
- * du composant parent sont reçues en props, ce qui évite de faire
- * transiter toute la logique de l’écran dans un seul fichier.
- */
-import { AppBottomBar } from '@/components/CommonComponent/AppBottomBar';
 import { AgricultureBackground } from '@/components/ProfileComponent/AgricultureBackground';
 import { InfoRow } from '@/components/ProfileComponent/InfoRow';
 import { SectionHeader } from '@/components/ProfileComponent/SectionHeader';
@@ -511,8 +503,6 @@ export function VueProfil({
             </Text>
           </View>
         </ScrollView>
-
-        <AppBottomBar />
       </View>
   );
 }

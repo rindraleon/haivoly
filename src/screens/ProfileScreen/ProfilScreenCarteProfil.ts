@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ProfilScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 import { colors, radius, } from '@/theme';
 
-/**
- * Styles `CARTE PROFIL` — extraits de `ProfilScreen`.
- */
 export const stylesCarteProfil = StyleSheet.create({
 profileCard: {
     position: 'relative',

@@ -1,17 +1,3 @@
-/**
- * Moteur de synchronisation hors-ligne.
- *
- * Principes :
- *   1. **Idempotence** : chaque action porte un `clientId` (UUID local) unique
- *      envoyé au serveur ; un rejeu est reconnu (`DUPLICATE`) et ne crée pas
- *      de doublon.
- *   2. **Batching** : toutes les actions en attente partent dans une seule
- *      requête `POST /sync`.
- *   3. **Reprise progressive** : délais 1 s → 3 s → 10 s → 30 s → 60 s.
- *   4. **Conflits explicites** : le serveur peut renvoyer `CONFLICT` ; on ne
- *      l'écrase jamais silencieusement, l'action est marquée en échec et
- *      l'utilisateur voit « Échec de synchronisation / Réessayer ».
- */
 import * as Crypto from 'expo-crypto';
 
 import { getIsOnline } from '@/hooks/common/useNetwork';
@@ -135,9 +121,6 @@ export async function syncOnce(): Promise<{
         Date.now() - new Date(action.updatedAt).getTime() >= backoffFor(action)),
   );
 
-  // Le serveur n'accepte que `CREATE|UPDATE|DELETE` sur une ressource métier :
-  // une action hors contrat est marquée `INVALID` (jamais envoyée, jamais
-  // comptée comme « en attente ») au lieu de boucler indéfiniment.
   const horsContrat = candidats.filter((action) => !estActionSynchronisable(action));
 
   for (const action of horsContrat) {

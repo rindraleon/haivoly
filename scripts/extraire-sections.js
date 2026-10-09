@@ -1,22 +1,4 @@
 #!/usr/bin/env node
-/**
- * Extrait les blocs JSX volumineux d'un écran vers des composants dédiés.
- *
- *   • l'analyse s'appuie sur l'AST **et sur le vérificateur de types** ;
- *   • un bloc n'est extrait que si toutes ses références libres proviennent de
- *     la portée du module (imports) ou de la portée du composant (état,
- *     callbacks, refs) : les variables d'itération d'un `map` interdisent donc
- *     l'extraction, par sécurité ;
- *   • les références au module deviennent des imports, les références au
- *     composant deviennent des props typées automatiquement ;
- *   • le site d'appel est remplacé par `<Nom ... />`, à l'identique ;
- *   • le script est récursif : on peut le relancer sur un composant produit
- *     pour l'affiner (il prend alors le plus gros composant de premier niveau).
- *
- * Usage :
- *   node scripts/extraire-sections.js <écran.tsx> [--min 100] [--max 8]
- *                                    [--liste] [--nom <ligne>=<NomComposant> …]
- */
 const fs = require('fs');
 const path = require('path');
 const ts = require('/home/user/mobile/node_modules/typescript');
@@ -229,14 +211,6 @@ const pascal = (texte) =>
 /* Typage automatique des props                                        */
 /* ------------------------------------------------------------------ */
 
-/**
- * Type d'une référence, exprimé lisiblement (props typées automatiquement).
- *
- * Le type est imprimé puis ses symboles sont résolus pour retrouver leur
- * module d'origine. En cas d'homonymie avec un import déjà présent dans le
- * nouveau module (deux types `Intervention` provenant de deux modules), le
- * type importé est renommé (`InterventionApi`) pour lever l'ambiguïté.
- */
 /** Spécifieur d'import valable depuis 'import { X } from <spec>' quel que soit le dossier. */
 function specifieurAbsolu(ligne, fichierSource) {
   const trouve = ligne && ligne.match(/from\s*'([^']+)'/);

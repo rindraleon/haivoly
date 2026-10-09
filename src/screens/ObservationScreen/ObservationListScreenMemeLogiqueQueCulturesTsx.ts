@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ObservationListScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 import { colors } from '@/theme';
 
-/**
- * Styles `même logique que cultures.tsx` — extraits de `ObservationListScreen`.
- */
 export const stylesMemeLogiqueQueCulturesTsx = StyleSheet.create({
 topBar: {
       paddingHorizontal: 16,

@@ -7,9 +7,6 @@ module.exports = defineConfig([
   {
     ignores: ["dist/*"],
   },
-  // Code applicatif : aucune trace directe. `console.log` en production finit
-  // dans la console du téléphone (données visibles, rendu ralenti) ; tout passe
-  // par `@/utils/logger`, qui journalise uniquement en développement.
   {
     files: ["src/**/*.{ts,tsx}"],
     rules: {

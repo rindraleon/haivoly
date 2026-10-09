@@ -1,6 +1,3 @@
-/**
- * Feuilles de style de `BootstrapScreen` (écran de démarrage).
- */
 import { StyleSheet } from 'react-native';
 
 import { colors } from '@/theme';

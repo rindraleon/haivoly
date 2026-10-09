@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ProfilScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 
 
-/**
- * Styles `ROOT` — extraits de `ProfilScreen`.
- */
 export const stylesRoot = StyleSheet.create({
 screen: {
     flex: 1,

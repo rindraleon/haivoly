@@ -1,9 +1,3 @@
-/**
- * RecolteCreateScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 import React, { useState } from 'react';
 import { Alert, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -30,14 +24,6 @@ const UNITES = [
   { value: 'unite', label: 'Unités' },
 ];
 
-/**
- * Enregistrement d'une récolte.
- *
- * ⚠️ Le mobile **n'envoie aucun statut** : le serveur crée la récolte et
- * bascule la culture en `RECOLTEE` dans une transaction. En cas d'échec, rien
- * n'est écrit (rollback). Après succès, `useCreateRecolte` invalide la culture
- * et le tableau de bord pour que l'interface reflète immédiatement l'état réel.
- */
 export default function AjoutRecolteScreen() {
   const { cultureId } = useLocalSearchParams<{
     cultureId: string;

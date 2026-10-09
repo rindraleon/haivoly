@@ -1,9 +1,3 @@
-/**
- * CultureParcellePickerScreen — implémentation de l’écran.
- *
- * Le fichier de route correspondant (`src/app/(app)/…`) ne fait que
- * réexporter ce composant : toute la logique vit ici.
- */
 import {
   ActivityIndicator,
   FlatList,
@@ -31,9 +25,6 @@ export default function ChoisirParcelleCultureScreen() {
   /** `useParcelles` renvoie une page paginée : l'écran travaille sur la liste. */
   const parcelles = parcellesPage?.items ?? [];
 
-  // ==============================
-  // CHARGEMENT
-  // ==============================
 
   if (isLoading) {
     return (
@@ -45,9 +36,6 @@ export default function ChoisirParcelleCultureScreen() {
     );
   }
 
-  // ==============================
-  // ERREUR
-  // ==============================
 
   if (isError) {
     return (
@@ -75,9 +63,6 @@ export default function ChoisirParcelleCultureScreen() {
     );
   }
 
-  // ==============================
-  // LISTE
-  // ==============================
 
   return (
     <View style={styles.container}>

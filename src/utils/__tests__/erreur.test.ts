@@ -1,9 +1,3 @@
-/**
- * Erreurs API : message lisible et rattachement aux champs.
- *
- * Vérifie le contrat établi avec le backend : le mobile lit le `code` (jamais le
- * texte) et rattache chaque erreur au bon champ via `path`, index compris.
- */
 import { ApiError } from '@/services/http';
 
 import {

@@ -1,10 +1,3 @@
-/**
- * Point d'entrée unique des services HTTP.
- *
- * Les écrans et les hooks n'importent plus jamais `axios` : tout passe par
- * `http` (`@/services/http`), qui applique l'URL de base, le jeton et le
- * déballage d'enveloppe. Les types métier viennent de `@/types`.
- */
 export * from './http';
 export * from './auth.service';
 export * from './parcelle.service';

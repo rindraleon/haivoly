@@ -22,19 +22,10 @@ import { Errors } from '@/screens/AuthScreen/RegisterScreen.helpers';
 import { Keyboard } from '@/components/AuthComponent/Keyboard';
 import { estEmailValide } from '@/utils/email';
 import { erreursParChamp, estErreurDe, messageErreur } from '@/utils/erreur';
-// =====================================================
-// TYPES
-// =====================================================
 
-// =====================================================
-// COMPONENT
-// =====================================================
 
 export default function RegisterScreen() {
 
-  // ===================================================
-  // FORM
-  // ===================================================
 
   const [nom, setNom] =
     useState('');
@@ -54,16 +45,10 @@ export default function RegisterScreen() {
   const [errors, setErrors] =
     useState<Errors>({});
 
-  // ===================================================
-  // MUTATION
-  // ===================================================
 
   const mutation =
     useRegister();
 
-  // ===================================================
-  // PASSWORD CHECKS
-  // ===================================================
 
   const pwdChecks =
     useMemo(() => {
@@ -122,9 +107,6 @@ export default function RegisterScreen() {
       passwordScore,
     ]);
 
-  // ===================================================
-  // VALIDATION
-  // ===================================================
 
   const validate = (): boolean => {
 
@@ -135,9 +117,6 @@ export default function RegisterScreen() {
     ) =>
       value.trim();
 
-    // -------------------------------------------------
-    // NOM
-    // -------------------------------------------------
 
     if (!clean(nom)) {
 
@@ -154,9 +133,6 @@ export default function RegisterScreen() {
         'Nom invalide.';
     }
 
-    // -------------------------------------------------
-    // PRENOM
-    // -------------------------------------------------
 
     if (
       clean(prenom) &&
@@ -169,9 +145,6 @@ export default function RegisterScreen() {
         'Prénom invalide.';
     }
 
-    // -------------------------------------------------
-    // EMAIL
-    // -------------------------------------------------
 
     if (!clean(email)) {
 
@@ -188,9 +161,6 @@ export default function RegisterScreen() {
         'Email invalide.';
     }
 
-    // -------------------------------------------------
-    // TELEPHONE
-    // -------------------------------------------------
 
     if (
       clean(telephone)
@@ -224,9 +194,6 @@ export default function RegisterScreen() {
       }
     }
 
-    // -------------------------------------------------
-    // PASSWORD
-    // -------------------------------------------------
 
     if (!password) {
 
@@ -258,9 +225,6 @@ export default function RegisterScreen() {
     );
   };
 
-  // ===================================================
-  // REGISTER
-  // ===================================================
 
   const handleRegister = () => {
 
@@ -324,16 +288,10 @@ export default function RegisterScreen() {
     );
   };
 
-  // ===================================================
-  // LOADING
-  // ===================================================
 
   const isLoading =
     mutation.isPending;
 
-  // ===================================================
-  // HELPERS
-  // ===================================================
 
   const clearFieldError = (
     field:
@@ -364,9 +322,6 @@ export default function RegisterScreen() {
     );
   };
 
-  // ===================================================
-  // RENDER
-  // ===================================================
 
   return (
 
@@ -453,11 +408,5 @@ export default function RegisterScreen() {
   );
 }
 
-// =====================================================
-// PASSWORD CHECK
-// =====================================================
 
-// =====================================================
-// STYLES
-// =====================================================
 

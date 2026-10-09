@@ -1,13 +1,6 @@
-/**
- * Feuilles de style de `ObservationListScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 
 
-/**
- * Styles `exactement comme cultures.tsx` — extraits de `ObservationListScreen`.
- */
 export const stylesExactementCommeCulturesTsx = StyleSheet.create({
 fieldShape: {
       position: 'absolute',

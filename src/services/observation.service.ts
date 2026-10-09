@@ -1,10 +1,3 @@
-/**
- * Observations rattachées à une culture.
- *
- * Aucun écran n'appelle `axios` directement : tout passe par `http` puis par
- * ces fonctions. Les identifiants (`parcelleId`, `cultureId`…) sont envoyés
- * tels quels ; c'est le serveur qui valide la propriété et les règles métier.
- */
 import { http } from '@/services/http';
 import type { FichierPhoto, Photo , Observation, Paginated } from '@/types';
 
@@ -22,11 +15,6 @@ export const observationsApi = {
   remove: (id: string) => http.delete<{ id: string }>(`/observations/${id}`),
 };
 
-/**
- * Photos rattachées à une observation (`/parcelles/${parcelleId}/cultures/${cultureId}/observations/${observationId}/photos`, `.../photos/upload`, `.../photos/:id`).
- * Les fichiers sont téléversés en `multipart/form-data` ; le serveur normalise
- * l'URL publique avant de la stocker.
- */
 export const observationPhotosApi = {
   list: (parcelleId: string, cultureId: string, observationId: string) => http.get<Photo[]>(`/parcelles/${parcelleId}/cultures/${cultureId}/observations/${observationId}/photos`),
   /** `fichier` est préparé par l'appelant (`preparerFichierPhoto` : compressé). */

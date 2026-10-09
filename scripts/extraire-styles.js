@@ -1,16 +1,4 @@
 #!/usr/bin/env node
-/**
- * Extrait une feuille de styles d'un écran vers un module dédié.
- *
- * Pour `src/screens/FooScreen/FooScreen.tsx`, la déclaration
- * `const styles = StyleSheet.create({ … })` part dans
- * `src/screens/FooScreen/FooScreen.styles.ts` et l'écran l'importe : le
- * composant ne garde que sa logique et son rendu.
- *
- * Aucune règle de style n'est modifiée : l'objet est recopié tel quel.
- *
- * Usage : node scripts/extraire-styles.js <fichier.tsx> [autre.tsx …]
- */
 const fs = require('fs');
 const path = require('path');
 const ts = require('/home/user/mobile/node_modules/typescript');

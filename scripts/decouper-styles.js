@@ -1,17 +1,4 @@
 #!/usr/bin/env node
-/**
- * Découpe une feuille de styles volumineuse en plusieurs modules.
- *
- * Le fichier d'origine est remplacé par un **agrégateur** qui réexporte les
- * mêmes clés (`export const styles = { ...partie1, ...partie2 }`) : aucune
- * référence `styles.xxx` n'est modifiée, seul le rangement change.
- *
- * Les groupes sont repris des commentaires de section déjà présents
- * (`// ===== ROOT =====`) ; à défaut, le découpage se fait tous les ~250
- * lignes de propriétés.
- *
- * Usage : node scripts/decouper-styles.js <fichier.styles.ts> [--seuil 250]
- */
 const fs = require('fs');
 const path = require('path');
 const ts = require('/home/user/mobile/node_modules/typescript');

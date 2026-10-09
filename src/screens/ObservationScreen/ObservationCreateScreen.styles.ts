@@ -1,7 +1,3 @@
-/**
- * Feuilles de style de `ObservationCreateScreen` — module dédié pour garder le
- * composant court et lisible.
- */
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -16,9 +12,6 @@ export const styles = StyleSheet.create({
     paddingBottom: 36,
   },
 
-  // ===================================================
-  // HEADER
-  // ===================================================
 
   header: {
     flexDirection: 'row',
@@ -66,9 +59,6 @@ export const styles = StyleSheet.create({
     color: '#6B7280',
   },
 
-  // ===================================================
-  // CONTEXTE CULTURE
-  // ===================================================
 
   contextCard: {
     position: 'relative',
@@ -175,9 +165,6 @@ export const styles = StyleSheet.create({
     color: '#166534',
   },
 
-  // ===================================================
-  // SECTION HEADER
-  // ===================================================
 
   sectionHeader: {
     flexDirection: 'row',
@@ -214,9 +201,6 @@ export const styles = StyleSheet.create({
     color: '#6B7280',
   },
 
-  // ===================================================
-  // DESCRIPTION
-  // ===================================================
 
   descriptionCard: {
     backgroundColor: '#FFFFFF',
@@ -290,9 +274,6 @@ export const styles = StyleSheet.create({
     color: '#9CA3AF',
   },
 
-  // ===================================================
-  // CONSEIL
-  // ===================================================
 
   tipCard: {
     flexDirection: 'row',
@@ -332,9 +313,6 @@ export const styles = StyleSheet.create({
     color: '#4B5563',
   },
 
-  // ===================================================
-  // DATE
-  // ===================================================
 
   dateCard: {
     minHeight: 72,
@@ -387,9 +365,6 @@ export const styles = StyleSheet.create({
     color: '#9CA3AF',
   },
 
-  // ===================================================
-  // SAVE
-  // ===================================================
 
   saveButton: {
     minHeight: 58,

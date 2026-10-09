@@ -1,10 +1,3 @@
-/**
- * Gestion des 401 : « identifiants erronés » vs « session perdue ».
- *
- * Un utilisateur qui se trompe de mot de passe ne doit pas voir « votre session
- * a expiré » ; à l'inverse, un jeton expiré ne doit pas le laisser sur un écran
- * protégé vide et sans explication.
- */
 import { estExpirationDeSession } from '@/services/http';
 
 describe('estExpirationDeSession', () => {

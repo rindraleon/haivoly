@@ -1,10 +1,3 @@
-/**
- * Substitut d'`expo-image-manipulator` pour les tests unitaires (module natif).
- *
- * Les règles de compression sont testées de façon pure dans
- * `image.regles.test.ts` ; ce substitut sert seulement à rendre importable
- * `utils/image.ts` (donc `utils/photo.ts`) hors appareil.
- */
 export const SaveFormat = {
   JPEG: 'jpeg',
   PNG: 'png',
