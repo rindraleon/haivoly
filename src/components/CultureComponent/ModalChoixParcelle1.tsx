@@ -1,4 +1,5 @@
 import { Chip } from '@/components/CommonComponent/Chip';
+import { i18n } from '@/i18n/instance';
 import { EmptyState } from '@/components/CommonComponent/EmptyState';
 import { ScreenHeader } from '@/components/CommonComponent/ScreenHeader';
 import { SearchBar } from '@/components/CommonComponent/SearchBar';
@@ -88,9 +89,7 @@ export function ModalChoixParcelle1({
             }
           >
 
-            {/* ===========================================
-                HEADER
-            ============================================ */}
+            {}
 
             <ScreenHeader
               title="Cultures"
@@ -449,7 +448,7 @@ export function ModalChoixParcelle1({
                       onChangeText={
                         setRecherche
                       }
-                      placeholder="Rechercher une culture..."
+                      placeholder={i18n.t('libelles.rechercheCulture')}
                     />
 
                   </View>
@@ -587,8 +586,8 @@ export function ModalChoixParcelle1({
                       recherche ||
                       statutFiltre !==
                         'TOUTES'
-                        ? 'Aucun résultat'
-                        : 'Aucune culture'
+                        ? i18n.t('domaine.aucunResultat')
+                        : i18n.t('libelles.aucuneCulture')
                     }
                     description={
                       recherche
@@ -598,14 +597,14 @@ export function ModalChoixParcelle1({
                           ? `Aucune culture ${nomStatut(
                               statutFiltre,
                             ).toLowerCase()}.`
-                          : 'Cette parcelle ne contient encore aucune culture.'
+                          : i18n.t('parcelles.parcelleNeContientEncore')
                     }
                     actionLabel={
                       recherche ||
                       statutFiltre !==
                         'TOUTES'
-                        ? 'Réinitialiser'
-                        : 'Ajouter une culture'
+                        ? i18n.t('domaine.reinitialiser')
+                        : i18n.t('cultures.ajouterCulture')
                     }
                     onAction={() => {
 

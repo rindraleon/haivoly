@@ -1,4 +1,5 @@
 
+import { i18n } from '@/i18n/instance';
 import { formatDateTime } from '@/utils/date';
 import type {Culture ,
   Observation,
@@ -6,7 +7,6 @@ import type {Culture ,
 
 
 import { router } from 'expo-router';
-
 
 
 export type StatutCulture =
@@ -33,25 +33,10 @@ export interface ObservationGlobale {
 export function nomStatut(
   statut?: string,
 ) {
-  switch (statut) {
-    case 'PLANIFIEE':
-      return 'PLANIFIÉE';
-
-    case 'EN_COURS':
-      return 'EN COURS';
-
-    case 'RECOLTEE':
-      return 'RÉCOLTÉE';
-
-    case 'ABANDONNEE':
-      return 'ABANDONNÉE';
-
-    case 'SUPPRIMEE':
-      return 'SUPPRIMÉE';
-
-    default:
-      return statut ?? '';
-  }
+  if (!statut) return '';
+  const cle = `statuts.${statut}`;
+  const texte = i18n.t(cle, { defaultValue: '' });
+  return texte || statut;
 }
 
 export function getBadgeVariant(

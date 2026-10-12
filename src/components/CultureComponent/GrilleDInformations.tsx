@@ -1,4 +1,5 @@
 import type { CultureToutesParcelles } from '@/screens/CultureScreen/CultureListScreen.helpers';
+import { i18n } from '@/i18n/instance';
 import { styles } from '@/screens/CultureScreen/CultureListScreen.styles';
 
 import { colors } from '@/theme';
@@ -75,7 +76,7 @@ export function GrilleDInformations({
                     }
                   >
                     {culture.stade ||
-                      'Non renseigné'}
+                      i18n.t('domaine.nonRenseigne')}
                   </Text>
 
                 </View>
@@ -128,7 +129,7 @@ export function GrilleDInformations({
                     }
                   >
                     {datePlantation ||
-                      'Non renseignée'}
+                      i18n.t('cultures.nonRenseignee')}
                   </Text>
 
                 </View>
@@ -181,7 +182,7 @@ export function GrilleDInformations({
                     }
                   >
                     {dateRecoltePrevue ||
-                      'Non renseignée'}
+                      i18n.t('cultures.nonRenseignee')}
                   </Text>
 
                 </View>
@@ -237,7 +238,7 @@ export function GrilleDInformations({
                   >
                     {estDelimitee
                       ? `${points.length} points GPS`
-                      : 'Non délimitée'}
+                      : i18n.t('cultures.nonDelimitee')}
                   </Text>
 
                 </View>

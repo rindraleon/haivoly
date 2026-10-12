@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { i18n } from '@/i18n/instance';
 import { Alert, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { CheckCircle2, MapPin, PenTool, Plus, RotateCcw, Trash2 } from 'lucide-react-native';
@@ -12,6 +13,7 @@ import { ParcelleMap } from '@/components/ParcelleComponent/ParcelleMap';
 import { ParcelleFormShell } from '@/components/ParcelleComponent/ParcelleFormShell';
 import { useDelimiterParcelle, useParcelle } from '@/hooks';
 import { ApiError } from '@/services/http';
+import { messageDesDefauts, validerGeometrie } from '@/utils/geometrie';
 import { formatSuperficie, polishPolygon } from '@/utils/parcelle';
 import type { PointGPS } from '@/types';
 
@@ -34,16 +36,20 @@ export default function DelimiterParcelleScreen() {
     latitude != null && longitude != null ? { latitude, longitude } : null;
 
   const superficie = formatSuperficie(pointsCourants);
-  const valide = pointsCourants.length >= 3;
+
+  // Validation identique à celle du backend : on évite un aller-retour réseau
+  // inutile (souvent impossible sur le terrain) et on explique le problème.
+  const geometrie = validerGeometrie(pointsCourants);
+  const valide = geometrie.valide;
 
   if (parcelle.isLoading) {
-    return <LoadingState message="Chargement de la délimitation…" />;
+    return <LoadingState message={i18n.t('parcelles.chargementDelimitation')} />;
   }
 
   if (parcelle.isError || !parcelle.data) {
     return (
       <ErrorState
-        title="Parcelle introuvable"
+        title={i18n.t('libelles.parcelleIntrouvable')}
         onRetry={() => parcelle.refetch()}
         onBack={() => router.back()}
       />
@@ -52,25 +58,30 @@ export default function DelimiterParcelleScreen() {
 
   const handleEnregistrer = async () => {
     if (!valide) {
-      Alert.alert('Délimitation incomplète', 'Ajoutez au moins 3 sommets.');
+      Alert.alert(
+        i18n.t('domaine.delimitationInvalide'),
+        geometrie.defauts.length > 0
+          ? messageDesDefauts(geometrie.defauts)
+          : 'Ajoutez au moins 3 sommets distincts.',
+      );
       return;
     }
 
     try {
       await delimitation.mutateAsync({ id: id as string, pointsGPS: pointsCourants });
-      Alert.alert('Délimitation enregistrée', 'La superficie a été recalculée.');
+      Alert.alert(i18n.t('domaine.delimitationEnregistree'), i18n.t('parcelles.superficieRecalculee'));
       router.back();
     } catch (error) {
       Alert.alert(
         'Enregistrement impossible',
-        error instanceof ApiError ? error.message : 'Une erreur est survenue.',
+        error instanceof ApiError ? error.message : i18n.t('domaine.erreurSurvenue'),
       );
     }
   };
 
   return (
     <ParcelleFormShell
-      title="Délimiter la parcelle"
+      title={i18n.t('parcelles.delimiter')}
       subtitle={parcelle.data.nom}
       onBack={() => router.back()}
       footer={

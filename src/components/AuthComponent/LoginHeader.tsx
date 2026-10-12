@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { i18n } from '@/i18n/instance';
 import { Sprout, ShieldCheck, TrendingUp } from 'lucide-react-native';
 import { colors, radius } from '@/theme';
 
@@ -21,7 +22,7 @@ export function LoginHeader() {
         <View style={styles.dot} />
         <View style={styles.trustItem}>
           <TrendingUp size={14} color={colors.primary[700]} />
-          <Text style={styles.trustText}>Pensé pour le terrain</Text>
+          <Text style={styles.trustText}>{i18n.t('libelles.penserTerrain')}</Text>
         </View>
       </View>
     </View>

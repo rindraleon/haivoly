@@ -1,4 +1,5 @@
 import { nomStatut } from '@/screens/ObservationScreen/ObservationListScreen.helpers';
+import { i18n } from '@/i18n/instance';
 import { styles } from '@/screens/ObservationScreen/ObservationListScreen.styles';
 
 
@@ -174,7 +175,7 @@ export function Fermerfiltre({
                             numberOfLines={1}
                           >
                             {parcellePourSelection?.nom ??
-                              'Sélectionner une parcelle'}
+                              i18n.t('domaine.selectionnerParcelle')}
                           </Text>
                         </View>
 
@@ -365,8 +366,8 @@ export function Fermerfiltre({
                           >
                             {parcelleTemporaire
                               ? culturePourSelection?.nom ??
-                                'Sélectionner une culture'
-                              : 'Choisissez d’abord une parcelle'}
+                                i18n.t('domaine.selectionnerCulture')
+                              : i18n.t('parcelles.choisissezDAbordParcelle')}
                           </Text>
                         </View>
 
@@ -607,12 +608,12 @@ export function Fermerfiltre({
                               {cultureTemporaire
                                 ? `${
                                     culturePourSelection?.nom ??
-                                    'Culture'
+                                    i18n.t('libelles.culture')
                                   } • ${
                                     parcellePourSelection?.nom ??
-                                    'Parcelle'
+                                    i18n.t('libelles.parcelle')
                                   }`
-                                : 'Sélectionnez une parcelle et une culture'}
+                                : i18n.t('observations.selectionParcelleCulture')}
                             </Text>
                           </View>
 

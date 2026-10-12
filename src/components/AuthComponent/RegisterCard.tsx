@@ -1,7 +1,6 @@
 
 
 
-
 import type { Errors } from '@/screens/AuthScreen/RegisterScreen.helpers';
 import { styles } from '@/screens/AuthScreen/RegisterScreen.styles';
 
@@ -19,7 +18,8 @@ type Props = {
   isLoading: boolean;
   nom: string;
   password: string;
-  passwordLabel: "Créez un mot de passe sécurisé" | "Mot de passe faible" | "Mot de passe moyen" | "Presque sécurisé" | "Mot de passe sécurisé";
+  /** Libellé affiché : `string`, pas une union de littéraux français (i18n). */
+  passwordLabel: string;
   passwordScore: number;
   prenom: string;
   pwdChecks: { len: boolean; upper: boolean; lower: boolean; number: boolean; };
@@ -77,9 +77,7 @@ export function RegisterCard({
                     telephone={telephone}
                   />
 
-                  {/* =========================================
-                      FOOTER
-                  ========================================== */}
+                  {}
 
                   <View
                     style={

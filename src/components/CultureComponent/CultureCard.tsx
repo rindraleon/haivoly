@@ -1,4 +1,5 @@
 
+import { i18n } from '@/i18n/instance';
 
 
 import { Pressable } from 'react-native';
@@ -11,11 +12,11 @@ const CYCLE: Record<
   string,
   { progression: number; label: string; active: boolean }
 > = {
-  PLANIFIEE: { progression: 33, label: 'Culture planifiée', active: true },
+  PLANIFIEE: { progression: 33, label: i18n.t('cultures.planifiee'), active: true },
   EN_COURS: { progression: 66, label: 'Culture en cours', active: true },
-  RECOLTEE: { progression: 100, label: 'Cycle terminé', active: true },
-  ABANDONNEE: { progression: 0, label: 'Cycle arrêté', active: false },
-  SUPPRIMEE: { progression: 0, label: 'Culture supprimée', active: false },
+  RECOLTEE: { progression: 100, label: i18n.t('cultures.cycleTermine'), active: true },
+  ABANDONNEE: { progression: 0, label: i18n.t('cultures.cycleArrete'), active: false },
+  SUPPRIMEE: { progression: 0, label: i18n.t('cultures.supprimee'), active: false },
 };
 
 export function CultureCard({

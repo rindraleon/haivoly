@@ -1,4 +1,5 @@
 import { Alert, Pressable } from 'react-native';
+import { i18n } from '@/i18n/instance';
 
 
 
@@ -113,20 +114,20 @@ export function ObservationCard({
         await photosQuery.refetch();
 
         Alert.alert(
-          'Succès',
-          'Photo ajoutée avec succès.',
+          i18n.t('domaine.succes'),
+          i18n.t('photos.ajoutee'),
         );
       } catch (error) {
         logger.warn(
           'ObservationCard',
-          "Échec de l'envoi d'une photo",
+          i18n.t('photos.erreur'),
         );
 
         Alert.alert(
           'Envoi impossible',
           messageErreur(
             error,
-            "La photo n'a pas pu être envoyée. Vérifiez votre connexion.",
+            i18n.t('photos.envoiEchoue'),
           ),
           [
             {
@@ -134,7 +135,7 @@ export function ObservationCard({
               style: 'cancel',
             },
             {
-              text: 'Réessayer',
+              text: i18n.t('commun.actions.reessayer'),
               onPress: () =>
                 void envoyerPhoto(uri),
             },
@@ -158,8 +159,8 @@ export function ObservationCard({
 
         if (!permission.granted) {
           Alert.alert(
-            'Permission refusée',
-            'L’accès à la galerie est nécessaire pour sélectionner une photo.',
+            i18n.t('photos.permissionGalerie.titre'),
+            i18n.t('photos.permissionGalerie.texte'),
           );
 
           return;
@@ -186,8 +187,8 @@ export function ObservationCard({
         logger.warn('ObservationCard', 'Sélection dans la galerie impossible');
 
         Alert.alert(
-          'Erreur',
-          "Impossible de sélectionner l'image.",
+          i18n.t('domaine.erreur'),
+          i18n.t('photos.selectionImpossible'),
         );
       }
     };
@@ -204,8 +205,8 @@ export function ObservationCard({
 
         if (!permission.granted) {
           Alert.alert(
-            'Permission refusée',
-            'L’accès à la caméra est nécessaire pour prendre une photo.',
+            i18n.t('photos.permissionGalerie.titre'),
+            i18n.t('photos.permissionCamera.texte'),
           );
 
           return;
@@ -231,8 +232,8 @@ export function ObservationCard({
         logger.warn('ObservationCard', 'Prise de photo impossible');
 
         Alert.alert(
-          'Erreur',
-          "Impossible de prendre la photo.",
+          i18n.t('domaine.erreur'),
+          i18n.t('photos.impossiblePrendrePhoto'),
         );
       }
     };
@@ -244,7 +245,7 @@ export function ObservationCard({
       }
 
       Alert.alert(
-        'Ajouter une photo',
+        i18n.t('libelles.ajouterPhoto'),
         'Choisissez une source.',
         [
           {
@@ -254,7 +255,7 @@ export function ObservationCard({
           },
 
           {
-            text: 'Caméra',
+            text: i18n.t('photos.source.camera'),
             onPress:
               prendrePhoto,
           },
@@ -277,7 +278,7 @@ export function ObservationCard({
 
       Alert.alert(
         'Supprimer la photo',
-        'Voulez-vous vraiment supprimer cette photo ?',
+        i18n.t('photos.voulezVraimentSupprimerPhoto'),
         [
           {
             text: 'Annuler',
@@ -285,7 +286,7 @@ export function ObservationCard({
           },
 
           {
-            text: 'Supprimer',
+            text: i18n.t('libelles.supprimer'),
             style: 'destructive',
 
             onPress:
@@ -298,8 +299,8 @@ export function ObservationCard({
                   await photosQuery.refetch();
 
                   Alert.alert(
-                    'Succès',
-                    'Photo supprimée.',
+                    i18n.t('domaine.succes'),
+                    i18n.t('photos.supprimee'),
                   );
                 } catch (
                   err: any
@@ -307,11 +308,11 @@ export function ObservationCard({
                   logger.warn('ObservationCard', "Échec de la suppression d'une photo");
 
                   Alert.alert(
-                    'Erreur',
+                    i18n.t('domaine.erreur'),
                     err?.response
                       ?.data
                       ?.message ||
-                      'Impossible de supprimer la photo.',
+                      i18n.t('photos.impossibleSupprimerPhoto'),
                   );
                 }
               },

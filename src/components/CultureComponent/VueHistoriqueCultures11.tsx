@@ -1,4 +1,5 @@
 import { styles } from '@/screens/CultureScreen/CultureHistoryScreen.styles';
+import { i18n } from '@/i18n/instance';
 import type { Dispatch, SetStateAction } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
@@ -252,8 +253,8 @@ export function VueHistoriqueCultures11({
                               ? 'Toutes'
                               : option ===
                                 'DELIMITEES'
-                              ? 'Délimitées'
-                              : 'Non délimitées'}
+                              ? i18n.t('cultures.delimitees')
+                              : i18n.t('cultures.nonDelimitees')}
                           </Text>
 
                         </TouchableOpacity>

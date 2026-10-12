@@ -1,4 +1,5 @@
 import { Chip } from '@/components/CommonComponent/Chip';
+import { i18n } from '@/i18n/instance';
 import { EmptyState } from '@/components/CommonComponent/EmptyState';
 import { ScreenHeader } from '@/components/CommonComponent/ScreenHeader';
 import { SearchBar } from '@/components/CommonComponent/SearchBar';
@@ -88,7 +89,7 @@ export function VueToutesParcelles({
                   onChangeText={
                     setRecherche
                   }
-                  placeholder="Rechercher culture, parcelle, variété..."
+                  placeholder={i18n.t('cultures.recherchePlaceholder')}
                 />
 
               </View>
@@ -241,7 +242,7 @@ export function VueToutesParcelles({
               >
                 {recherche
                   ? `pour "${recherche}"`
-                  : 'Triées par modification récente'}
+                  : i18n.t('cultures.trieesModification')}
               </Text>
 
             </View>
@@ -401,8 +402,8 @@ export function VueToutesParcelles({
                     recherche ||
                     statutFiltre !==
                       'TOUTES'
-                      ? 'Aucun résultat'
-                      : 'Aucune culture'
+                      ? i18n.t('domaine.aucunResultat')
+                      : i18n.t('libelles.aucuneCulture')
                   }
                   description={
                     recherche
@@ -412,14 +413,14 @@ export function VueToutesParcelles({
                         ? `Aucune culture ${nomStatut(
                             statutFiltre,
                           ).toLowerCase()}.`
-                        : 'Commencez par ajouter votre première culture.'
+                        : i18n.t('cultures.premiereCulture')
                   }
                   actionLabel={
                     recherche ||
                     statutFiltre !==
                       'TOUTES'
-                      ? 'Réinitialiser'
-                      : 'Ajouter une culture'
+                      ? i18n.t('domaine.reinitialiser')
+                      : i18n.t('cultures.ajouterCulture')
                   }
                   onAction={() => {
 

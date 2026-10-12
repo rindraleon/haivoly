@@ -1,4 +1,6 @@
 import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { i18n } from '@/i18n/instance';
+import { useTranslation } from 'react-i18next';
 import { Camera, Plus, X } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { colors } from '@/theme';
@@ -30,6 +32,7 @@ export function PhotosIntervention({
   interventionId: string;
   modificationAutorisee: boolean;
 }) {
+  const { t } = useTranslation();
   const photosQuery = usePhotosIntervention(
     parcelleId,
     cultureId,
@@ -97,19 +100,19 @@ export function PhotosIntervention({
       await uploadPhoto.mutateAsync(fichier);
       await photosQuery.refetch();
 
-      Alert.alert('Succès', 'Photo ajoutée avec succès.');
+      Alert.alert(t('photos.succes'), t('photos.ajoutee'));
     } catch (error) {
       logger.warn('PhotosIntervention', "Échec de l'envoi d'une photo");
       Alert.alert(
         'Envoi impossible',
         messageErreur(
           error,
-          "La photo n'a pas pu être envoyée. Vérifiez votre connexion.",
+          t('photos.envoiEchoue'),
         ),
         [
           { text: 'Annuler', style: 'cancel' },
           // Reprise immédiate, sans avoir à repasser par la galerie.
-          { text: 'Réessayer', onPress: () => void envoyerPhoto(uri) },
+          { text: t('commun.actions.reessayer'), onPress: () => void envoyerPhoto(uri) },
         ],
       );
     } finally {
@@ -129,8 +132,8 @@ export function PhotosIntervention({
 
       if (!permission.granted) {
         Alert.alert(
-          'Permission refusée',
-          "L'accès à la galerie est nécessaire pour sélectionner une photo.",
+          t('photos.permissionGalerie.titre'),
+          t('photos.permissionGalerie.texte'),
         );
         return;
       }
@@ -149,7 +152,7 @@ export function PhotosIntervention({
       await envoyerPhoto(result.assets[0].uri);
     } catch {
       logger.warn('PhotosIntervention', 'Sélection dans la galerie impossible');
-      Alert.alert('Erreur', "Impossible de sélectionner l'image.");
+      Alert.alert(t('photos.erreur'), t('photos.selectionImpossible'));
     }
   };
 
@@ -164,8 +167,8 @@ export function PhotosIntervention({
 
       if (!permission.granted) {
         Alert.alert(
-          'Permission refusée',
-          "L'accès à la caméra est nécessaire pour prendre une photo.",
+          t('photos.permissionCamera.titre'),
+          t('photos.permissionCamera.texte'),
         );
         return;
       }
@@ -182,7 +185,7 @@ export function PhotosIntervention({
       await envoyerPhoto(result.assets[0].uri);
     } catch {
       logger.warn('PhotosIntervention', 'Prise de photo impossible');
-      Alert.alert('Erreur', 'Impossible de prendre la photo.');
+      Alert.alert(i18n.t('domaine.erreur'), 'Impossible de prendre la photo.');
     }
   };
 
@@ -193,7 +196,7 @@ export function PhotosIntervention({
 
     Alert.alert('Ajouter une photo', 'Choisissez une source.', [
       { text: 'Galerie', onPress: choisirGalerie },
-      { text: 'Caméra', onPress: prendrePhoto },
+      { text: t('photos.source.camera'), onPress: prendrePhoto },
       { text: 'Annuler', style: 'cancel' },
     ]);
   };
@@ -205,24 +208,24 @@ export function PhotosIntervention({
 
     Alert.alert(
       'Supprimer la photo',
-      'Voulez-vous vraiment supprimer cette photo ?',
+      i18n.t('photos.voulezVraimentSupprimerPhoto'),
       [
         { text: 'Annuler', style: 'cancel' },
         {
-          text: 'Supprimer',
+          text: i18n.t('libelles.supprimer'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deletePhoto.mutateAsync(photoId);
               await photosQuery.refetch();
-              Alert.alert('Succès', 'Photo supprimée.');
+              Alert.alert(t('photos.succes'), t('photos.supprimee'));
             } catch (error) {
               logger.warn('PhotosIntervention', 'Échec de la suppression');
               Alert.alert(
                 'Suppression impossible',
                 messageErreur(
                   error,
-                  'La photo n’a pas pu être supprimée. Réessayez.',
+                  t('photos.suppressionEchouee'),
                 ),
               );
             }
@@ -245,7 +248,7 @@ export function PhotosIntervention({
           />
         </View>
 
-        <Text style={styles.photoTitle}>PHOTOS</Text>
+        <Text style={styles.photoTitle}>{t('photos.titre')}</Text>
         <Text style={styles.photoCount}>{photos.length}</Text>
       </View>
 
@@ -314,7 +317,7 @@ export function PhotosIntervention({
                 {modificationAutorisee ? (
                   <TouchableOpacity
                     accessibilityRole="button"
-                    accessibilityLabel="Supprimer la photo"
+                    accessibilityLabel={i18n.t('libelles.supprimerPhoto')}
                     // Bouton visuel de 28 px : `hitSlop` porte la cible
                     // tactile à ~44 px, sans agrandir l'icône.
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -338,7 +341,7 @@ export function PhotosIntervention({
             {modificationAutorisee ? (
               <TouchableOpacity
                 accessibilityRole="button"
-                accessibilityLabel="Ajouter une photo"
+                accessibilityLabel={i18n.t('libelles.ajouterPhoto')}
                 style={styles.photoAddTile}
                 onPress={choisirPhoto}
                 disabled={photoEnCours || etapeEnvoi !== 'inactif'}

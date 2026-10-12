@@ -1,4 +1,5 @@
 import { useConfirm } from '@/components/CommonComponent/ConfirmProvider';
+import { i18n } from '@/i18n/instance';
 import {
   ActivityIndicator,
   Alert,
@@ -34,7 +35,7 @@ export default function ConfirmationSuppressionScreen() {
     if (!raisonTrim) {
       Alert.alert(
         'Raison obligatoire',
-        'Veuillez préciser la raison de la suppression de cette parcelle.',
+        i18n.t('divers.suppression.raisonRequise'),
       );
       return;
     }
@@ -42,7 +43,7 @@ export default function ConfirmationSuppressionScreen() {
     const ok = await confirm({
       title: `Supprimer "${nom}" ?`,
       description: `Voulez-vous vraiment supprimer définitivement la parcelle "${nom}" ? Cette action est irréversible et marquera la parcelle comme SUPPRIMÉE.`,
-      confirmLabel: 'Supprimer',
+      confirmLabel: i18n.t('libelles.supprimer'),
       cancelLabel: 'Annuler',
       variant: 'danger',
     });
@@ -56,8 +57,8 @@ export default function ConfirmationSuppressionScreen() {
       {
         onSuccess: () => {
           Alert.alert(
-            'Suppression confirmée',
-            'La parcelle a été marquée comme supprimée.',
+            i18n.t('divers.suppression.confirmee'),
+            i18n.t('divers.suppression.parcelleMarquee'),
             [
               {
                 text: 'OK',
@@ -74,9 +75,9 @@ export default function ConfirmationSuppressionScreen() {
           );
 
           Alert.alert(
-            'Erreur',
+            i18n.t('domaine.erreur'),
             error?.response?.data?.message ||
-              'Impossible de supprimer la parcelle.',
+              i18n.t('parcelles.impossibleSupprimerParcelle'),
           );
         },
       },
@@ -110,7 +111,7 @@ export default function ConfirmationSuppressionScreen() {
 
       <TextInput
         style={styles.input}
-        placeholder="Ex : parcelle abandonnée, vente de la parcelle..."
+        placeholder={i18n.t('divers.suppression.raisonPlaceholder')}
         value={raison}
         onChangeText={setRaison}
         multiline

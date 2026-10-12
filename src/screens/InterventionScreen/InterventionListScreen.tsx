@@ -1,4 +1,5 @@
  
+import { i18n } from '@/i18n/instance';
 
 import { useCallback, useMemo, useState } from 'react';
 
@@ -429,8 +430,8 @@ export default function InterventionsCultureScreen() {
 
     if (!modificationAutorisee) {
       Alert.alert(
-        'Action impossible',
-        'Cette culture est en lecture seule.',
+        i18n.t('divers.actionImpossible'),
+        i18n.t('cultures.cultureLectureSeule'),
       );
       return;
     }
@@ -550,24 +551,24 @@ export default function InterventionsCultureScreen() {
 
     if (!modificationAutorisee && contexte.parcelleId === parcelleId) {
       Alert.alert(
-        'Action impossible',
-        'Cette culture est en lecture seule.',
+        i18n.t('divers.actionImpossible'),
+        i18n.t('cultures.cultureLectureSeule'),
       );
       return;
     }
 
     if (!type.trim()) {
       Alert.alert(
-        'Champ obligatoire',
-        "Veuillez saisir le type d'intervention.",
+        i18n.t('domaine.champObligatoire'),
+        i18n.t('interventions.veuillezSaisirTypeD2'),
       );
       return;
     }
 
     if (!date.trim()) {
       Alert.alert(
-        'Champ obligatoire',
-        'Veuillez saisir la date.',
+        i18n.t('domaine.champObligatoire'),
+        i18n.t('domaine.veuillezSaisirDate'),
       );
       return;
     }
@@ -583,8 +584,8 @@ export default function InterventionsCultureScreen() {
         quantiteValue < 0
       ) {
         Alert.alert(
-          'Quantité invalide',
-          'Veuillez saisir une quantité numérique valide.',
+          i18n.t('domaine.quantiteInvalide'),
+          i18n.t('domaine.quantiteNumerique'),
         );
         return;
       }
@@ -601,8 +602,8 @@ export default function InterventionsCultureScreen() {
         coutValue < 0
       ) {
         Alert.alert(
-          'Coût invalide',
-          'Veuillez saisir un coût numérique valide.',
+          i18n.t('domaine.coutInvalide'),
+          i18n.t('domaine.coutNumerique'),
         );
         return;
       }
@@ -627,8 +628,8 @@ export default function InterventionsCultureScreen() {
         });
 
         Alert.alert(
-          'Succès',
-          'L�?Tintervention a été modifiée avec succès.',
+          i18n.t('domaine.succes'),
+          i18n.t('interventions.modifieeSucces'),
         );
       } else {
         await createMutation.mutateAsync({
@@ -637,8 +638,8 @@ export default function InterventionsCultureScreen() {
         });
 
         Alert.alert(
-          'Succès',
-          'L�?Tintervention a été enregistrée avec succès.',
+          i18n.t('domaine.succes'),
+          i18n.t('interventions.ajouteeSucces'),
         );
       }
 
@@ -657,10 +658,10 @@ export default function InterventionsCultureScreen() {
         ),
       );
     } catch (error: any) {
-      logger.warn('InterventionListScreen', '�?chec du chargement des interventions');
+      logger.warn('InterventionListScreen', 'Échec du chargement des interventions');
 
       Alert.alert(
-        'Erreur',
+        i18n.t('domaine.erreur'),
         normaliserErreur(error),
       );
     }
@@ -671,30 +672,30 @@ export default function InterventionsCultureScreen() {
   ) => {
     if (lectureSeule) {
       Alert.alert(
-        'Lecture seule',
-        'Cette culture ne peut plus être modifiée.',
+        i18n.t('divers.lectureSeule'),
+        i18n.t('interventions.cultureNonModifiable'),
       );
       return;
     }
 
     if (cultureSupprimee) {
       Alert.alert(
-        'Action impossible',
-        'Cette culture a été supprimée.',
+        i18n.t('divers.actionImpossible'),
+        i18n.t('interventions.cultureSupprimee'),
       );
       return;
     }
 
     Alert.alert(
-      'Supprimer l�?Tintervention',
-      'Voulez-vous vraiment supprimer cette intervention ?',
+      i18n.t('interventions.supprimerUne'),
+      i18n.t('interventions.voulezVraimentSupprimerIntervention'),
       [
         {
           text: 'Annuler',
           style: 'cancel',
         },
         {
-          text: 'Supprimer',
+          text: i18n.t('libelles.supprimer'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -711,10 +712,10 @@ export default function InterventionsCultureScreen() {
                 ),
               );
             } catch (error: any) {
-              logger.warn('InterventionListScreen', "�?chec de la suppression de l'intervention");
+              logger.warn('InterventionListScreen', "Échec de la suppression de l'intervention");
 
               Alert.alert(
-                'Erreur',
+                i18n.t('domaine.erreur'),
                 normaliserErreur(error),
               );
             }
@@ -734,19 +735,19 @@ export default function InterventionsCultureScreen() {
 
     if (!autorisee) {
       Alert.alert(
-        'Lecture seule',
-        'Cette intervention appartient à une culture en lecture seule.',
+        i18n.t('divers.lectureSeule'),
+        i18n.t('interventions.lectureSeule'),
       );
       return;
     }
 
     Alert.alert(
-      'Supprimer l�?Tintervention',
-      'Voulez-vous vraiment supprimer cette intervention ?',
+      i18n.t('interventions.supprimerUne'),
+      i18n.t('interventions.voulezVraimentSupprimerIntervention'),
       [
         { text: 'Annuler', style: 'cancel' },
         {
-          text: 'Supprimer',
+          text: i18n.t('libelles.supprimer'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -761,8 +762,8 @@ export default function InterventionsCultureScreen() {
                 ),
               );
             } catch (error: any) {
-              logger.warn('InterventionListScreen', '�?chec de la suppression groupée');
-              Alert.alert('Erreur', normaliserErreur(error));
+              logger.warn('InterventionListScreen', 'Échec de la suppression groupée');
+              Alert.alert(i18n.t('domaine.erreur'), normaliserErreur(error));
             }
           },
         },
@@ -782,16 +783,16 @@ export default function InterventionsCultureScreen() {
   const continuerAjoutGlobal = () => {
     if (!parcelleTemporaire) {
       Alert.alert(
-        'Sélection incomplète',
-        'Veuillez sélectionner une parcelle.',
+        i18n.t('domaine.selectionIncomplete'),
+        i18n.t('domaine.selectionParcelleRequise'),
       );
       return;
     }
 
     if (!cultureTemporaire) {
       Alert.alert(
-        'Sélection incomplète',
-        'Veuillez sélectionner une culture.',
+        i18n.t('domaine.selectionIncomplete'),
+        i18n.t('domaine.selectionCultureRequise'),
       );
       return;
     }
@@ -806,8 +807,8 @@ export default function InterventionsCultureScreen() {
 
     if (!parcelle || !culture) {
       Alert.alert(
-        'Erreur',
-        'La parcelle ou la culture sélectionnée est introuvable.',
+        i18n.t('domaine.erreur'),
+        i18n.t('domaine.entiteIntrouvable'),
       );
       return;
     }
@@ -819,8 +820,8 @@ export default function InterventionsCultureScreen() {
 
     if (!autorisee) {
       Alert.alert(
-        'Action impossible',
-        'Cette culture est en lecture seule. Vous ne pouvez pas ajouter une intervention.',
+        i18n.t('divers.actionImpossible'),
+        i18n.t('cultures.cultureLectureSeuleNe'),
       );
       return;
     }
@@ -886,16 +887,16 @@ export default function InterventionsCultureScreen() {
   const voirSuivi = () => {
     if (!parcelleTemporaire) {
       Alert.alert(
-        'Sélection incomplète',
-        'Veuillez sélectionner une parcelle.',
+        i18n.t('domaine.selectionIncomplete'),
+        i18n.t('domaine.selectionParcelleRequise'),
       );
       return;
     }
 
     if (!cultureTemporaire) {
       Alert.alert(
-        'Sélection incomplète',
-        'Veuillez sélectionner une culture.',
+        i18n.t('domaine.selectionIncomplete'),
+        i18n.t('domaine.selectionCultureRequise'),
       );
       return;
     }
@@ -910,8 +911,8 @@ export default function InterventionsCultureScreen() {
 
     if (!parcelle || !culture) {
       Alert.alert(
-        'Erreur',
-        'La parcelle ou la culture sélectionnée est introuvable.',
+        i18n.t('domaine.erreur'),
+        i18n.t('domaine.entiteIntrouvable'),
       );
       return;
     }
@@ -957,7 +958,7 @@ export default function InterventionsCultureScreen() {
     return (
       <View style={styles.root}>
         <View style={styles.center}>
-          <Text style={styles.blockedIcon}>�Ys�</Text>
+          <Text style={styles.blockedIcon}>🚫</Text>
           <Text style={styles.blockedTitle}>
             Culture supprimée
           </Text>

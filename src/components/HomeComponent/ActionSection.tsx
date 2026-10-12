@@ -4,6 +4,7 @@ import {
   Pressable,
   StyleSheet,
 } from 'react-native';
+import { i18n } from '@/i18n/instance';
 
 import {
   MapPinned,
@@ -116,7 +117,7 @@ export function ActionSection({
         {/* PARCELLES */}
         <ActionCard
           icon={MapPinned}
-          title="Mes parcelles"
+          title={i18n.t('libelles.mesParcelles')}
           subtitle={`${parcellesCount} parcelles`}
           accent={colors.primary[500]}
           onPress={() =>
@@ -129,7 +130,7 @@ export function ActionSection({
         {/* CULTURES */}
         <ActionCard
           icon={Sprout}
-          title="Mes cultures"
+          title={i18n.t('libelles.mesCultures')}
           subtitle="Cultures en cours"
           accent={colors.info[500]}
           onPress={() =>
@@ -143,7 +144,7 @@ export function ActionSection({
         <ActionCard
           icon={Leaf}
           title="Interventions"
-          subtitle="Historique & suivi"
+          subtitle={i18n.t('libelles.historiqueSuivi')}
           accent={colors.warning[500]}
           onPress={() =>
             router.push(

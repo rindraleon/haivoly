@@ -12,6 +12,7 @@ export * from './DateTimeInput';
 export * from './EmptyState';
 export * from './ErrorState';
 export * from './Input';
+export * from './IconButton';
 export * from './LoadingState';
 export * from './OfflineBanner';
 export * from './PasswordInput';

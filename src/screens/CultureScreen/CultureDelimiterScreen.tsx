@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect, react-hooks/immutability, react/no-unescaped-entities */
+import { i18n } from '@/i18n/instance';
 import { useEffect, useState } from 'react';
 
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native';
@@ -11,6 +12,7 @@ import { getAreaOfPolygon } from 'geolib';
 
 import { useParcelle } from '@/hooks';
 
+import { messageDesDefauts, validerGeometrie } from '@/utils/geometrie';
 import type { PointGPS } from '@/types';
 
 import { getCurrentLocation , culturesApi } from '@/services';
@@ -253,8 +255,8 @@ if (
         );
 
         Alert.alert(
-          'Erreur',
-          'Impossible de récupérer les délimitations des cultures.',
+          i18n.t('domaine.erreur'),
+          i18n.t('cultures.delimitation.recupImpossible'),
         );
       } finally {
         setLoadingCulture(false);
@@ -299,7 +301,6 @@ if (
   };
 
 
-
   const pointDansParcelle = (
     latitude: number,
     longitude: number,
@@ -334,10 +335,6 @@ if (
   };
 
 
-
-
-
-
   const verifierPointAutorise = (
     latitude: number,
     longitude: number,
@@ -351,7 +348,7 @@ if (
     ) {
       Alert.alert(
         'Point interdit',
-        'Le point doit obligatoirement être à l’intérieur de la parcelle.',
+        i18n.t('cultures.delimitation.pointDoitEtreDedans'),
       );
 
       return false;
@@ -366,7 +363,7 @@ if (
 
     if (culture) {
       Alert.alert(
-        'Zone déjà occupée',
+        i18n.t('cultures.zoneOccupee'),
         `Impossible d'ajouter ce point : cette zone est déjà occupée par la culture "${culture.cultureNom}".`,
       );
 
@@ -385,8 +382,8 @@ if (
         pointsParcelle.length < 3
       ) {
         Alert.alert(
-          'Parcelle non délimitée',
-          'La parcelle doit avoir au moins 3 points GPS.',
+          i18n.t('cultures.parcelleNonDelimitee'),
+          i18n.t('parcelles.parcelleDoitAvoirMoins'),
         );
 
         return;
@@ -446,7 +443,7 @@ if (
       );
 
       Alert.alert(
-        'Point ajouté',
+        i18n.t('cultures.delimitation.pointAjoute'),
         `P${nouveauPoint.ordre} enregistré.`,
       );
     } catch (error: any) {
@@ -459,7 +456,7 @@ if (
       Alert.alert(
         'Erreur GPS',
         error?.message ||
-          'Impossible de récupérer la position.',
+          i18n.t('cultures.delimitation.positionImpossible'),
       );
     } finally {
       setLoading(false);
@@ -608,7 +605,7 @@ if (
               style: 'cancel',
             },
             {
-              text: 'Supprimer',
+              text: i18n.t('libelles.supprimer'),
               style: 'destructive',
               onPress: () => {
                 setPointsGPS(
@@ -667,7 +664,7 @@ if (
       ) {
         Alert.alert(
           'Parcelle invalide',
-          'La parcelle doit avoir au moins 3 points GPS.',
+          i18n.t('parcelles.parcelleDoitAvoirMoins'),
         );
 
         return false;
@@ -678,7 +675,20 @@ if (
       ) {
         Alert.alert(
           'Points insuffisants',
-          'Il faut au moins 3 points pour délimiter une culture.',
+          i18n.t('cultures.delimitation.minimumPoints'),
+        );
+
+        return false;
+      }
+
+      // Mêmes règles que le backend : doublons, sommet (0;0), surface
+      // dégénérée et auto-intersections sont refusés avant l'envoi.
+      const geometrie = validerGeometrie(pointsGPS);
+
+      if (!geometrie.valide) {
+        Alert.alert(
+          i18n.t('domaine.delimitationInvalide'),
+          messageDesDefauts(geometrie.defauts),
         );
 
         return false;
@@ -695,7 +705,7 @@ if (
           )
         ) {
           Alert.alert(
-            'Tracé invalide',
+            i18n.t('cultures.delimitation.traceInvalide'),
             `Le point P${point.ordre} se trouve à l’extérieur de la parcelle.`,
           );
 
@@ -714,7 +724,7 @@ if (
           )
         ) {
           Alert.alert(
-            'Zone déjà occupée',
+            i18n.t('cultures.zoneOccupee'),
             `La nouvelle culture touche ou chevauche la culture "${culture.cultureNom}".\n\nVeuillez modifier le tracé.`,
           );
 
@@ -729,8 +739,8 @@ if (
   const handleFinish = async () => {
     if (!parcelleId) {
       Alert.alert(
-        'Erreur',
-        'Identifiant de la parcelle introuvable.',
+        i18n.t('domaine.erreur'),
+        i18n.t('parcelles.identifiantParcelleIntrouvable'),
       );
 
       return;
@@ -738,8 +748,8 @@ if (
 
     if (!cultureId) {
       Alert.alert(
-        'Erreur',
-        'Identifiant de la culture introuvable.',
+        i18n.t('domaine.erreur'),
+        i18n.t('cultures.identifiantCultureIntrouvable'),
       );
 
       return;
@@ -788,7 +798,7 @@ if (
       );
 
       Alert.alert(
-        'Délimitation enregistrée',
+        i18n.t('domaine.delimitationEnregistree'),
         `${points.length} points GPS enregistrés.\n\nSuperficie : ${superficie.toFixed(
           2,
         )} m²`,
@@ -809,10 +819,10 @@ if (
       );
 
       Alert.alert(
-        'Erreur',
+        i18n.t('domaine.erreur'),
         error?.response?.data
           ?.message ||
-          'Impossible d’enregistrer la délimitation de la culture.',
+          i18n.t('cultures.delimitation.enregistrementImpossible'),
       );
     } finally {
       setLoading(false);
@@ -1018,9 +1028,6 @@ const culturePoints =
 const culturesExistantes =
   ${JSON.stringify(culturesExistantes)};
 
-// =====================================================
-// POINT DANS POLYGONE
-// =====================================================
 
 function pointInPolygon(
   latitude,
@@ -1077,9 +1084,6 @@ function pointInPolygon(
   return inside;
 }
 
-// =====================================================
-// CARTE
-// =====================================================
 
 const map =
   L.map('map', {
@@ -1107,9 +1111,6 @@ const map =
 
   );
 
-// =====================================================
-// CARTES
-// =====================================================
 
 const standard =
   L.tileLayer(
@@ -1135,9 +1136,6 @@ const satellite =
 
 standard.addTo(map);
 
-// =====================================================
-// CHOIX CARTE
-// =====================================================
 
 L.control.layers(
 
@@ -1156,9 +1154,6 @@ L.control.layers(
 
 ).addTo(map);
 
-// =====================================================
-// PARCELLE
-// =====================================================
 
 const parcelleCoordinates =
   parcellePoints.map(
@@ -1191,9 +1186,6 @@ const parcellePolygon =
 
   ).addTo(map);
 
-// =====================================================
-// CULTURES EXISTANTES
-// =====================================================
 
 culturesExistantes.forEach(
   function(culture) {
@@ -1240,9 +1232,6 @@ culturesExistantes.forEach(
 
     }
 
-    // ================================================
-    // POINTS DES CULTURES EXISTANTES
-    // ================================================
 
     culture.points.forEach(
       function(point) {
@@ -1293,9 +1282,6 @@ culturesExistantes.forEach(
   }
 );
 
-// =====================================================
-// POLYGONE CULTURE ACTUELLE
-// =====================================================
 
 if (
   culturePoints.length >= 3
@@ -1340,9 +1326,6 @@ if (
 
 }
 
-// =====================================================
-// AJOUT MANUEL
-// =====================================================
 
 map.on(
   'click',
@@ -1358,15 +1341,12 @@ map.on(
     if (!autorise) {
 
       alert(
-        'Ce point est à l’extérieur de la parcelle.'
+        i18n.t('cultures.delimitation.pointHorsParcelle')
       );
 
       return;
     }
 
-    // ==============================================
-    // VÉRIFIER CULTURES EXISTANTES
-    // ==============================================
 
     for (
       const culture of culturesExistantes
@@ -1382,9 +1362,7 @@ map.on(
       if (interdit) {
 
         alert(
-          'Cette zone est déjà occupée par la culture "' +
-          culture.cultureNom +
-          '".'
+          i18n.t('divers.zoneOccupeeCulture', { nom: culture.cultureNom })
         );
 
         return;
@@ -1411,9 +1389,6 @@ map.on(
   }
 );
 
-// =====================================================
-// SUPPRESSION
-// =====================================================
 
 function deletePoint(
   pointId
@@ -1434,9 +1409,6 @@ function deletePoint(
 
 }
 
-// =====================================================
-// POINTS CULTURE ACTUELLE
-// =====================================================
 
 culturePoints.forEach(
   function(point) {
@@ -1537,7 +1509,7 @@ culturePoints.forEach(
         if (!dansParcelle) {
 
           alert(
-            'Le point doit rester à l’intérieur de la parcelle.'
+            i18n.t('cultures.delimitation.pointDoitResterDedans')
           );
 
           window.ReactNativeWebView.postMessage(
@@ -1574,9 +1546,7 @@ culturePoints.forEach(
           ) {
 
             alert(
-              'Le point ne peut pas être placé dans la culture "' +
-              culture.cultureNom +
-              '".'
+              i18n.t('divers.pointDansCulture', { nom: culture.cultureNom })
             );
 
             window.ReactNativeWebView.postMessage(

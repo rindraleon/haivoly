@@ -1,4 +1,5 @@
 import type { CultureAvecPoints } from '@/screens/CultureScreen/CultureHistoryScreen';
+import { i18n } from '@/i18n/instance';
 import { styles } from '@/screens/CultureScreen/CultureHistoryScreen.styles';
 
 
@@ -289,7 +290,7 @@ export function VueHistoriqueCultures1({
                 styles.searchInput
               }
 
-              placeholder="Rechercher une culture..."
+              placeholder={i18n.t('libelles.rechercheCulture')}
 
               value={
                 recherche
@@ -438,7 +439,7 @@ export function VueHistoriqueCultures1({
                       'PLANTATION_RECENTE',
 
                     label:
-                      'Date de plantation : récente → ancienne',
+                      i18n.t('cultures.triPlantationRecente'),
                   },
 
                   {
@@ -446,7 +447,7 @@ export function VueHistoriqueCultures1({
                       'PLANTATION_ANCIENNE',
 
                     label:
-                      'Date de plantation : ancienne → récente',
+                      i18n.t('cultures.triPlantationAncienne'),
                   },
 
                   {
@@ -454,7 +455,7 @@ export function VueHistoriqueCultures1({
                       'MODIFICATION_RECENTE',
 
                     label:
-                      'Modification : récente → ancienne',
+                      i18n.t('cultures.triModificationRecente'),
                   },
 
                   {
@@ -462,7 +463,7 @@ export function VueHistoriqueCultures1({
                       'MODIFICATION_ANCIENNE',
 
                     label:
-                      'Modification : ancienne → récente',
+                      i18n.t('cultures.triModificationAncienne'),
                   },
 
                 ].map(
@@ -561,7 +562,7 @@ export function VueHistoriqueCultures1({
                 >
                   {culturesHistorique.length >
                   0
-                    ? 'Aucun résultat'
+                    ? i18n.t('domaine.aucunResultat')
                     : 'Aucun historique'}
                 </Text>
 
@@ -572,8 +573,8 @@ export function VueHistoriqueCultures1({
                 >
                   {culturesHistorique.length >
                   0
-                    ? 'Aucune culture ne correspond à votre recherche ou à vos filtres.'
-                    : 'Cette parcelle ne contient encore aucune culture récoltée, abandonnée ou supprimée.'}
+                    ? i18n.t('cultures.aucunResultat')
+                    : i18n.t('divers.parcelleSansCulture')}
                 </Text>
 
               </View>
@@ -853,7 +854,7 @@ export function VueHistoriqueCultures1({
 
                             ? `${culturePoints.length} points GPS — ancienne zone délimitée`
 
-                            : 'Culture non délimitée'}
+                            : i18n.t('cultures.cultureNonDelimitee')}
 
                         </Text>
 

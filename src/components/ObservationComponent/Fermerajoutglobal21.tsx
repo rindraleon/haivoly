@@ -1,4 +1,5 @@
 import { styles } from '@/screens/ObservationScreen/ObservationListScreen.styles';
+import { i18n } from '@/i18n/instance';
 
 
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -130,7 +131,7 @@ export function Fermerajoutglobal21({
                                     item.id ===
                                     parcelleAjout,
                                 )?.nom ??
-                                  'Sélectionner une parcelle'}
+                                  i18n.t('domaine.selectionnerParcelle')}
                               </Text>
                             </View>
 
@@ -346,8 +347,8 @@ export function Fermerajoutglobal21({
                                         item.id ===
                                         cultureAjout,
                                     )?.nom ??
-                                    'Sélectionner une culture'
-                                  : 'Choisissez d’abord une parcelle'}
+                                    i18n.t('domaine.selectionnerCulture')
+                                  : i18n.t('parcelles.choisissezDAbordParcelle')}
                               </Text>
                             </View>
 
@@ -498,13 +499,13 @@ export function Fermerajoutglobal21({
                                                   ? 'Culture en cours'
                                                   : culture.statut ===
                                                     'PLANIFIEE'
-                                                  ? 'Culture planifiée'
+                                                  ? i18n.t('observations.culturePlanifiee')
                                                   : culture.statut ===
                                                     'RECOLTEE'
-                                                  ? 'Lecture seule • récoltée'
+                                                  ? i18n.t('observations.lectureSeuleRecoltee')
                                                   : culture.statut ===
                                                     'ABANDONNEE'
-                                                  ? 'Lecture seule • abandonnée'
+                                                  ? i18n.t('observations.lectureSeuleAbandonnee')
                                                   : culture.statut}
                                               </Text>
                                             </View>

@@ -1,6 +1,7 @@
 import DateTimePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker';
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -8,6 +9,7 @@ import { Button } from '@/components/CommonComponent/Button';
 import { Input } from '@/components/CommonComponent/Input';
 import { colors, radius, spacing } from '@/theme';
 import { dateOnlyVersDateLocale, toDateOnly } from '@/utils/date';
+import { i18n } from '@/i18n/instance';
 
 type Props = {
   label?: string;
@@ -32,10 +34,12 @@ export function DateInput({
   error,
   disabled,
   leftIcon,
-  placeholder = 'Sélectionner une date',
+  placeholder,
   minimumDate,
   maximumDate,
 }: Props) {
+  const { t } = useTranslation();
+  const placeholderAffiche = placeholder ?? t('commun.placeholders.selectionnerDate');
   const [pickerVisible, setPickerVisible] = useState(false);
   const initiale = dateOnlyVersDateLocale(value) ?? new Date();
 
@@ -77,7 +81,7 @@ export function DateInput({
             leftIcon={leftIcon}
             editable={false}
             value={value}
-            placeholder={placeholder}
+            placeholder={placeholderAffiche}
           />
         </View>
       </Pressable>
@@ -91,7 +95,7 @@ export function DateInput({
         >
           <View style={styles.overlay}>
             <View style={styles.sheet}>
-              <Text style={styles.title}>{label ?? 'Choisir une date'}</Text>
+              <Text style={styles.title}>{label ?? i18n.t('domaine.choisirDate')}</Text>
 
               <DateTimePicker
                 value={initiale}

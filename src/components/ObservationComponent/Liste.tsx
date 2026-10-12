@@ -1,4 +1,5 @@
 import { ObservationCard } from '@/components/ObservationComponent/ObservationCard';
+import { i18n } from '@/i18n/instance';
 import type { CultureGlobale, ObservationGlobale } from '@/screens/ObservationScreen/ObservationListScreen.helpers';
 import { styles } from '@/screens/ObservationScreen/ObservationListScreen.styles';
 
@@ -151,7 +152,7 @@ export function Liste({
                                 item.id ===
                                 cultureSelectionnee,
                             )?.nom ??
-                            'Culture'
+                            i18n.t('libelles.culture')
                           }`
                         : ''}
                     </Text>
@@ -267,8 +268,8 @@ export function Liste({
                     }
                   >
                     {filtreActif
-                      ? 'Aucune observation ne correspond aux filtres sélectionnés.'
-                      : "Aucune observation n'a encore été enregistrée dans vos cultures."}
+                      ? i18n.t('observations.aucunResultatFiltres')
+                      : i18n.t('divers.aucuneObservation')}
                   </Text>
 
                   {filtreActif ? (
@@ -347,7 +348,7 @@ export function Liste({
               {/* FAB : attaché à la zone de liste */}
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Ajouter une observation"
+                accessibilityLabel={i18n.t('libelles.ajouterObservation')}
                 onPress={
                   ouvrirAjoutGlobal
                 }

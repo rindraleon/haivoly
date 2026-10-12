@@ -1,9 +1,20 @@
 import { ApiError, toApiError, type ChampInvalide } from '@/services/http';
+// Import de la couche PURE de l'i18n : `@/i18n` tire expo-localization et
+// AsyncStorage, que l'environnement de test `node` de jest ne peut charger.
+import { i18n } from '@/i18n/instance';
 
 type ReponseErreur = {
   response?: { data?: { message?: string | string[] } };
   message?: string | string[];
 };
+
+export function traduireCodeErreur(code: string | null): string | null {
+  if (!code || !i18n.isInitialized) return null;
+
+  const cle = `erreurs.codes.${code}`;
+  const texte = i18n.t(cle, { defaultValue: '' });
+  return typeof texte === 'string' && texte.trim() ? texte : null;
+}
 
 /** Message global affichable (bandeau d'erreur). */
 export function messageErreur(error: unknown, defaut: string): string {
@@ -11,6 +22,14 @@ export function messageErreur(error: unknown, defaut: string): string {
 
   if (apiError.code === 'UNKNOWN') return defaut;
 
+  // 1. Priorité au code stable traduit : c'est le seul identifiant fiable,
+  //    le texte du serveur restant en français quelle que soit la langue UI.
+  const traduit = traduireCodeErreur(
+    apiError.code === 'HTTP_ERROR' ? null : apiError.code
+  );
+  if (traduit) return traduit;
+
+  // 2. Repli sur le message du serveur, s'il est exploitable.
   if (apiError.message && apiError.message !== 'Erreur inconnue') {
     return apiError.message;
   }

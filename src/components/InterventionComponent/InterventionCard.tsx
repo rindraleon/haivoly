@@ -1,4 +1,5 @@
 import { Badge } from '@/components/CommonComponent/Badge';
+import { i18n } from '@/i18n/instance';
 import { CalendarDays, ChevronRight, Clock3, FileText, FlaskConical, MapPin, Package, Pencil, Sprout, Trash2 } from 'lucide-react-native';
 import { Card } from '@/components/CommonComponent/Card';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -58,7 +59,7 @@ export function InterventionCard({
                 numberOfLines={1}
                 style={styles.interventionSubtitle}
               >
-                {cultureNom || 'Culture'}
+                {cultureNom || i18n.t('libelles.culture')}
               </Text>
 
               <MapPin
@@ -70,7 +71,7 @@ export function InterventionCard({
                 numberOfLines={1}
                 style={styles.interventionSubtitle}
               >
-                {parcelleNom || 'Parcelle'}
+                {parcelleNom || i18n.t('libelles.parcelle')}
               </Text>
             </View>
           </View>
@@ -219,7 +220,7 @@ export function InterventionCard({
               color="#166534"
               strokeWidth={2.1}
             />
-            <Text style={styles.editButtonText}>Modifier</Text>
+            <Text style={styles.editButtonText}>{i18n.t('libelles.modifier')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -232,7 +233,7 @@ export function InterventionCard({
               color="#DC2626"
               strokeWidth={2.1}
             />
-            <Text style={styles.deleteButtonText}>Supprimer</Text>
+            <Text style={styles.deleteButtonText}>{i18n.t('libelles.supprimer')}</Text>
           </TouchableOpacity>
         </View>
       ) : (

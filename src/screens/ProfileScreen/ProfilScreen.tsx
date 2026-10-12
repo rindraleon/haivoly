@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
   ActivityIndicator,
@@ -30,6 +31,7 @@ import { VueProfil } from '@/components/ProfileComponent/VueProfil';
 import { logger } from '@/utils/logger';
 
 export default function ProfilScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   const {
@@ -43,8 +45,8 @@ export default function ProfilScreen() {
 
   const handleLogout = () => {
     Alert.alert(
-      'Déconnexion',
-      'Voulez-vous vraiment vous déconnecter ?',
+      t('profil.deconnexion.titre'),
+      t('profil.deconnexion.question'),
       [
         {
           text: 'Annuler',
@@ -52,7 +54,7 @@ export default function ProfilScreen() {
         },
 
         {
-          text: 'Se déconnecter',
+          text: t('profil.deconnexion.confirmer'),
           style: 'destructive',
 
           onPress: async () => {
@@ -69,12 +71,12 @@ export default function ProfilScreen() {
             } catch {
               logger.warn(
                 'ProfilScreen',
-                'Échec de la déconnexion',
+                t('profil.deconnexion.echec'),
               );
 
               Alert.alert(
-                'Déconnexion impossible',
-                'Veuillez réessayer dans un instant.',
+                t('profil.deconnexion.impossible'),
+                t('profil.deconnexion.reessayer'),
               );
             }
           },
@@ -207,7 +209,7 @@ export default function ProfilScreen() {
               refetch()
             }
             accessibilityRole="button"
-            accessibilityLabel="Réessayer de charger le profil"
+            accessibilityLabel={t('profil.reessayerChargement')}
           >
             <Text
               style={
@@ -229,13 +231,13 @@ Réessayer
   ]
     .filter(Boolean)
     .join(' ')
-    .trim() || 'Utilisateur';
+    .trim() || t('profil.utilisateur');
 
   const roleLabel =
     profile.role ===
     'AGRICULTEUR'
-      ? 'Agriculteur'
-      : 'Propriétaire';
+      ? t('profil.roleAgriculteur')
+      : t('profil.roleProprietaire');
 
   const initials =
     `${profile.prenom?.charAt(0) ?? ''}${profile.nom?.charAt(0) ?? ''}`

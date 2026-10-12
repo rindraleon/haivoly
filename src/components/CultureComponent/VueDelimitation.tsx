@@ -1,4 +1,5 @@
 import type { PointGPS } from '@/types';
+import { i18n } from '@/i18n/instance';
 import type { CulturePolygon } from '@/screens/CultureScreen/CultureDelimiterScreen.helpers';
 import { styles } from '@/screens/CultureScreen/CultureDelimiterScreen.styles';
 import { router } from 'expo-router';
@@ -55,7 +56,7 @@ export function VueDelimitation({
             style={styles.cultureName}
           >
             {cultureNom ||
-              'Culture'}
+              i18n.t('libelles.culture')}
           </Text>
 
           <Text

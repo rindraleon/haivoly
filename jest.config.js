@@ -12,6 +12,9 @@ module.exports = {
     // Modules natifs utilisés par la compression d'image.
     '^expo-image-manipulator$': '<rootDir>/src/test-stubs/expo-image-manipulator.ts',
     '^expo-file-system$': '<rootDir>/src/test-stubs/expo-file-system.ts',
+    // AsyncStorage livre de l'ESM non transformé et dépend d'un module natif.
+    '^@react-native-async-storage/async-storage$':
+      '<rootDir>/src/test-stubs/async-storage.ts',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   transform: {

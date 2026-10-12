@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { AlertTriangle } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
+
 import { colors, radius } from '@/theme';
 import { Button } from './Button';
 
@@ -12,23 +14,27 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({
-  title = 'Une erreur est survenue',
-  message = 'Impossible de charger les données. Vérifiez votre connexion.',
+  title,
+  message,
   onRetry,
   onBack,
 }: ErrorStateProps) {
+  const { t } = useTranslation();
+  const titreAffiche = title ?? t('commun.etats.erreurSurvenue');
+  const messageAffiche = message ?? t('commun.etats.chargementImpossible');
+
   return (
     <View style={styles.container}>
       <View style={styles.iconWrap}>
         <AlertTriangle size={22} color={colors.error[500]} strokeWidth={1.9} />
       </View>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.message}>{message}</Text>
+      <Text style={styles.title}>{titreAffiche}</Text>
+      <Text style={styles.message}>{messageAffiche}</Text>
       <View style={styles.actions}>
-        {onRetry ? <Button onPress={onRetry}>Réessayer</Button> : null}
+        {onRetry ? <Button onPress={onRetry}>{t('commun.actions.reessayer')}</Button> : null}
         {onBack ? (
           <Button variant="outline" onPress={onBack}>
-            Retour
+            {t('commun.actions.retour')}
           </Button>
         ) : null}
       </View>

@@ -5,10 +5,13 @@ import {
   TextInput,
   View,
   type TextInputProps,
+  type TextStyle,
   type ViewStyle,
 } from 'react-native';
 import { colors, radius } from '@/theme';
 import { AlertCircle } from 'lucide-react-native';
+
+export type InputSize = 'sm' | 'md';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -18,7 +21,17 @@ interface InputProps extends TextInputProps {
   rightIcon?: React.ReactNode;
   containerStyle?: ViewStyle;
   required?: boolean;
+  size?: InputSize;
 }
+
+/** Hauteurs et corps de texte par variante — centralisés, jamais redéfinis par écran. */
+const DIMENSIONS: Record<
+  InputSize,
+  { containerMinHeight: number; inputMinHeight: number; fontSize: number; paddingVertical: number; labelSize: number; gap: number }
+> = {
+  sm: { containerMinHeight: 42, inputMinHeight: 40, fontSize: 14, paddingVertical: 8, labelSize: 12.5, gap: 5 },
+  md: { containerMinHeight: 52, inputMinHeight: 50, fontSize: 15, paddingVertical: 12, labelSize: 13.5, gap: 7 },
+};
 
 export function Input({
   label,
@@ -28,17 +41,30 @@ export function Input({
   rightIcon,
   containerStyle,
   required,
+  size = 'md',
   editable = true,
   ...props
 }: InputProps) {
   const [focused, setFocused] = useState(false);
   const hasError = !!error;
+  const d = DIMENSIONS[size];
+
+  const containerStyleParTaille: ViewStyle = {
+    minHeight: d.containerMinHeight,
+    gap: size === 'sm' ? 8 : 10,
+  };
+
+  const inputStyleParTaille: TextStyle = {
+    fontSize: d.fontSize,
+    paddingVertical: d.paddingVertical,
+    minHeight: d.inputMinHeight,
+  };
 
   return (
-    <View style={[styles.wrapper, containerStyle]}>
+    <View style={[styles.wrapper, { gap: d.gap }, containerStyle]}>
       {label && (
         <View style={styles.labelRow}>
-          <Text style={styles.label}>
+          <Text style={[styles.label, { fontSize: d.labelSize }]}>
             {label}
             {required && <Text style={styles.required}> *</Text>}
           </Text>
@@ -49,6 +75,7 @@ export function Input({
       <View
         style={[
           styles.container,
+          containerStyleParTaille,
           focused && styles.focused,
           hasError && styles.errorBorder,
           !editable && styles.disabled,
@@ -56,7 +83,7 @@ export function Input({
       >
         {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
         <TextInput
-          style={[styles.input, !editable && styles.inputDisabled]}
+          style={[styles.input, inputStyleParTaille, !editable && styles.inputDisabled]}
           placeholderTextColor={colors.neutral[400]}
           onFocus={(e) => {
             setFocused(true);
@@ -67,6 +94,7 @@ export function Input({
             props.onBlur?.(e);
           }}
           editable={editable}
+          accessibilityLabel={label}
           {...props}
         />
         {rightIcon && <View style={styles.rightIcon}>{rightIcon}</View>}

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { i18n } from '@/i18n/instance';
 
 import { router } from 'expo-router';
 
@@ -31,7 +32,7 @@ export default function ChoisirParcelleCultureScreen() {
       <View style={styles.center}>
         <ActivityIndicator size="large" />
 
-        <Text>Chargement des parcelles...</Text>
+        <Text>{i18n.t('libelles.chargementParcelles')}</Text>
       </View>
     );
   }

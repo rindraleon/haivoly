@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { i18n } from '@/i18n/instance';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -13,7 +14,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
 
 import { AppText } from '@/components/CommonComponent/AppText';
-import { colors, radius, spacing } from '@/theme';
+import { radius, spacing } from '@/theme';
+import { useTheme } from '@/hooks/common/useTheme';
+import type { Jetons } from '@/theme/jetons';
 
 export interface ScreenContainerProps {
   /** En-tête affiché seulement si un titre est fourni. */
@@ -40,6 +43,9 @@ export function ScreenContainer({
   contentStyle,
   children,
 }: ScreenContainerProps) {
+  const { jetons } = useTheme();
+  const styles = useMemo(() => creerStyles(jetons), [jetons]);
+
   const contenu = scroll ? (
     <ScrollView
       style={styles.flex}
@@ -67,9 +73,9 @@ export function ScreenContainer({
                   onPress={onBack}
                   style={styles.backButton}
                   accessibilityRole="button"
-                  accessibilityLabel="Revenir en arrière"
+                  accessibilityLabel={i18n.t('divers.revenirEnArriere')}
                 >
-                  <ChevronLeft size={20} color={colors.neutral[800]} />
+                  <ChevronLeft size={20} color={jetons.texte.principal} />
                 </Pressable>
               ) : null}
 
@@ -101,41 +107,47 @@ export function ScreenContainer({
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  root: { flex: 1, backgroundColor: colors.background.app },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.md,
-  },
-  backButton: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.neutral[0],
-    borderWidth: 1,
-    borderColor: colors.neutral[200],
-  },
-  headerTexts: { flex: 1 },
-  title: { fontSize: 19, fontWeight: '700', color: colors.neutral[900] },
-  subtitle: { marginTop: 2 },
-  content: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing['3xl'],
-    gap: spacing.md,
-  },
-  footer: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    backgroundColor: colors.background.app,
-    borderTopWidth: 1,
-    borderTopColor: colors.neutral[200],
-  },
-});
+/**
+ * Ce composant pose le fond de tous les écrans : c'est lui qui rend le thème
+ * visible immédiatement. Ses styles dépendent donc des jetons.
+ */
+function creerStyles(jetons: Jetons) {
+  return StyleSheet.create({
+    flex: { flex: 1 },
+    root: { flex: 1, backgroundColor: jetons.fond.app },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+      paddingHorizontal: spacing.lg,
+      paddingBottom: spacing.md,
+    },
+    backButton: {
+      width: 36,
+      height: 36,
+      borderRadius: radius.full,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: jetons.fond.carte,
+      borderWidth: 1,
+      borderColor: jetons.bordure.defaut,
+    },
+    headerTexts: { flex: 1 },
+    title: { fontSize: 19, fontWeight: '700', color: jetons.texte.principal },
+    subtitle: { marginTop: 2 },
+    content: {
+      paddingHorizontal: spacing.lg,
+      paddingBottom: spacing['3xl'],
+      gap: spacing.md,
+    },
+    footer: {
+      paddingHorizontal: spacing.lg,
+      paddingTop: spacing.md,
+      backgroundColor: jetons.fond.app,
+      borderTopWidth: 1,
+      borderTopColor: jetons.bordure.defaut,
+    },
+  });
+}
 
 export default ScreenContainer;

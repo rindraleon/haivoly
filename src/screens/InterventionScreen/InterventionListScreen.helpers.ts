@@ -1,4 +1,4 @@
-
+import { baliseDeFormatage, i18n } from '@/i18n/instance';
 import { formatDateTime } from '@/utils/date';
 import type {Culture } from '@/types';
 
@@ -44,15 +44,15 @@ export interface ContexteFormulaire {
 export function libelleStatut(statut?: string) {
   switch (statut) {
     case 'PLANIFIEE':
-      return 'PLANIFIÉE';
+      return i18n.t('statuts.PLANIFIEE');
     case 'EN_COURS':
-      return 'EN COURS';
+      return i18n.t('statuts.EN_COURS');
     case 'RECOLTEE':
-      return 'RÉCOLTÉE';
+      return i18n.t('statuts.RECOLTEE');
     case 'ABANDONNEE':
-      return 'ABANDONNÉE';
+      return i18n.t('statuts.ABANDONNEE');
     case 'SUPPRIMEE':
-      return 'SUPPRIMÉE';
+      return i18n.t('statuts.SUPPRIMEE');
     default:
       return statut ?? '';
   }
@@ -99,10 +99,10 @@ export function formaterDate(date?: string | null): string {
 
 export function formaterMontant(cout?: number | null): string {
   if (cout === undefined || cout === null) {
-    return 'Non renseigné';
+    return i18n.t('domaine.nonRenseigne');
   }
 
-  return `${new Intl.NumberFormat('fr-FR').format(cout)} Ar`;
+  return `${new Intl.NumberFormat(baliseDeFormatage()).format(cout)} Ar`;
 }
 
 export function normaliserErreur(error: any): string {

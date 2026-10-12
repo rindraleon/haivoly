@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import { i18n } from '@/i18n/instance';
 
 import { useMemo, useState } from 'react';
 
@@ -72,19 +73,19 @@ export default function ModifierObservationScreen() {
   const statutLabel = useMemo(() => {
     switch (statut) {
       case 'PLANIFIEE':
-        return 'PLANIFIÉE';
+        return i18n.t('statuts.PLANIFIEE');
 
       case 'EN_COURS':
-        return 'EN COURS';
+        return i18n.t('statuts.EN_COURS');
 
       case 'RECOLTEE':
-        return 'RÉCOLTÉE';
+        return i18n.t('statuts.RECOLTEE');
 
       case 'ABANDONNEE':
-        return 'ABANDONNÉE';
+        return i18n.t('statuts.ABANDONNEE');
 
       case 'SUPPRIMEE':
-        return 'SUPPRIMÉE';
+        return i18n.t('statuts.SUPPRIMEE');
 
       default:
         return statut;
@@ -123,8 +124,8 @@ export default function ModifierObservationScreen() {
     async () => {
       if (!modificationAutorisee) {
         Alert.alert(
-          'Action impossible',
-          'Cette culture est en lecture seule.',
+          i18n.t('divers.actionImpossible'),
+          i18n.t('cultures.cultureLectureSeule'),
         );
 
         return;
@@ -136,8 +137,8 @@ export default function ModifierObservationScreen() {
         !observationId
       ) {
         Alert.alert(
-          'Erreur',
-          'Les informations de l’observation sont incomplètes.',
+          i18n.t('domaine.erreur'),
+          i18n.t('observations.informationsIncompletes'),
         );
 
         return;
@@ -145,8 +146,8 @@ export default function ModifierObservationScreen() {
 
       if (!description.trim()) {
         Alert.alert(
-          'Champ obligatoire',
-          'Veuillez saisir une description.',
+          i18n.t('domaine.champObligatoire'),
+          i18n.t('divers.veuillezSaisirDescription'),
         );
 
         return;
@@ -168,8 +169,8 @@ export default function ModifierObservationScreen() {
         );
 
         Alert.alert(
-          'Observation mise à jour',
-          'Votre observation terrain a été modifiée avec succès.',
+          i18n.t('observations.miseAJour'),
+          i18n.t('observations.modifieeSucces'),
           [
             {
               text: 'OK',
@@ -182,10 +183,10 @@ export default function ModifierObservationScreen() {
         logger.warn('ObservationEditScreen', "Échec de la modification de l'observation");
 
         Alert.alert(
-          'Erreur',
+          i18n.t('domaine.erreur'),
           error?.response?.data
             ?.message ||
-            "Impossible de modifier l'observation.",
+            i18n.t('observations.impossibleModifierLObservation'),
         );
       }
     };

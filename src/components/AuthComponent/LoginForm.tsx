@@ -1,4 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { i18n } from '@/i18n/instance';
 import { router } from 'expo-router';
 import { Input } from '@/components/CommonComponent/Input';
 import { PasswordInput } from '@/components/CommonComponent/PasswordInput';
@@ -35,8 +36,8 @@ export function LoginForm({ email, password, errors, loading, onEmailChange, onP
 
       <View style={{ gap: 6 }}>
         <PasswordInput
-          label="Mot de passe"
-          placeholder="Votre mot de passe"
+          label={i18n.t('libelles.motDePasse')}
+          placeholder={i18n.t('libelles.votreMotDePasse')}
           value={password}
           onChangeText={onPasswordChange}
           editable={!loading}
@@ -67,7 +68,7 @@ export function LoginForm({ email, password, errors, loading, onEmailChange, onP
           disabled={loading}
           style={({ pressed }) => [styles.registerBtn, pressed && { opacity: 0.7 }]}
         >
-          <Text style={styles.registerBtnText}>Créer un compte</Text>
+          <Text style={styles.registerBtnText}>{i18n.t('libelles.creerCompte')}</Text>
         </Pressable>
       </View>
     </View>

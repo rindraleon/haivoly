@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect, react/no-unescaped-entities */
+import { i18n } from '@/i18n/instance';
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native';
 
 import { router, useLocalSearchParams } from 'expo-router';
@@ -142,7 +143,7 @@ export default function ModifierInterventionScreen() {
     const errorMessage =
       (error as any)?.response?.data
         ?.message ||
-      'Impossible de récupérer cette intervention.';
+      i18n.t('interventions.recupImpossible');
 
     return (
       <View style={styles.center}>
@@ -174,16 +175,16 @@ export default function ModifierInterventionScreen() {
 
     if (!typeValue) {
       Alert.alert(
-        'Champ obligatoire',
-        'Veuillez saisir le type d’intervention.',
+        i18n.t('domaine.champObligatoire'),
+        i18n.t('interventions.veuillezSaisirTypeD'),
       );
       return;
     }
 
     if (!dateValue) {
       Alert.alert(
-        'Champ obligatoire',
-        'Veuillez saisir la date de l’intervention.',
+        i18n.t('domaine.champObligatoire'),
+        i18n.t('interventions.veuillezSaisirDateL'),
       );
       return;
     }
@@ -195,7 +196,7 @@ export default function ModifierInterventionScreen() {
     ) {
       Alert.alert(
         'Date invalide',
-        'Veuillez saisir une date valide au format AAAA-MM-JJ.',
+        i18n.t('domaine.veuillezSaisirDateValide'),
       );
       return;
     }
@@ -215,8 +216,8 @@ export default function ModifierInterventionScreen() {
         parsedQuantite < 0
       ) {
         Alert.alert(
-          'Quantité invalide',
-          'La quantité doit être un nombre positif ou égal à zéro.',
+          i18n.t('domaine.quantiteInvalide'),
+          i18n.t('interventions.quantiteInvalidePositive'),
         );
         return;
       }
@@ -239,8 +240,8 @@ export default function ModifierInterventionScreen() {
         parsedCout < 0
       ) {
         Alert.alert(
-          'Coût invalide',
-          'Le coût doit être un nombre positif ou égal à zéro.',
+          i18n.t('domaine.coutInvalide'),
+          i18n.t('interventions.coutInvalidePositif'),
         );
         return;
       }
@@ -270,8 +271,8 @@ export default function ModifierInterventionScreen() {
       });
 
       Alert.alert(
-        'Succès',
-        'L’intervention a été modifiée avec succès.',
+        i18n.t('domaine.succes'),
+        i18n.t('interventions.modifieeSucces'),
         [
           {
             text: 'OK',
@@ -282,10 +283,10 @@ export default function ModifierInterventionScreen() {
     } catch (err: any) {
       const message =
         err?.response?.data?.message ||
-        'Impossible de modifier l’intervention.';
+        i18n.t('interventions.impossibleModifierLIntervention');
 
       Alert.alert(
-        'Erreur',
+        i18n.t('domaine.erreur'),
         Array.isArray(message)
           ? message.join('\n')
           : String(message),

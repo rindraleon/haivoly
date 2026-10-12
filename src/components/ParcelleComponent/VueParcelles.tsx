@@ -1,4 +1,5 @@
 import { Chip } from '@/components/CommonComponent/Chip';
+import { i18n } from '@/i18n/instance';
 import { EmptyState } from '@/components/CommonComponent/EmptyState';
 import { ScreenHeader } from '@/components/CommonComponent/ScreenHeader';
 import { SearchBar } from '@/components/CommonComponent/SearchBar';
@@ -42,9 +43,7 @@ export function VueParcelles({
 }: Props) {
   return (
 <View style={styles.root}>
-        {/* =================================================
-            HEADER
-        ================================================== */}
+        {}
         <ScreenHeader
           title="Parcelles"
           subtitle={`${stats.actives} actives • ${stats.superficieHa.toFixed(
@@ -62,7 +61,7 @@ export function VueParcelles({
               <SearchBar
                 value={recherche}
                 onChangeText={setRecherche}
-                placeholder="Rechercher parcelle, sol, description..."
+                placeholder={i18n.t('libelles.rechercheParcelleSol')}
               />
             </View>
 
@@ -164,7 +163,7 @@ export function VueParcelles({
             >
               {recherche
                 ? `pour "${recherche}"`
-                : 'Triées par modification récente'}
+                : i18n.t('parcelles.trieesModification')}
             </Text>
           </View>
         </View>
@@ -244,18 +243,18 @@ export function VueParcelles({
                 }
                 title={
                   recherche
-                    ? 'Aucun résultat'
+                    ? i18n.t('domaine.aucunResultat')
                     : 'Aucune parcelle'
                 }
                 description={
                   recherche
                     ? `Aucune parcelle ne correspond à "${recherche}". Essayez un autre terme.`
-                    : 'Commencez par créer votre première parcelle pour organiser vos cultures.'
+                    : i18n.t('parcelles.premiereParcelle')
                 }
                 actionLabel={
                   recherche
                     ? 'Effacer la recherche'
-                    : 'Créer une parcelle'
+                    : i18n.t('parcelles.creerUne')
                 }
                 onAction={() =>
                   recherche

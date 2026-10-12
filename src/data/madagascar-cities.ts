@@ -11,11 +11,6 @@ export interface VilleMadagascar {
   longitude: number;
 }
 
-/**
- * Principales villes de Madagascar avec leurs coordonnées approximatives.
- * Sert à centrer la carte sur la ville la plus proche de l'utilisateur lors
- * de la création d'une parcelle (facilite la délimitation).
- */
 export const VILLES_MADAGASCAR: VilleMadagascar[] = [
   { nom: 'Antananarivo', latitude: -18.8792, longitude: 47.5079 },
   { nom: 'Antsirabe', latitude: -19.8659, longitude: 47.0325 },

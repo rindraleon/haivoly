@@ -1,4 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect, react/no-unescaped-entities */
+import { i18n } from '@/i18n/instance';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -12,6 +14,7 @@ import { PasswordInput } from '@/components/CommonComponent/PasswordInput';
 import { styles } from './ResetPasswordScreen.styles';
 import { PasswordRuleItem } from '@/components/AuthComponent/PasswordRuleItem';
 export default function ResetPasswordScreen() {
+  const { t } = useTranslation();
   const { token: tokenParam } = useLocalSearchParams<{ token?: string }>();
   const [token, setToken] = useState(tokenParam || '');
   const [newPassword, setNewPassword] = useState('');
@@ -37,12 +40,12 @@ export default function ResetPasswordScreen() {
 
   const validate = (): boolean => {
     const e: typeof errors = {};
-    if (!token.trim()) e.general = 'Le lien est invalide ou incomplet. Veuillez refaire une demande.';
-    if (!newPassword) e.newPassword = 'Le nouveau mot de passe est obligatoire.';
-    else if (!checks.len) e.newPassword = 'Au moins 8 caractères.';
+    if (!token.trim()) e.general = i18n.t('divers.lienInvalideOuIncomplet');
+    if (!newPassword) e.newPassword = i18n.t('auth.nouveauMotPasseObligatoire');
+    else if (!checks.len) e.newPassword = t('auth.reset.motDePasseCourt');
     else if (!checks.upper || !checks.lower || !checks.number) e.newPassword = 'Ajoutez majuscule, minuscule et chiffre.';
-    if (!confirmPassword) e.confirmPassword = 'Veuillez confirmer le mot de passe.';
-    else if (newPassword !== confirmPassword) e.confirmPassword = 'Les mots de passe ne correspondent pas.';
+    if (!confirmPassword) e.confirmPassword = i18n.t('auth.veuillezConfirmerMotPasse');
+    else if (newPassword !== confirmPassword) e.confirmPassword = i18n.t('divers.motsPasseNeCorrespondent');
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -60,7 +63,7 @@ export default function ResetPasswordScreen() {
       setState('success');
     } catch (error) {
       setErrors({
-        general: messageErreur(error, 'Le lien est invalide ou a expiré.'),
+        general: messageErreur(error, t('auth.reset.lienInvalide')),
       });
       setState('form');
     }
@@ -74,7 +77,7 @@ export default function ResetPasswordScreen() {
             <View style={styles.successIcon}>
               <CheckCircle2 size={30} color={colors.success[600]} strokeWidth={2} />
             </View>
-            <Text style={styles.successTitle}>Mot de passe réinitialisé</Text>
+            <Text style={styles.successTitle}>{t('auth.reset.reinitialise')}</Text>
             <Text style={styles.successDesc}>
               Votre mot de passe a été mis à jour avec succès. Vous pouvez maintenant vous connecter avec vos nouveaux
               identifiants.
@@ -97,7 +100,7 @@ export default function ResetPasswordScreen() {
               <View style={styles.iconCircle}>
                 <KeyRound size={22} color={colors.primary[600]} strokeWidth={1.9} />
               </View>
-              <Text style={styles.title}>Réinitialiser votre mot de passe</Text>
+              <Text style={styles.title}>{t('auth.reset.titre')}</Text>
               <Text style={styles.subtitle}>Choisissez un mot de passe robuste que vous n'utilisez nulle part ailleurs.</Text>
             </View>
 
@@ -112,14 +115,14 @@ export default function ResetPasswordScreen() {
               {/* Token hidden if from URL; allow manual paste for deep-link fallback */}
               {!tokenParam && (
                 <View style={styles.tokenBox}>
-                  <Text style={styles.tokenLabel}>Token (depuis l'email)</Text>
+                  <Text style={styles.tokenLabel}>{t('auth.reset.tokenLabel')}</Text>
                   <Text style={styles.tokenHint}>Collez le token reçu par email si le lien ne s'est pas ouvert automatiquement.</Text>
                 </View>
               )}
 
               <PasswordInput
-                label="Nouveau mot de passe"
-                placeholder="Au moins 8 caractères"
+                label={i18n.t('libelles.nouveauMotDePasse')}
+                placeholder={t('auth.reset.placeholderLongueur')}
                 value={newPassword}
                 onChangeText={(v) => {
                   setNewPassword(v);
@@ -132,16 +135,16 @@ export default function ResetPasswordScreen() {
 
               {newPassword.length > 0 && (
                 <View style={styles.checks}>
-                  <PasswordRuleItem valid={checks.len} text="Au moins 8 caractères" />
-                  <PasswordRuleItem valid={checks.upper} text="Une majuscule" />
-                  <PasswordRuleItem valid={checks.lower} text="Une minuscule" />
-                  <PasswordRuleItem valid={checks.number} text="Un chiffre" />
+                  <PasswordRuleItem valid={checks.len} text={t('auth.register.securite.regleLongueur')} />
+                  <PasswordRuleItem valid={checks.upper} text={i18n.t('libelles.uneMajuscule')} />
+                  <PasswordRuleItem valid={checks.lower} text={i18n.t('libelles.uneMinuscule')} />
+                  <PasswordRuleItem valid={checks.number} text={i18n.t('libelles.unChiffre')} />
                 </View>
               )}
 
               <PasswordInput
-                label="Confirmer le mot de passe"
-                placeholder="Répétez le mot de passe"
+                label={i18n.t('libelles.confirmerMotDePasse')}
+                placeholder={t('auth.reset.confirmer')}
                 value={confirmPassword}
                 onChangeText={(v) => {
                   setConfirmPassword(v);
@@ -156,7 +159,7 @@ export default function ResetPasswordScreen() {
                 <View style={[styles.matchRow, checks.match ? styles.matchOk : styles.matchKo]}>
                   <ShieldCheck size={14} color={checks.match ? colors.success[600] : colors.neutral[400]} />
                   <Text style={[styles.matchText, checks.match ? styles.matchTextOk : styles.matchTextKo]}>
-                    {checks.match ? 'Les mots de passe correspondent' : 'Les mots de passe ne correspondent pas'}
+                    {checks.match ? i18n.t('divers.motsPasseCorrespondent') : 'Les mots de passe ne correspondent pas'}
                   </Text>
                 </View>
               )}
@@ -168,11 +171,11 @@ export default function ResetPasswordScreen() {
                 size="lg"
                 disabled={state === 'loading'}
               >
-                {state === 'loading' ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
+                {state === 'loading' ? t('auth.reset.enCours') : t('auth.reset.soumettre')}
               </Button>
 
               <Pressable onPress={() => router.replace('/(auth)/login' as any)} style={styles.link}>
-                <Text style={styles.linkText}>Retour à la connexion</Text>
+                <Text style={styles.linkText}>{t('auth.retourConnexion')}</Text>
               </Pressable>
             </View>
           </View>

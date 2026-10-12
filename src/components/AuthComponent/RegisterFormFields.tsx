@@ -1,4 +1,5 @@
 import { PwdCheck } from '@/components/AuthComponent/PwdCheck';
+import { i18n } from '@/i18n/instance';
 import { Button } from '@/components/CommonComponent/Button';
 import { Input } from '@/components/CommonComponent/Input';
 import { PasswordInput } from '@/components/CommonComponent/PasswordInput';
@@ -18,7 +19,7 @@ type Props = {
   isLoading: boolean;
   nom: string;
   password: string;
-  passwordLabel: "Créez un mot de passe sécurisé" | "Mot de passe faible" | "Mot de passe moyen" | "Presque sécurisé" | "Mot de passe sécurisé";
+  passwordLabel: string;
   passwordScore: number;
   prenom: string;
   pwdChecks: { len: boolean; upper: boolean; lower: boolean; number: boolean; };
@@ -56,9 +57,7 @@ export function RegisterFormFields({
                       }
                     >
 
-                      {/* -----------------------------------------
-                          CARD HEADER
-                      ----------------------------------------- */}
+                      {}
 
                       <View
                         style={
@@ -108,9 +107,7 @@ export function RegisterFormFields({
 
                       </View>
 
-                      {/* -----------------------------------------
-                          GENERAL ERROR
-                      ----------------------------------------- */}
+                      {}
 
                       {errors.general && (
                         <View
@@ -146,9 +143,7 @@ export function RegisterFormFields({
                         </View>
                       )}
 
-                      {/* -----------------------------------------
-                          PERSONAL INFORMATION
-                      ----------------------------------------- */}
+                      {}
 
                       <View
                         style={
@@ -240,7 +235,7 @@ export function RegisterFormFields({
                           />
 
                           <Input
-                            label="Prénom"
+                            label={i18n.t('profil.prenom')}
                             placeholder="Hery"
                             value={prenom}
                             onChangeText={(
@@ -307,7 +302,7 @@ export function RegisterFormFields({
                           >
 
                             <Input
-                              label="Téléphone"
+                              label={i18n.t('domaine.telephone')}
                               placeholder="+261 34 00 000 00"
                               value={
                                 telephone
@@ -345,9 +340,7 @@ export function RegisterFormFields({
 
                       </View>
 
-                      {/* -----------------------------------------
-                          SECURITY
-                      ----------------------------------------- */}
+                      {}
 
                       <View
                         style={
@@ -405,8 +398,8 @@ export function RegisterFormFields({
                         </View>
 
                         <PasswordInput
-                          label="Mot de passe"
-                          placeholder="Au moins 8 caractères"
+                          label={i18n.t('libelles.motDePasse')}
+                          placeholder={i18n.t('auth.register.motDePasseCourt')}
                           value={
                             password
                           }
@@ -436,9 +429,7 @@ export function RegisterFormFields({
                           required
                         />
 
-                        {/* -------------------------------------
-                            PASSWORD STRENGTH
-                        ------------------------------------- */}
+                        {}
 
                         {password.length > 0 && (
 
@@ -512,28 +503,28 @@ export function RegisterFormFields({
                                 valid={
                                   pwdChecks.len
                                 }
-                                text="8 caractères minimum"
+                                text={i18n.t('auth.register.securite.regleLongueur')}
                               />
 
                               <PwdCheck
                                 valid={
                                   pwdChecks.upper
                                 }
-                                text="Une majuscule"
+                                text={i18n.t('libelles.uneMajuscule')}
                               />
 
                               <PwdCheck
                                 valid={
                                   pwdChecks.lower
                                 }
-                                text="Une minuscule"
+                                text={i18n.t('libelles.uneMinuscule')}
                               />
 
                               <PwdCheck
                                 valid={
                                   pwdChecks.number
                                 }
-                                text="Un chiffre"
+                                text={i18n.t('libelles.unChiffre')}
                               />
 
                             </View>
@@ -543,9 +534,7 @@ export function RegisterFormFields({
 
                       </View>
 
-                      {/* -----------------------------------------
-                          TRUST MESSAGE
-                      ----------------------------------------- */}
+                      {}
 
                       <View
                         style={
@@ -597,9 +586,7 @@ export function RegisterFormFields({
 
                       </View>
 
-                      {/* -----------------------------------------
-                          BUTTON
-                      ----------------------------------------- */}
+                      {}
 
                       <Button
                         onPress={
@@ -612,13 +599,11 @@ export function RegisterFormFields({
                         size="lg"
                       >
                         {isLoading
-                          ? 'Création...'
-                          : 'Créer mon compte'}
+                          ? i18n.t('auth.register.creation')
+                          : i18n.t('auth.register.soumettre')}
                       </Button>
 
-                      {/* -----------------------------------------
-                          LOGIN
-                      ----------------------------------------- */}
+                      {}
 
                       <View
                         style={

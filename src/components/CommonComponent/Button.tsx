@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -8,7 +8,9 @@ import {
   type ViewStyle,
   type TextStyle,
 } from 'react-native';
-import { colors, radius, sizing } from '@/theme';
+import { radius, sizing } from '@/theme';
+import { useTheme } from '@/hooks/common/useTheme';
+import type { Jetons } from '@/theme/jetons';
 
 type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
 type Size = 'sm' | 'md' | 'lg';
@@ -42,6 +44,8 @@ export function Button({
   textStyle,
   accessibilityLabel,
 }: ButtonProps) {
+  const { jetons } = useTheme();
+  const styles = useMemo(() => creerStyles(jetons), [jetons]);
   const isDisabled = disabled || loading;
 
   return (
@@ -54,7 +58,7 @@ export function Button({
       style={({ pressed }) => [
         styles.base,
         stylesBySize[size],
-        stylesByVariant[variant].container,
+        styles.parVariante[variant].container,
         fullWidth && styles.fullWidth,
         isDisabled && styles.disabled,
         pressed && !isDisabled && styles.pressed,
@@ -64,14 +68,18 @@ export function Button({
       {loading ? (
         <>
           <ActivityIndicator
-            color={variant === 'primary' || variant === 'destructive' ? '#FFFFFF' : colors.primary[500]}
+            color={
+              variant === 'primary' || variant === 'destructive'
+                ? jetons.primaire.contraste
+                : jetons.primaire.base
+            }
             size="small"
           />
           <Text
             style={[
               styles.text,
-              stylesBySize[size] && textSizeBySize[size],
-              stylesByVariant[variant].text,
+              textSizeBySize[size],
+              styles.parVariante[variant].text,
               textStyle,
             ]}
           >
@@ -85,7 +93,7 @@ export function Button({
             style={[
               styles.text,
               textSizeBySize[size],
-              stylesByVariant[variant].text,
+              styles.parVariante[variant].text,
               isDisabled && styles.textDisabled,
               textStyle,
             ]}
@@ -99,24 +107,6 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: 'transparent',
-  },
-  fullWidth: { alignSelf: 'stretch', width: '100%' },
-  disabled: { opacity: 0.52 },
-  pressed: { opacity: 0.86, transform: [{ scale: 0.985 }] },
-  icon: { alignItems: 'center', justifyContent: 'center' },
-  text: { fontWeight: '700', textAlign: 'center' },
-  textDisabled: { opacity: 0.9 },
-});
-
 const stylesBySize: Record<Size, ViewStyle> = {
   sm: { minHeight: sizing.buttonHeightSm, paddingHorizontal: 14, borderRadius: radius.sm },
   md: { minHeight: sizing.buttonHeight, paddingHorizontal: 18 },
@@ -129,25 +119,50 @@ const textSizeBySize: Record<Size, TextStyle> = {
   lg: { fontSize: 16, lineHeight: 24 },
 };
 
-const stylesByVariant: Record<Variant, { container: ViewStyle; text: TextStyle }> = {
-  primary: {
-    container: { backgroundColor: colors.primary[500], borderColor: colors.primary[500] },
-    text: { color: '#FFFFFF' },
-  },
-  secondary: {
-    container: { backgroundColor: colors.neutral[900], borderColor: colors.neutral[900] },
-    text: { color: '#FFFFFF' },
-  },
-  outline: {
-    container: { backgroundColor: '#FFFFFF', borderColor: colors.border.strong },
-    text: { color: colors.neutral[700] },
-  },
-  ghost: {
-    container: { backgroundColor: 'transparent', borderColor: 'transparent' },
-    text: { color: colors.primary[500] },
-  },
-  destructive: {
-    container: { backgroundColor: colors.error[500], borderColor: colors.error[500] },
-    text: { color: '#FFFFFF' },
-  },
-};
+/**
+ * Les variantes dépendent des jetons : recalculées à chaque changement de
+ * thème, donc un passage en sombre repeint les boutons sans rechargement.
+ */
+function creerStyles(jetons: Jetons) {
+  return {
+    ...StyleSheet.create({
+      base: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        borderRadius: radius.md,
+        borderWidth: 1,
+        borderColor: 'transparent',
+      },
+      fullWidth: { alignSelf: 'stretch', width: '100%' },
+      disabled: { opacity: 0.52 },
+      pressed: { opacity: 0.86, transform: [{ scale: 0.985 }] },
+      icon: { alignItems: 'center', justifyContent: 'center' },
+      text: { fontWeight: '700', textAlign: 'center' },
+      textDisabled: { opacity: 0.9 },
+    }),
+    parVariante: {
+      primary: {
+        container: { backgroundColor: jetons.primaire.base, borderColor: jetons.primaire.base },
+        text: { color: jetons.primaire.contraste },
+      },
+      secondary: {
+        container: { backgroundColor: jetons.texte.principal, borderColor: jetons.texte.principal },
+        text: { color: jetons.texte.inverse },
+      },
+      outline: {
+        container: { backgroundColor: jetons.fond.carte, borderColor: jetons.bordure.appuyee },
+        text: { color: jetons.texte.principal },
+      },
+      ghost: {
+        container: { backgroundColor: 'transparent', borderColor: 'transparent' },
+        text: { color: jetons.primaire.base },
+      },
+      destructive: {
+        container: { backgroundColor: jetons.erreur.base, borderColor: jetons.erreur.base },
+        text: { color: jetons.primaire.contraste },
+      },
+    } as Record<Variant, { container: ViewStyle; text: TextStyle }>,
+  };
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { i18n } from '@/i18n/instance';
 import { Alert } from 'react-native';
 import { router } from 'expo-router';
 
@@ -35,7 +36,7 @@ export default function AjoutParcelleScreen() {
             'Enregistrement impossible',
             error instanceof ApiError
               ? error.message
-              : 'Une erreur est survenue. Réessayez.',
+              : i18n.t('domaine.reessayerErreur'),
           );
         }
       }}

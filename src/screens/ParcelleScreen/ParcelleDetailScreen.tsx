@@ -1,4 +1,5 @@
 import React from 'react';
+import { i18n } from '@/i18n/instance';
 import { Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Layers, MapPinned, Pencil, PenTool, Ruler, Sprout } from 'lucide-react-native';
@@ -39,14 +40,14 @@ export default function DetailParcelleScreen() {
   const center = centre;
 
   if (parcelle.isLoading) {
-    return <LoadingState message="Chargement de la parcelle…" />;
+    return <LoadingState message={i18n.t('parcelles.chargementParcelle')} />;
   }
 
   if (parcelle.isError || !parcelle.data) {
     return (
       <ErrorState
-        title="Parcelle introuvable"
-        message="Cette parcelle n'existe pas ou ne vous appartient pas."
+        title={i18n.t('libelles.parcelleIntrouvable')}
+        message={i18n.t('parcelles.parcelleNExistePas')}
         onRetry={() => parcelle.refetch()}
         onBack={() => router.back()}
       />
@@ -59,7 +60,7 @@ export default function DetailParcelleScreen() {
   return (
     <ParcelleFormShell
       title={data.nom}
-      subtitle={superficie ? `Superficie ${superficie}` : 'Superficie non calculée'}
+      subtitle={superficie ? `Superficie ${superficie}` : i18n.t('parcelles.superficieNonCalculee')}
       onBack={() => router.back()}
       footer={
         <View style={styles.footerRow}>
@@ -117,12 +118,12 @@ export default function DetailParcelleScreen() {
       </Card>
 
       <Card>
-        <Text style={styles.sectionTitle}>Informations</Text>
+        <Text style={styles.sectionTitle}>{i18n.t('libelles.informations')}</Text>
         <Row label="Statut" value={<Badge label={libelleStatut(data.statut)} variant={badgeStatut(data.statut)} />} />
-        <Row label="Type de sol" value={data.typeSol ?? 'Non renseigné'} />
+        <Row label="Type de sol" value={data.typeSol ?? i18n.t('domaine.nonRenseigne')} />
         <Row label="Latitude" value={center ? center.latitude.toFixed(6) : '—'} />
         <Row label="Longitude" value={center ? center.longitude.toFixed(6) : '—'} />
-        <Row label="Créée le" value={formatDate(data.creeA)} />
+        <Row label={i18n.t('parcelles.creeeLe')} value={formatDate(data.creeA)} />
         {data.description ? <Row label="Description" value={data.description} /> : null}
       </Card>
 
@@ -149,9 +150,9 @@ export default function DetailParcelleScreen() {
         ) : (cultures.data?.items ?? []).length === 0 ? (
           <EmptyState
             icon={Layers}
-            title="Aucune culture"
-            description="Ajoutez une culture pour suivre le cycle cultural de cette parcelle."
-            actionLabel="Ajouter une culture"
+            title={i18n.t('libelles.aucuneCulture')}
+            description={i18n.t('parcelles.ajoutezCultureSuivreCycle')}
+            actionLabel={i18n.t('cultures.ajouterCulture')}
             onAction={() =>
               router.push({
                 pathname: '/(app)/(cultures)/ajout-culture',
@@ -175,7 +176,7 @@ export default function DetailParcelleScreen() {
                 <View style={styles.flex}>
                   <Text style={styles.cultureName}>{culture.nom}</Text>
                   <Text style={styles.muted}>
-                    {culture.type ?? 'Type non précisé'} · plantée le{' '}
+                    {culture.type ?? i18n.t('parcelles.typeNonPrecise')} · plantée le{' '}
                     {formatDate(culture.datePlantation)}
                   </Text>
                 </View>
@@ -222,13 +223,13 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 function libelleStatut(statut: string): string {
   switch (statut) {
     case 'ACTIVE':
-      return 'Active';
+      return i18n.t('statuts.ACTIVE');
     case 'ABANDONNEE':
-      return 'Abandonnée';
+      return i18n.t('statuts.ABANDONNEE');
     case 'ARCHIVEE':
-      return 'Archivée';
+      return i18n.t('statuts.ARCHIVEE');
     default:
-      return 'Supprimée';
+      return i18n.t('statuts.SUPPRIMEE');
   }
 }
 
@@ -241,15 +242,15 @@ function badgeStatut(statut: string): 'success' | 'warning' | 'neutral' | 'error
 function libelleStatutCulture(statut: StatutCulture): string {
   switch (statut) {
     case 'PLANIFIEE':
-      return 'Planifiée';
+      return i18n.t('statuts.PLANIFIEE');
     case 'EN_COURS':
-      return 'En cours';
+      return i18n.t('statuts.EN_COURS');
     case 'RECOLTEE':
-      return 'Récoltée';
+      return i18n.t('statuts.RECOLTEE');
     case 'ABANDONNEE':
-      return 'Abandonnée';
+      return i18n.t('statuts.ABANDONNEE');
     default:
-      return 'Supprimée';
+      return i18n.t('statuts.SUPPRIMEE');
   }
 }
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { i18n } from '@/i18n/instance';
 import { Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Pencil, Plus, Sprout, Wheat } from 'lucide-react-native';
@@ -32,13 +33,13 @@ export default function DetailCultureScreen() {
   const interventions = useInterventions(idCulture);
 
   if (culture.isLoading) {
-    return <LoadingState message="Chargement de la culture…" />;
+    return <LoadingState message={i18n.t('cultures.chargementCulture')} />;
   }
 
   if (culture.isError || !culture.data) {
     return (
       <ErrorState
-        title="Culture introuvable"
+        title={i18n.t('libelles.cultureIntrouvable')}
         onRetry={() => culture.refetch()}
         onBack={() => router.back()}
       />
@@ -108,16 +109,16 @@ export default function DetailCultureScreen() {
       </Card>
 
       <Card>
-        <Text style={styles.sectionTitle}>Informations culturales</Text>
+        <Text style={styles.sectionTitle}>{i18n.t('libelles.informationsCulturales')}</Text>
         <Row label="Statut" value={<BadgeStatut statut={data.statut} />} />
-        <Row label="Type" value={data.type ?? 'Non précisé'} />
-        <Row label="Variété" value={data.variete ?? 'Non précisée'} />
-        <Row label="Stade" value={data.stade ?? 'Non précisé'} />
+        <Row label="Type" value={data.type ?? i18n.t('domaine.nonPrecise')} />
+        <Row label={i18n.t('domaine.variete')} value={data.variete ?? i18n.t('cultures.nonPrecisee')} />
+        <Row label="Stade" value={data.stade ?? i18n.t('domaine.nonPrecise')} />
         <Row label="Plantation" value={formatDate(data.datePlantation)} />
-        <Row label="Récolte prévue" value={formatDate(data.datePrevueRecolte)} />
+        <Row label={i18n.t('domaine.recoltePrevue')} value={formatDate(data.datePrevueRecolte)} />
         {data.recolte ? (
           <Row
-            label="Récolte réelle"
+            label={i18n.t('cultures.recolteReelle')}
             value={`${formatDate(data.recolte.dateRecolte)} · ${data.recolte.quantite} ${data.recolte.unite}`}
           />
         ) : null}
@@ -147,8 +148,8 @@ export default function DetailCultureScreen() {
         ) : (interventions.data ?? []).length === 0 ? (
           <EmptyState
             icon={Sprout}
-            title="Aucune intervention"
-            description="Enregistrez les travaux réalisés sur cette culture (irrigation, traitement…)."
+            title={i18n.t('libelles.aucuneIntervention')}
+            description={i18n.t('cultures.travauxHint')}
           />
         ) : (
           (interventions.data ?? []).map((intervention) => (
@@ -194,20 +195,20 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 
 function BadgeStatut({ statut }: { statut: string }) {
   const map: Record<string, { label: string; variant: 'success' | 'info' | 'warning' | 'error' | 'neutral' }> = {
-    PLANIFIEE: { label: 'Planifiée', variant: 'neutral' },
-    EN_COURS: { label: 'En cours', variant: 'info' },
-    RECOLTEE: { label: 'Récoltée', variant: 'success' },
-    ABANDONNEE: { label: 'Abandonnée', variant: 'warning' },
-    SUPPRIMEE: { label: 'Supprimée', variant: 'error' },
+    PLANIFIEE: { label: i18n.t('statuts.PLANIFIEE'), variant: 'neutral' },
+    EN_COURS: { label: i18n.t('statuts.EN_COURS'), variant: 'info' },
+    RECOLTEE: { label: i18n.t('statuts.RECOLTEE'), variant: 'success' },
+    ABANDONNEE: { label: i18n.t('statuts.ABANDONNEE'), variant: 'warning' },
+    SUPPRIMEE: { label: i18n.t('statuts.SUPPRIMEE'), variant: 'error' },
   };
   const item = map[statut] ?? { label: statut, variant: 'neutral' as const };
   return <Badge label={item.label} variant={item.variant} />;
 }
 
 function libelleStatutIntervention(statut: string): string {
-  if (statut === 'PLANIFIEE') return 'Planifiée';
-  if (statut === 'TERMINEE') return 'Terminée';
-  return 'En cours';
+  if (statut === 'PLANIFIEE') return i18n.t('statuts.PLANIFIEE');
+  if (statut === 'TERMINEE') return i18n.t('cultures.terminee');
+  return i18n.t('statuts.EN_COURS');
 }
 
 function badgeStatutIntervention(
@@ -224,7 +225,7 @@ export function libelleType(type: string): string {
     PLANTATION: 'Plantation',
     IRRIGATION: 'Irrigation',
     FERTILISATION: 'Fertilisation',
-    DESHERBAGE: 'Désherbage',
+    DESHERBAGE: i18n.t('cultures.desherbage'),
     TRAITEMENT: 'Traitement',
     ENTRETIEN: 'Entretien',
     INSPECTION: 'Inspection',

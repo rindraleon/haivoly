@@ -1,4 +1,5 @@
 import { ScreenHeader } from '@/components/CommonComponent/ScreenHeader';
+import { i18n } from '@/i18n/instance';
 import { InterventionCard } from '@/components/InterventionComponent/InterventionCard';
 import { Intervention, StatutCulture, libelleStatut } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
 import { styles } from '@/screens/InterventionScreen/InterventionListScreen.styles';
@@ -72,10 +73,10 @@ export function ResumeInterventions({
           </View>
           <View style={styles.contextContent}>
             <Text style={styles.contextTitle} numberOfLines={1}>
-              {cultureNom || 'Culture'}
+              {cultureNom || i18n.t('libelles.culture')}
             </Text>
             <Text style={styles.contextSubtitle} numberOfLines={1}>
-              {parcelleNom || 'Parcelle'}
+              {parcelleNom || i18n.t('libelles.parcelle')}
               {' • '}
               {statut ? libelleStatut(statut) : 'Statut inconnu'}
             </Text>
@@ -92,7 +93,7 @@ export function ResumeInterventions({
               />
               <TextInput
                 style={styles.searchInput}
-                placeholder="Rechercher intervention..."
+                placeholder={i18n.t('libelles.rechercheInterventionCourte')}
                 placeholderTextColor="#9CA3AF"
                 value={recherche}
                 onChangeText={setRecherche}
@@ -131,7 +132,7 @@ export function ResumeInterventions({
             <Text style={styles.statHint} numberOfLines={1}>
               {recherche
                 ? `pour "${recherche}"`
-                : 'Triées par date récente'}
+                : i18n.t('domaine.trieesDateRecente')}
             </Text>
           </View>
         </View>
@@ -179,15 +180,15 @@ export function ResumeInterventions({
                   Consultation uniquement
                 </Text>
                 <Text style={styles.readOnlyBannerText}>
-                  Cette culture est {statut === 'RECOLTEE' ? 'récoltée' : 'abandonnée'}.
+                  Cette culture est {statut === 'RECOLTEE' ? i18n.t('divers.recoltee') : i18n.t('divers.abandonnee')}.
                   Les interventions restent consultables.
                 </Text>
               </View>
             ) : null}
 
             {renderFormulaireInline(
-              cultureNom || 'Culture',
-              parcelleNom || 'Parcelle',
+              cultureNom || i18n.t('libelles.culture'),
+              parcelleNom || i18n.t('libelles.parcelle'),
             )}
 
             {interventionsQuery.isLoading ? (
@@ -223,8 +224,8 @@ export function ResumeInterventions({
                   </Text>
                   <Text style={styles.emptyText}>
                     {recherche
-                      ? 'Aucune intervention ne correspond à votre recherche.'
-                      : "Aucune intervention n'a encore été enregistrée pour cette culture."}
+                      ? i18n.t('interventions.aucuneRecherche')
+                      : i18n.t('divers.aucuneInterventionCulture')}
                   </Text>
                 </View>
               </View>
@@ -252,7 +253,7 @@ export function ResumeInterventions({
         {modificationAutorisee ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Ajouter une intervention"
+            accessibilityLabel={i18n.t('libelles.ajouterIntervention')}
             onPress={ouvrirAjout}
             style={({ pressed }) => [
               styles.fab,

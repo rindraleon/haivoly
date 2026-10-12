@@ -1,13 +1,16 @@
 import { AgricultureBackground } from '@/components/ProfileComponent/AgricultureBackground';
+import { i18n } from '@/i18n/instance';
+import { useTranslation } from 'react-i18next';
 import { InfoRow } from '@/components/ProfileComponent/InfoRow';
 import { SectionHeader } from '@/components/ProfileComponent/SectionHeader';
 import { styles } from '@/screens/ProfileScreen/ProfilScreen.styles';
 
 import { colors } from '@/theme';
 import type { QueryObserverResult, RefetchOptions } from '@tanstack/query-core';
-import { ChevronRight, LogOut, Mail, Phone, ShieldCheck, Sprout, User } from 'lucide-react-native';
+import { ChevronRight, Languages, Moon, LogOut, Mail, Phone, ShieldCheck, Sprout, User } from 'lucide-react-native';
 import { Alert, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import type { EdgeInsets } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 
 import type {
   Utilisateur,
@@ -20,7 +23,7 @@ type Props = {
   isFetching: boolean;
   profile: NoInfer<Utilisateur> | undefined;
   refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<NoInfer<Utilisateur>, Error>>;
-  roleLabel: "Agriculteur" | "Propriétaire";
+  roleLabel: string;
 };
 
 export function VueProfil({
@@ -33,6 +36,7 @@ export function VueProfil({
   refetch,
   roleLabel,
 }: Props) {
+  const { t } = useTranslation();
   if (!profile) return null;
   return (
 <View style={styles.screen}>
@@ -70,9 +74,7 @@ export function VueProfil({
           }
         >
 
-          {/* =================================================
-              HEADER
-          ================================================= */}
+          {}
 
           <View
             style={
@@ -123,9 +125,7 @@ export function VueProfil({
             </View>
           </View>
 
-          {/* =================================================
-              CARTE IDENTITÉ
-          ================================================= */}
+          {}
 
           <View
             style={
@@ -249,9 +249,7 @@ export function VueProfil({
             </View>
           </View>
 
-          {/* =================================================
-              INFORMATIONS PERSONNELLES
-          ================================================= */}
+          {}
 
           <View
             style={
@@ -259,8 +257,8 @@ export function VueProfil({
             }
           >
             <SectionHeader
-              title="Informations personnelles"
-              subtitle="Vos coordonnées"
+              title={i18n.t('libelles.informationsPersonnelles')}
+              subtitle={i18n.t('profil.coordonnees')}
             />
 
             <View
@@ -315,18 +313,16 @@ export function VueProfil({
                     }
                   />
                 }
-                label="Téléphone"
+                label={i18n.t('domaine.telephone')}
                 value={
                   profile.telephone ||
-                  'Non renseigné'
+                  t('profil.nonRenseigne')
                 }
               />
             </View>
           </View>
 
-          {/* =================================================
-              COMPTE
-          ================================================= */}
+          {}
 
           <View
             style={
@@ -334,8 +330,8 @@ export function VueProfil({
             }
           >
             <SectionHeader
-              title="Mon compte"
-              subtitle="Gérez votre compte"
+              title={i18n.t('libelles.monCompte')}
+              subtitle={i18n.t('profil.gerezCompte')}
             />
 
             <View
@@ -352,11 +348,11 @@ export function VueProfil({
                 onPress={() => {
                   Alert.alert(
                     'Modification du profil',
-                    'La modification du profil sera disponible prochainement.',
+                    i18n.t('divers.modificationProfilSeraDisponible'),
                   );
                 }}
                 accessibilityRole="button"
-                accessibilityLabel="Modifier mon profil"
+                accessibilityLabel={i18n.t('libelles.modifierProfil')}
               >
                 <View
                   style={
@@ -412,12 +408,64 @@ export function VueProfil({
                   />
                 </View>
               </Pressable>
+
+              <Pressable
+                style={({ pressed }) => [
+                  styles.menuItem,
+                  pressed && styles.menuItemPressed,
+                ]}
+                onPress={() => router.push('/(app)/(common)/langue' as never)}
+                accessibilityRole="button"
+                accessibilityLabel={i18n.t('libelles.choisirLangue')}
+              >
+                <View style={styles.menuLeft}>
+                  <View style={styles.menuIcon}>
+                    <Languages size={20} color={colors.primary[600]} />
+                  </View>
+
+                  <View style={styles.menuTextBlock}>
+                    <Text style={styles.menuTitle}>{t('langue.titre')}</Text>
+                    <Text style={styles.menuSubtitle}>
+                      {t('langue.sousTitreChoix')}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.chevronCircle}>
+                  <ChevronRight size={18} color={colors.primary[700]} />
+                </View>
+              </Pressable>
+
+              <Pressable
+                style={({ pressed }) => [
+                  styles.menuItem,
+                  pressed && styles.menuItemPressed,
+                ]}
+                onPress={() => router.push('/(app)/(common)/theme' as never)}
+                accessibilityRole="button"
+                accessibilityLabel={i18n.t('theme.titre')}
+              >
+                <View style={styles.menuLeft}>
+                  <View style={styles.menuIcon}>
+                    <Moon size={20} color={colors.primary[600]} />
+                  </View>
+
+                  <View style={styles.menuTextBlock}>
+                    <Text style={styles.menuTitle}>{t('theme.titre')}</Text>
+                    <Text style={styles.menuSubtitle}>
+                      {t('theme.sousTitreChoix')}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.chevronCircle}>
+                  <ChevronRight size={18} color={colors.primary[700]} />
+                </View>
+              </Pressable>
             </View>
           </View>
 
-          {/* =================================================
-              DÉCONNEXION
-          ================================================= */}
+          {}
 
           <Pressable
             style={({ pressed }) => [
@@ -427,7 +475,7 @@ export function VueProfil({
             ]}
             onPress={handleLogout}
             accessibilityRole="button"
-            accessibilityLabel="Se déconnecter"
+            accessibilityLabel={i18n.t('profil.deconnexion.confirmer')}
           >
             <View
               style={
@@ -472,9 +520,7 @@ export function VueProfil({
             />
           </Pressable>
 
-          {/* =================================================
-              FOOTER
-          ================================================= */}
+          {}
 
           <View
             style={

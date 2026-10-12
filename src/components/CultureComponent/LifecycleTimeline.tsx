@@ -1,4 +1,5 @@
 import React from 'react';
+import { i18n } from '@/i18n/instance';
 import { StyleSheet, Text, View } from 'react-native';
 import { CalendarDays, Check, Clock3, Leaf, Sprout, Wheat, XCircle } from 'lucide-react-native';
 
@@ -7,9 +8,9 @@ import { formatDate } from '@/utils/date';
 import type { Culture, StatutCulture } from '@/types';
 
 const ETAPES: { statut: StatutCulture; label: string }[] = [
-  { statut: 'PLANIFIEE', label: 'Planifiée' },
-  { statut: 'EN_COURS', label: 'En cours' },
-  { statut: 'RECOLTEE', label: 'Récoltée' },
+  { statut: 'PLANIFIEE', label: i18n.t('statuts.PLANIFIEE') },
+  { statut: 'EN_COURS', label: i18n.t('statuts.EN_COURS') },
+  { statut: 'RECOLTEE', label: i18n.t('statuts.RECOLTEE') },
 ];
 
 function icone(statut: StatutCulture) {
@@ -61,8 +62,8 @@ export function LifecycleTimeline({ culture }: LifecycleTimelineProps) {
           <XCircle size={16} color={colors.neutral[600]} />
           <Text style={styles.horsCycleTexte}>
             {statut === 'ABANDONNEE'
-              ? 'Culture abandonnée — le cycle est interrompu.'
-              : 'Culture supprimée — historique conservé.'}
+              ? i18n.t('cultures.abandonneeDetail')
+              : i18n.t('cultures.supprimeeDetail')}
           </Text>
         </View>
       ) : (
@@ -123,8 +124,8 @@ export function LifecycleTimeline({ culture }: LifecycleTimelineProps) {
             Étape actuelle :{' '}
             {horsCycle
               ? statut === 'ABANDONNEE'
-                ? 'Abandonnée'
-                : 'Supprimée'
+                ? i18n.t('statuts.ABANDONNEE')
+                : i18n.t('statuts.SUPPRIMEE')
               : ETAPES[courante].label}
           </Text>
         </View>

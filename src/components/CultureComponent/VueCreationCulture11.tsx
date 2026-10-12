@@ -1,4 +1,5 @@
 import { ButtonNext } from '@/components/CultureComponent/ButtonNext';
+import { i18n } from '@/i18n/instance';
 import { DateField } from '@/components/CultureComponent/DateField';
 import { FormGroup } from '@/components/CultureComponent/FormGroup';
 import { styles } from '@/screens/CultureScreen/CultureCreateScreen.styles';
@@ -89,7 +90,7 @@ export function VueCreationCulture11({
                     iconColor={
                       colors.primary[700]
                     }
-                    label="Date de plantation"
+                    label={i18n.t('cultures.datePlantation')}
                     value={
                       formaterDate(
                         datePlantation,
@@ -115,7 +116,7 @@ export function VueCreationCulture11({
                         color="#3D6E9D"
                       />
                     }
-                    label="Date prévue de récolte"
+                    label={i18n.t('cultures.datePrevueRecolte')}
                     value={
                       formaterDate(
                         datePrevueRecolte,
@@ -211,14 +212,14 @@ export function VueCreationCulture11({
                       />
                     }
                     label="Description"
-                    helper="Ajoutez toute information utile pour le suivi de la culture."
+                    helper={i18n.t('cultures.ajoutezTouteInformationUtile')}
                   >
                     <TextInput
                       style={[
                         styles.input,
                         styles.textArea,
                       ]}
-                      placeholder="Description de la culture"
+                      placeholder={i18n.t('libelles.descriptionCulture')}
                       placeholderTextColor="#A0AAA2"
                       value={description}
                       onChangeText={
@@ -265,8 +266,8 @@ export function VueCreationCulture11({
                         }
                       >
                         {hasDates
-                          ? 'Dates renseignées'
-                          : 'Dates non renseignées'}
+                          ? i18n.t('cultures.datesRenseignees')
+                          : i18n.t('cultures.datesNonRenseignees')}
                       </Text>
 
                       <Text

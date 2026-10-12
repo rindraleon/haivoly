@@ -1,4 +1,5 @@
 import React from 'react';
+import { i18n } from '@/i18n/instance';
 import { Alert } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 
@@ -14,14 +15,14 @@ export default function ModifierParcelleScreen() {
   const miseAJour = useUpdateParcelle();
 
   if (parcelle.isLoading) {
-    return <LoadingState message="Chargement de la parcelle…" />;
+    return <LoadingState message={i18n.t('parcelles.chargementParcelle')} />;
   }
 
   if (parcelle.isError || !parcelle.data) {
     return (
       <ErrorState
-        title="Parcelle introuvable"
-        message="Impossible de charger les informations de cette parcelle."
+        title={i18n.t('libelles.parcelleIntrouvable')}
+        message={i18n.t('parcelles.impossibleChargerInformationsParcelle')}
         onRetry={() => parcelle.refetch()}
         onBack={() => router.back()}
       />
@@ -51,12 +52,12 @@ export default function ModifierParcelleScreen() {
             },
           });
 
-          Alert.alert('Parcelle mise à jour', 'Les modifications ont été enregistrées.');
+          Alert.alert(i18n.t('parcelles.miseAJour'), i18n.t('parcelles.modificationsEnregistrees'));
           router.back();
         } catch (error) {
           Alert.alert(
             'Modification impossible',
-            error instanceof ApiError ? error.message : 'Une erreur est survenue.',
+            error instanceof ApiError ? error.message : i18n.t('domaine.erreurSurvenue'),
           );
         }
       }}

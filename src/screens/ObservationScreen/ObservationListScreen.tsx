@@ -1,4 +1,5 @@
  
+import { i18n } from '@/i18n/instance';
 
 import { useCallback, useMemo, useState, } from 'react';
 
@@ -676,8 +677,8 @@ export default function ObservationsScreen() {
         !parcelleTemporaire
       ) {
         Alert.alert(
-          'Sélection incomplète',
-          'Veuillez sélectionner une parcelle.',
+          i18n.t('domaine.selectionIncomplete'),
+          i18n.t('domaine.selectionParcelleRequise'),
         );
 
         return;
@@ -687,8 +688,8 @@ export default function ObservationsScreen() {
         !cultureTemporaire
       ) {
         Alert.alert(
-          'Sélection incomplète',
-          'Veuillez sélectionner une culture.',
+          i18n.t('domaine.selectionIncomplete'),
+          i18n.t('domaine.selectionCultureRequise'),
         );
 
         return;
@@ -713,8 +714,8 @@ export default function ObservationsScreen() {
         !culture
       ) {
         Alert.alert(
-          'Erreur',
-          'La parcelle ou la culture sélectionnée est introuvable.',
+          i18n.t('domaine.erreur'),
+          i18n.t('domaine.entiteIntrouvable'),
         );
 
         return;
@@ -757,8 +758,8 @@ export default function ObservationsScreen() {
 
       if (!modificationAutorisee) {
         Alert.alert(
-          'Action impossible',
-          'Cette culture est en lecture seule.',
+          i18n.t('divers.actionImpossible'),
+          i18n.t('cultures.cultureLectureSeule'),
         );
 
         return;
@@ -814,8 +815,8 @@ export default function ObservationsScreen() {
     () => {
       if (!parcelleAjout) {
         Alert.alert(
-          'Sélection incomplète',
-          'Veuillez sélectionner une parcelle.',
+          i18n.t('domaine.selectionIncomplete'),
+          i18n.t('domaine.selectionParcelleRequise'),
         );
 
         return;
@@ -823,8 +824,8 @@ export default function ObservationsScreen() {
 
       if (!cultureAjout) {
         Alert.alert(
-          'Sélection incomplète',
-          'Veuillez sélectionner une culture.',
+          i18n.t('domaine.selectionIncomplete'),
+          i18n.t('domaine.selectionCultureRequise'),
         );
 
         return;
@@ -849,8 +850,8 @@ export default function ObservationsScreen() {
         !culture
       ) {
         Alert.alert(
-          'Erreur',
-          'La parcelle ou la culture sélectionnée est introuvable.',
+          i18n.t('domaine.erreur'),
+          i18n.t('domaine.entiteIntrouvable'),
         );
 
         return;
@@ -866,8 +867,8 @@ export default function ObservationsScreen() {
 
       if (!autorisee) {
         Alert.alert(
-          'Action impossible',
-          'Cette culture est en lecture seule. Vous ne pouvez pas ajouter une observation.',
+          i18n.t('divers.actionImpossible'),
+          i18n.t('cultures.cultureLectureSeuleNe2'),
         );
 
         return;
@@ -939,8 +940,8 @@ export default function ObservationsScreen() {
       }
 
       Alert.alert(
-        'Supprimer',
-        'Voulez-vous vraiment supprimer cette observation ?',
+        i18n.t('libelles.supprimer'),
+        i18n.t('observations.voulezVraimentSupprimerObservation'),
         [
           {
             text: 'Annuler',
@@ -948,7 +949,7 @@ export default function ObservationsScreen() {
           },
 
           {
-            text: 'Supprimer',
+            text: i18n.t('libelles.supprimer'),
             style: 'destructive',
 
             onPress:
@@ -962,8 +963,8 @@ export default function ObservationsScreen() {
                   );
 
                   Alert.alert(
-                    'Succès',
-                    'Observation supprimée avec succès.',
+                    i18n.t('domaine.succes'),
+                    i18n.t('observations.supprimeeSucces'),
                   );
 
                   await observationsQuery.refetch();
@@ -980,11 +981,11 @@ export default function ObservationsScreen() {
                   logger.warn('ObservationListScreen', "Échec de la suppression de l'observation");
 
                   Alert.alert(
-                    'Erreur',
+                    i18n.t('domaine.erreur'),
                     error?.response
                       ?.data
                       ?.message ||
-                      "Impossible de supprimer l'observation.",
+                      i18n.t('observations.impossibleSupprimerLObservation'),
                   );
                 }
               },
@@ -1010,8 +1011,8 @@ export default function ObservationsScreen() {
       }
 
       Alert.alert(
-        'Supprimer',
-        'Voulez-vous vraiment supprimer cette observation ?',
+        i18n.t('libelles.supprimer'),
+        i18n.t('observations.voulezVraimentSupprimerObservation'),
         [
           {
             text: 'Annuler',
@@ -1019,7 +1020,7 @@ export default function ObservationsScreen() {
           },
 
           {
-            text: 'Supprimer',
+            text: i18n.t('libelles.supprimer'),
             style: 'destructive',
 
             onPress:
@@ -1036,8 +1037,8 @@ export default function ObservationsScreen() {
                   );
 
                   Alert.alert(
-                    'Succès',
-                    'Observation supprimée avec succès.',
+                    i18n.t('domaine.succes'),
+                    i18n.t('observations.supprimeeSucces'),
                   );
 
                   await Promise.all(
@@ -1052,11 +1053,11 @@ export default function ObservationsScreen() {
                   logger.warn('ObservationListScreen', "Échec de la suppression de l'observation");
 
                   Alert.alert(
-                    'Erreur',
+                    i18n.t('domaine.erreur'),
                     error?.response
                       ?.data
                       ?.message ||
-                      "Impossible de supprimer l'observation.",
+                      i18n.t('observations.impossibleSupprimerLObservation'),
                   );
                 }
               },

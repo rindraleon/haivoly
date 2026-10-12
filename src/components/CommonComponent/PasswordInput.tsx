@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { i18n } from '@/i18n/instance';
 import { Pressable } from 'react-native';
 import { Eye, EyeOff, LockKeyhole } from 'lucide-react-native';
 import { Input } from './Input';
@@ -15,7 +16,7 @@ interface PasswordInputProps extends Omit<TextInputProps, 'secureTextEntry'> {
 }
 
 export function PasswordInput({
-  label = 'Mot de passe',
+  label = i18n.t('libelles.motDePasse'),
   error,
   hint,
   containerStyle,
@@ -59,7 +60,7 @@ export function PasswordInput({
           onPress={() => setVisible((v) => !v)}
           hitSlop={10}
           style={{ padding: 4 }}
-          accessibilityLabel={visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+          accessibilityLabel={visible ? i18n.t('auth.masquerMotPasse') : 'Afficher le mot de passe'}
           accessibilityRole="button"
         >
           {visible ? <EyeOff size={19} color={colors.neutral[500]} /> : <Eye size={19} color={colors.neutral[500]} />}

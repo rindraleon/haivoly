@@ -1,4 +1,5 @@
  
+import { i18n } from '@/i18n/instance';
 
 import {
   useMemo,
@@ -77,19 +78,19 @@ export default function AjoutObservationScreen() {
   const statutLabel = useMemo(() => {
     switch (statut) {
       case 'PLANIFIEE':
-        return 'PLANIFIÉE';
+        return i18n.t('statuts.PLANIFIEE');
 
       case 'EN_COURS':
-        return 'EN COURS';
+        return i18n.t('statuts.EN_COURS');
 
       case 'RECOLTEE':
-        return 'RÉCOLTÉE';
+        return i18n.t('statuts.RECOLTEE');
 
       case 'ABANDONNEE':
-        return 'ABANDONNÉE';
+        return i18n.t('statuts.ABANDONNEE');
 
       case 'SUPPRIMEE':
-        return 'SUPPRIMÉE';
+        return i18n.t('statuts.SUPPRIMEE');
 
       default:
         return statut;
@@ -104,8 +105,8 @@ export default function AjoutObservationScreen() {
         statut === 'ABANDONNEE'
       ) {
         Alert.alert(
-          'Action impossible',
-          'Cette culture est en lecture seule.',
+          i18n.t('divers.actionImpossible'),
+          i18n.t('cultures.cultureLectureSeule'),
         );
 
         return;
@@ -116,8 +117,8 @@ export default function AjoutObservationScreen() {
         !cultureId
       ) {
         Alert.alert(
-          'Erreur',
-          'La parcelle ou la culture est introuvable.',
+          i18n.t('domaine.erreur'),
+          i18n.t('parcelles.parcelleOuCultureIntrouvable'),
         );
 
         return;
@@ -125,8 +126,8 @@ export default function AjoutObservationScreen() {
 
       if (!description.trim()) {
         Alert.alert(
-          'Champ obligatoire',
-          'Veuillez saisir une description.',
+          i18n.t('domaine.champObligatoire'),
+          i18n.t('divers.veuillezSaisirDescription'),
         );
 
         return;
@@ -147,8 +148,8 @@ export default function AjoutObservationScreen() {
         );
 
         Alert.alert(
-          'Observation enregistrée',
-          'Votre observation terrain a été ajoutée avec succès.',
+          i18n.t('observations.enregistree'),
+          i18n.t('observations.ajouteeSucces'),
           [
             {
               text: 'OK',
@@ -161,10 +162,10 @@ export default function AjoutObservationScreen() {
         logger.warn('ObservationCreateScreen', "Échec de la création de l'observation");
 
         Alert.alert(
-          'Erreur',
+          i18n.t('domaine.erreur'),
           error?.response?.data
             ?.message ||
-            "Impossible d'enregistrer l'observation.",
+            i18n.t('observations.impossibleDEnregistrerL'),
         );
       }
     };

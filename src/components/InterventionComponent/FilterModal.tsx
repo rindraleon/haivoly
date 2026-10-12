@@ -1,4 +1,5 @@
 import { ActivityIndicator, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { i18n } from '@/i18n/instance';
 import { Check, ChevronDown, ChevronRight, MapPin, Sprout, X } from 'lucide-react-native';
 import { libelleStatut } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
 import { styles } from '@/screens/InterventionScreen/InterventionListScreen.styles';
@@ -75,13 +76,13 @@ export function FilterModal({
             <View>
               <Text style={styles.sheetTitle}>
                 {modeAjout
-                  ? 'Ajouter une intervention'
+                  ? i18n.t('libelles.ajouterIntervention')
                   : 'Filtrer les interventions'}
               </Text>
               <Text style={styles.sheetSubtitle}>
                 {modeAjout
-                  ? 'Choisissez une parcelle et une culture'
-                  : 'Parcelle puis culture'}
+                  ? i18n.t('parcelles.choisissezParcelleCulture')
+                  : i18n.t('parcelles.parcellePuisCulture')}
               </Text>
             </View>
 
@@ -98,7 +99,7 @@ export function FilterModal({
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.sheetContent}
           >
-            <Text style={styles.filterLabel}>PARCELLE</Text>
+            <Text style={styles.filterLabel}>{i18n.t('libelles.parcelleMaj')}</Text>
 
             <TouchableOpacity
               activeOpacity={0.8}
@@ -123,7 +124,7 @@ export function FilterModal({
                   numberOfLines={1}
                 >
                   {parcellePourSelection?.nom ??
-                    'Sélectionner une parcelle'}
+                    i18n.t('domaine.selectionnerParcelle')}
                 </Text>
               </View>
 
@@ -246,8 +247,8 @@ export function FilterModal({
                 >
                   {parcelleTemporaire
                     ? culturePourSelection?.nom ??
-                      'Sélectionner une culture'
-                    : 'Choisissez d’abord une parcelle'}
+                      i18n.t('domaine.selectionnerCulture')
+                    : i18n.t('parcelles.choisissezDAbordParcelle')}
                 </Text>
               </View>
 
@@ -382,7 +383,7 @@ export function FilterModal({
                     >
                       {cultureTemporaire
                         ? `${culturePourSelection?.nom ?? 'Culture'} • ${parcellePourSelection?.nom ?? 'Parcelle'}`
-                        : 'Sélectionnez une parcelle et une culture'}
+                        : i18n.t('observations.selectionParcelleCulture')}
                     </Text>
                   </View>
                   <ChevronRight
@@ -404,7 +405,7 @@ export function FilterModal({
                 onPress={onClose}
               >
                 <Text style={styles.resetSmallButtonText}>
-                  {modeAjout ? 'Annuler' : 'Réinitialiser'}
+                  {modeAjout ? 'Annuler' : i18n.t('domaine.reinitialiser')}
                 </Text>
               </TouchableOpacity>
 

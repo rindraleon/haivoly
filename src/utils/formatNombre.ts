@@ -1,14 +1,23 @@
+import { baliseDeFormatage } from '@/i18n/instance';
 
 /** Valeur brute acceptée (nombre, chaîne numérique, absence). */
 type NombreBrut = number | string | null | undefined;
 
-const NOMBRE_FR = (() => {
+/**
+ * Formatteur entier pour la langue active.
+ * Résolu à chaque appel et non au chargement du module : une instance figée
+ * ici conserverait la balise du démarrage et ignorerait tout changement de
+ * langue en cours de session.
+ */
+function formatteurEntier(): Intl.NumberFormat | null {
   try {
-    return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 });
+    return new Intl.NumberFormat(baliseDeFormatage(), {
+      maximumFractionDigits: 0,
+    });
   } catch {
     return null;
   }
-})();
+}
 
 /** Regroupement manuel : `1 234 567`. */
 function regroupementManuel(valeur: number): string {
@@ -28,7 +37,8 @@ function regroupementManuel(valeur: number): string {
 export function formatNombre(valeur: NombreBrut): string {
   const nombre = typeof valeur === 'string' ? Number(valeur) : valeur;
   if (nombre === null || nombre === undefined || !Number.isFinite(nombre)) return '0';
-  return NOMBRE_FR ? NOMBRE_FR.format(nombre) : regroupementManuel(nombre);
+  const formatteur = formatteurEntier();
+  return formatteur ? formatteur.format(nombre) : regroupementManuel(nombre);
 }
 
 /** Nombre avec une décimale au plus : `1 234,5`. */
@@ -37,7 +47,7 @@ export function formatNombreDecimal(valeur: NombreBrut, decimales = 1): string {
   if (nombre === null || nombre === undefined || !Number.isFinite(nombre)) return '0';
 
   try {
-    return new Intl.NumberFormat('fr-FR', {
+    return new Intl.NumberFormat(baliseDeFormatage(), {
       minimumFractionDigits: 0,
       maximumFractionDigits: decimales,
     }).format(nombre);

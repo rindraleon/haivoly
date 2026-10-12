@@ -1,4 +1,5 @@
 import { AppSelect } from '@/components/CommonComponent/AppSelect';
+import { i18n } from '@/i18n/instance';
 import { DateInput } from '@/components/CommonComponent/DateInput';
 import { styles } from '@/screens/InterventionScreen/InterventionEditScreen.styles';
 import { colors } from '@/theme';
@@ -81,7 +82,7 @@ export function VueModificationIntervention({
             </Text>
 
             <Text style={styles.contextValue}>
-              {parcelleNom || 'Parcelle'}
+              {parcelleNom || i18n.t('libelles.parcelle')}
             </Text>
 
             <Text
@@ -94,13 +95,13 @@ export function VueModificationIntervention({
             </Text>
 
             <Text style={styles.contextValue}>
-              {cultureNom || 'Culture'}
+              {cultureNom || i18n.t('libelles.culture')}
             </Text>
           </View>
 
           {/* TYPE — liste déroulante : aucun code technique à recopier */}
           <AppSelect
-            label="Type d’intervention"
+            label={i18n.t('libelles.typeIntervention')}
             required
             value={type}
             options={TYPES_INTERVENTION}
@@ -126,8 +127,8 @@ export function VueModificationIntervention({
                 ? `Statut recalculé par le serveur : ${
                     statutInterventionPrevu(date) ===
                     'PLANIFIEE'
-                      ? 'Planifiée'
-                      : 'En cours'
+                      ? i18n.t('statuts.PLANIFIEE')
+                      : i18n.t('statuts.EN_COURS')
                   }`
                 : undefined
             }
@@ -145,7 +146,7 @@ export function VueModificationIntervention({
             ]}
             value={description}
             onChangeText={setDescription}
-            placeholder="Description de l’intervention"
+            placeholder={i18n.t('libelles.descriptionIntervention')}
             placeholderTextColor="#999"
             multiline
             numberOfLines={4}
@@ -162,7 +163,7 @@ export function VueModificationIntervention({
             options={PRODUITS_INTERVENTION}
             onChange={setProduit}
             disabled={updateMutation.isPending}
-            emptyLabel="Aucun produit renseigné"
+            emptyLabel={i18n.t('interventions.aucunProduit')}
           />
 
           {/* QUANTITE */}
@@ -184,7 +185,7 @@ export function VueModificationIntervention({
 
           {/* UNITE — liste déroulante */}
           <AppSelect
-            label="Unité"
+            label={i18n.t('domaine.unite')}
             value={unite || null}
             options={UNITES_INTERVENTION}
             onChange={setUnite}

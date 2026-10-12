@@ -1,4 +1,5 @@
  
+import { i18n } from '@/i18n/instance';
 
 import {
   useCallback,
@@ -13,7 +14,6 @@ import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 
-
 import {
   router,
   useFocusEffect,
@@ -21,7 +21,6 @@ import {
 } from 'expo-router';
 
 import { useQueries } from '@tanstack/react-query';
-
 
 
 import {
@@ -32,13 +31,6 @@ import {
 } from '@/hooks';
 
 import { colors } from '@/theme';
-
-
-
-
-
-
-
 
 
 import { styles } from './CultureListScreen.styles';
@@ -61,8 +53,6 @@ const FILTRES: FiltreCulture[] = [
   'ABANDONNEE',
   'SUPPRIMEE',
 ];
-
-
 
 
 export default function CulturesScreen() {
@@ -1172,9 +1162,6 @@ L.control.layers(
   }
 ).addTo(map);
 
-// =====================================================
-// PARCELLE
-// =====================================================
 
 const parcelleBounds = [];
 
@@ -1210,22 +1197,16 @@ if (
     ).addTo(map);
 
   parcellePolygon.bindPopup(
-    '<b>Parcelle</b>'
+    '<b>{i18n.t('libelles.parcelle')}</b>'
   );
 
 }
 
-// =====================================================
-// COUCHES CULTURES
-// =====================================================
 
 let cultureLayers = [];
 let cultureMarkers = [];
 let currentCultures = [];
 
-// =====================================================
-// LÉGENDE
-// =====================================================
 
 const legend =
   L.control({
@@ -1242,10 +1223,10 @@ legend.onAdd =
       );
 
     div.innerHTML =
-      '<div class="legend-title">Légende</div>' +
+      '<div class="legend-title">${i18n.t('divers.legende')}</div>' +
       '<div class="legend-item">' +
       '<div class="legend-color" style="background:#2e7d32"></div>' +
-      'Parcelle' +
+      i18n.t('libelles.parcelle') +
       '</div>';
 
     return div;
@@ -1254,9 +1235,6 @@ legend.onAdd =
 
 legend.addTo(map);
 
-// =====================================================
-// MISE À JOUR LÉGENDE
-// =====================================================
 
 function mettreAJourLegende(
   cultures
@@ -1272,12 +1250,12 @@ function mettreAJourLegende(
   }
 
   let html =
-    '<div class="legend-title">Légende</div>';
+    '<div class="legend-title">${i18n.t('divers.legende')}</div>';
 
   html +=
     '<div class="legend-item">' +
     '<div class="legend-color" style="background:#2e7d32"></div>' +
-    'Parcelle' +
+    i18n.t('libelles.parcelle') +
     '</div>';
 
   cultures.forEach(
@@ -1307,9 +1285,6 @@ function mettreAJourLegende(
 
 }
 
-// =====================================================
-// SUPPRESSION ANCIENNES CULTURES
-// =====================================================
 
 function supprimerCulturesExistantes() {
 
@@ -1340,9 +1315,6 @@ function supprimerCulturesExistantes() {
 
 }
 
-// =====================================================
-// AJOUT CULTURES
-// =====================================================
 
 function afficherCultures(
   cultures
@@ -1508,9 +1480,6 @@ function afficherCultures(
 
 }
 
-// =====================================================
-// MESSAGE REACT NATIVE -> LEAFLET
-// =====================================================
 
 function traiterMessage(
   event
@@ -1550,9 +1519,6 @@ function traiterMessage(
 
 }
 
-// =====================================================
-// COMPATIBILITÉ ANDROID / IOS
-// =====================================================
 
 window.addEventListener(
   'message',
@@ -1564,9 +1530,6 @@ document.addEventListener(
   traiterMessage,
 );
 
-// =====================================================
-// INITIALISATION
-// =====================================================
 
 if (
   pointsParcelle.length === 0

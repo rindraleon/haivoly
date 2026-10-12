@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unescaped-entities */
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
@@ -11,9 +11,11 @@ import { Input } from '@/components/CommonComponent/Input';
 
 import { styles } from './ForgotPasswordScreen.styles';
 import { estEmailValide } from '@/utils/email';
+import { i18n } from '@/i18n/instance';
 type State = 'idle' | 'loading' | 'success' | 'error';
 
 export default function ForgotPasswordScreen() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | undefined>();
   const [generalError, setGeneralError] = useState<string | undefined>();
@@ -25,7 +27,7 @@ export default function ForgotPasswordScreen() {
   const validate = (): boolean => {
     const norm = email.trim();
     if (!norm) {
-      setError("L'adresse email est obligatoire.");
+      setError(i18n.t('auth.lAdresseEmailObligatoire'));
       return false;
     }
     if (!estEmailValide(norm)) {
@@ -48,7 +50,7 @@ export default function ForgotPasswordScreen() {
       setGeneralError(
         messageErreur(
           error,
-          'Une erreur est survenue. Vérifiez votre connexion.',
+          t('auth.forgot.echec'),
         ),
       );
       setState('error');
@@ -63,7 +65,7 @@ export default function ForgotPasswordScreen() {
             <View style={styles.successIcon}>
               <CheckCircle2 size={32} color={colors.success[600]} strokeWidth={2} />
             </View>
-            <Text style={styles.successTitle}>Email envoyé</Text>
+            <Text style={styles.successTitle}>{t('auth.forgot.emailEnvoye')}</Text>
             <Text style={styles.successDesc}>
               Si un compte est associé à <Text style={{ fontWeight: '700', color: colors.neutral[900] }}>{email.trim()}</Text>, vous
               recevrez un lien de réinitialisation. Pensez à vérifier vos spams.
@@ -71,7 +73,7 @@ export default function ForgotPasswordScreen() {
 
             {devToken && (
               <View style={styles.devBox}>
-                <Text style={styles.devLabel}>Mode développement — token</Text>
+                <Text style={styles.devLabel}>{t('auth.forgot.modeDev')}</Text>
                 <Text selectable style={styles.devToken}>
                   {devToken}
                 </Text>
@@ -97,7 +99,7 @@ export default function ForgotPasswordScreen() {
                 }}
                 style={styles.linkBtn}
               >
-                <Text style={styles.linkText}>Renvoyer un lien</Text>
+                <Text style={styles.linkText}>{t('auth.forgot.renvoyer')}</Text>
               </Pressable>
             </View>
           </View>
@@ -112,7 +114,7 @@ export default function ForgotPasswordScreen() {
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           <Pressable onPress={() => router.replace('/(auth)/login' as any)} style={styles.backBtn} hitSlop={8}>
             <ArrowLeft size={18} color={colors.neutral[700]} />
-            <Text style={styles.backText}>Retour à la connexion</Text>
+            <Text style={styles.backText}>{t('auth.retourConnexion')}</Text>
           </Pressable>
 
           <View style={styles.card}>
@@ -120,7 +122,7 @@ export default function ForgotPasswordScreen() {
               <View style={styles.iconCircle}>
                 <Mail size={22} color={colors.primary[600]} strokeWidth={1.9} />
               </View>
-              <Text style={styles.title}>Mot de passe oublié ?</Text>
+              <Text style={styles.title}>{t('auth.forgot.titre')}</Text>
               <Text style={styles.subtitle}>
                 Entrez votre adresse email pour recevoir un lien permettant de réinitialiser votre mot de passe.
               </Text>
@@ -166,8 +168,8 @@ export default function ForgotPasswordScreen() {
               </Button>
 
               <View style={styles.helpBox}>
-                <Text style={styles.helpTitle}>Vous ne recevez pas l'email ?</Text>
-                <Text style={styles.helpText}>• Vérifiez l'orthographe de votre adresse{'\n'}• Consultez vos courriers indésirables{'\n'}• Le lien expire après 60 minutes</Text>
+                <Text style={styles.helpTitle}>{t('auth.forgot.aideTitre')}</Text>
+                <Text style={styles.helpText}>{t('auth.forgot.aideTexte')}</Text>
               </View>
             </View>
           </View>

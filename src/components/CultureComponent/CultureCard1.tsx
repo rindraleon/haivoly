@@ -1,4 +1,5 @@
 import { Badge } from '@/components/CommonComponent/Badge';
+import { i18n } from '@/i18n/instance';
 import { Card } from '@/components/CommonComponent/Card';
 import { CultureToutesParcelles, getBadgeVariant, nomStatut } from '@/screens/CultureScreen/CultureListScreen.helpers';
 import { styles } from '@/screens/CultureScreen/CultureListScreen.styles';
@@ -44,9 +45,7 @@ export function CultureCard1({
           }
         >
 
-          {/* =========================================
-              HEADER
-          ========================================== */}
+          {}
 
           <View
             style={
@@ -168,9 +167,7 @@ export function CultureCard1({
 
           </View>
 
-          {/* =========================================
-              SEPARATEUR
-          ========================================== */}
+          {}
 
           <View
             style={
@@ -178,9 +175,7 @@ export function CultureCard1({
             }
           />
 
-          {/* =========================================
-              PROGRESSION
-          ========================================== */}
+          {}
 
           <Progression
             progression={progression}
@@ -188,9 +183,7 @@ export function CultureCard1({
             progressionLabel={progressionLabel}
           />
 
-          {/* =========================================
-              PARCELLE
-          ========================================== */}
+          {}
 
           <Pressable
             onPress={onPress}
@@ -238,7 +231,7 @@ export function CultureCard1({
                   }
                 >
                   {culture.parcelleNom ||
-                    'Parcelle non renseignée'}
+                    i18n.t('domaine.parcelleNonRenseignee')}
                 </Text>
 
               </View>
@@ -247,9 +240,7 @@ export function CultureCard1({
 
           </Pressable>
 
-          {/* =========================================
-              GRILLE D'INFORMATIONS
-          ========================================== */}
+          {}
 
           <GrilleDInformations
             culture={culture}
@@ -259,9 +250,7 @@ export function CultureCard1({
             points={points}
           />
 
-          {/* =========================================
-              FOOTER
-          ========================================== */}
+          {}
 
           <View
             style={
@@ -291,7 +280,7 @@ export function CultureCard1({
               >
                 {dateModification
                   ? `Modifiée le ${dateModification}`
-                  : 'Modification non renseignée'}
+                  : i18n.t('cultures.modificationNonRenseignee')}
               </Text>
 
             </View>

@@ -1,4 +1,5 @@
 import { Badge } from '@/components/CommonComponent/Badge';
+import { i18n } from '@/i18n/instance';
 import { Card } from '@/components/CommonComponent/Card';
 import { StatutCulture, formaterDate, getBadgeVariant, nomStatut } from '@/screens/ObservationScreen/ObservationListScreen.helpers';
 import { styles } from '@/screens/ObservationScreen/ObservationListScreen.styles';
@@ -348,7 +349,7 @@ export function ObservationCard1({
                         {modificationAutorisee ? (
                           <TouchableOpacity
                             accessibilityRole="button"
-                            accessibilityLabel="Supprimer la photo"
+                            accessibilityLabel={i18n.t('libelles.supprimerPhoto')}
                             hitSlop={{
                               top: 10,
                               bottom: 10,
@@ -383,7 +384,7 @@ export function ObservationCard1({
                   {modificationAutorisee ? (
                     <TouchableOpacity
                       accessibilityRole="button"
-                      accessibilityLabel="Ajouter une photo"
+                      accessibilityLabel={i18n.t('libelles.ajouterPhoto')}
                       style={
                         styles.photoAddTile
                       }

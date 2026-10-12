@@ -1,4 +1,5 @@
 import { ObservationGlobale, nomStatut } from '@/screens/ObservationScreen/ObservationListScreen.helpers';
+import { i18n } from '@/i18n/instance';
 import { styles } from '@/screens/ObservationScreen/ObservationListScreen.styles';
 
 
@@ -86,7 +87,7 @@ export function VueObservations1({
                     style={
                       styles.searchInput
                     }
-                    placeholder="Rechercher observation, culture, parcelle..."
+                    placeholder={i18n.t('libelles.rechercheObservation')}
                     placeholderTextColor="#9CA3AF"
                     value={
                       recherche
@@ -225,7 +226,7 @@ export function VueObservations1({
                         numberOfLines={1}
                       >
                         {parcellePourSelection?.nom ??
-                          'Sélectionner une parcelle'}
+                          i18n.t('domaine.selectionnerParcelle')}
                       </Text>
                     </View>
 
@@ -412,8 +413,8 @@ export function VueObservations1({
                       >
                         {parcelleTemporaire
                           ? culturePourSelection?.nom ??
-                            'Sélectionner une culture'
-                          : 'Choisissez d’abord une parcelle'}
+                            i18n.t('domaine.selectionnerCulture')
+                          : i18n.t('parcelles.choisissezDAbordParcelle')}
                       </Text>
                     </View>
 
@@ -667,7 +668,7 @@ export function VueObservations1({
                     ? `pour "${recherche}"`
                     : filtreActif
                       ? 'Filtre actif'
-                      : 'Triées par date récente'}
+                      : i18n.t('domaine.trieesDateRecente')}
                 </Text>
               </View>
             </View>

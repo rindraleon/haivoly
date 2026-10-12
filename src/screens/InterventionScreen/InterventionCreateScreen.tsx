@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { i18n } from '@/i18n/instance';
 import { Alert, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { CalendarClock, Sparkles } from 'lucide-react-native';
@@ -70,7 +71,7 @@ export default function AjoutInterventionScreen() {
 
   const enregistrer = async () => {
     if (!cultureId) {
-      Alert.alert('Culture manquante', 'Sélectionnez d’abord une culture.');
+      Alert.alert('Culture manquante', i18n.t('observations.selectionCultureSeule'));
       return;
     }
 
@@ -89,21 +90,21 @@ export default function AjoutInterventionScreen() {
         },
       });
 
-      Alert.alert('Intervention enregistrée', 'Le statut a été calculé par le serveur.', [
+      Alert.alert(i18n.t('interventions.enregistree'), i18n.t('interventions.statutCalculeServeur'), [
         { text: 'OK', onPress: () => router.back() },
       ]);
     } catch (error) {
       Alert.alert(
         'Enregistrement impossible',
-        error instanceof ApiError ? error.message : 'Une erreur est survenue.',
+        error instanceof ApiError ? error.message : i18n.t('domaine.erreurSurvenue'),
       );
     }
   };
 
   return (
     <ParcelleFormShell
-      title="Nouvelle intervention"
-      subtitle="Type, culture, produit et quantité"
+      title={i18n.t('libelles.nouvelleIntervention')}
+      subtitle={i18n.t('interventions.typeCultureProduit')}
       onBack={() => router.back()}
       footer={
         <Button onPress={enregistrer} loading={creation.isPending}>
@@ -113,9 +114,9 @@ export default function AjoutInterventionScreen() {
     >
       <Card style={styles.section}>
         <AppSelect
-          label="Parcelle"
+          label={i18n.t('libelles.parcelle')}
           required
-          placeholder="Sélectionner une parcelle"
+          placeholder={i18n.t('domaine.selectionnerParcelle')}
           value={parcelleId || null}
           options={optionsParcelles}
           onChange={(value) => {
@@ -133,7 +134,7 @@ export default function AjoutInterventionScreen() {
         />
 
         <AppSelect
-          label="Type d’intervention"
+          label={i18n.t('libelles.typeIntervention')}
           required
           value={type}
           options={TYPES_INTERVENTION}
@@ -148,7 +149,7 @@ export default function AjoutInterventionScreen() {
           hint={
             isDateOnly(date)
               ? `Date retenue : ${formatDate(date)} — statut déduit par le serveur`
-              : 'Sélectionnez une date dans le calendrier'
+              : i18n.t('interventions.selectionnerDate')
           }
           leftIcon={<CalendarClock size={16} color={colors.neutral[400]} />}
         />
@@ -158,7 +159,7 @@ export default function AjoutInterventionScreen() {
             <Sparkles size={15} color={colors.primary[700]} />
             <Text style={styles.previewText}>Statut calculé :</Text>
             <Badge
-              label={apercuStatut === 'PLANIFIEE' ? 'Planifiée' : 'En cours'}
+              label={apercuStatut === 'PLANIFIEE' ? i18n.t('statuts.PLANIFIEE') : i18n.t('statuts.EN_COURS')}
               variant={apercuStatut === 'PLANIFIEE' ? 'warning' : 'info'}
             />
           </View>
@@ -167,8 +168,8 @@ export default function AjoutInterventionScreen() {
 
       <Card style={styles.section}>
         <AppSelect
-          label="Produit utilisé"
-          placeholder="Sélectionner un produit"
+          label={i18n.t('interventions.produitUtilise')}
+          placeholder={i18n.t('interventions.selectionnerProduit')}
           value={produit || null}
           options={PRODUITS_INTERVENTION}
           onChange={setProduit}
@@ -178,7 +179,7 @@ export default function AjoutInterventionScreen() {
         <View style={styles.rowFields}>
           <View style={styles.flex}>
             <Input
-              label="Quantité"
+              label={i18n.t('domaine.quantite')}
               value={quantite}
               onChangeText={setQuantite}
               placeholder="25"
@@ -187,7 +188,7 @@ export default function AjoutInterventionScreen() {
           </View>
           <View style={styles.flex}>
             <AppSelect
-              label="Unité"
+              label={i18n.t('domaine.unite')}
               value={unite}
               options={UNITES_INTERVENTION}
               onChange={setUnite}
@@ -196,7 +197,7 @@ export default function AjoutInterventionScreen() {
         </View>
 
         <Input
-          label="Coût"
+          label={i18n.t('interventions.cout')}
           value={cout}
           onChangeText={setCout}
           placeholder="En Ariary (facultatif)"
@@ -207,7 +208,7 @@ export default function AjoutInterventionScreen() {
           label="Description"
           value={description}
           onChangeText={setDescription}
-          placeholder="Observations, dosage, parcelle concernée…"
+          placeholder={i18n.t('interventions.descriptionPlaceholder')}
           multiline
           numberOfLines={3}
         />
@@ -246,19 +247,19 @@ function CulturePicker({
     .map((culture) => ({
       value: culture.id,
       label: culture.nom,
-      description: culture.statut === 'EN_COURS' ? 'En cours' : 'Planifiée',
+      description: culture.statut === 'EN_COURS' ? i18n.t('statuts.EN_COURS') : i18n.t('statuts.PLANIFIEE'),
     }));
 
   return (
     <AppSelect
-      label="Culture"
+      label={i18n.t('libelles.culture')}
       required
-      placeholder={parcelle ? 'Sélectionner une culture' : 'Choisissez d’abord une parcelle'}
+      placeholder={parcelle ? i18n.t('domaine.selectionnerCulture') : 'Choisissez d’abord une parcelle'}
       value={value || null}
       options={options}
       onChange={onChange}
       disabled={!parcelleId}
-      emptyLabel="Aucune culture en cours sur cette parcelle"
+      emptyLabel={i18n.t('parcelles.aucuneCultureCoursParcelle')}
     />
   );
 }

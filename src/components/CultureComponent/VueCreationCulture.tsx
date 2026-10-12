@@ -1,8 +1,6 @@
 
 
 
-
-
 import { styles } from '@/screens/CultureScreen/CultureCreateScreen.styles';
 import type { CulturePayload, Culture } from '@/types';
 import { colors } from '@/theme';
@@ -87,9 +85,7 @@ export function VueCreationCulture({
             : undefined
         }
       >
-        {/* ==================================================
-            HEADER
-        ================================================== */}
+        {}
 
         <View style={styles.header}>
           <TouchableOpacity

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { i18n } from '@/i18n/instance';
 import { StyleSheet, Text, View } from 'react-native';
 import {
   ArrowLeft,
@@ -50,12 +51,12 @@ const TYPES_SOL = [
   { value: 'ARGILEUX', label: 'Argileux' },
   { value: 'LIMONEUX', label: 'Limoneux' },
   { value: 'SABLEUX', label: 'Sableux' },
-  { value: 'HUMIFERE', label: 'Humifère' },
+  { value: 'HUMIFERE', label: i18n.t('parcelles.humifere') },
   { value: 'CALCAIRE', label: 'Calcaire' },
   { value: 'AUTRE', label: 'Autre' },
 ];
 
-const ETAPES = ['Informations', 'Délimitation', 'Résumé', 'Enregistrement'];
+const ETAPES = ['Informations', i18n.t('domaine.delimitation'), i18n.t('parcelles.resume'), 'Enregistrement'];
 
 export function ParcelleWizard({
   mode,
@@ -85,8 +86,8 @@ export function ParcelleWizard({
   };
 
   const motifBlocage = (index: number): string | null => {
-    if (index === 0) return 'Renseignez un nom de parcelle (2 caractères minimum).';
-    if (index === 1) return 'Ajoutez au moins 3 sommets pour former un polygone.';
+    if (index === 0) return i18n.t('parcelles.nomRequis');
+    if (index === 1) return i18n.t('parcelles.ajoutezMoins3Sommets');
     return null;
   };
 
@@ -121,7 +122,7 @@ export function ParcelleWizard({
 
   return (
     <ParcelleFormShell
-      title={creation ? 'Nouvelle parcelle' : 'Modifier la parcelle'}
+      title={creation ? 'Nouvelle parcelle' : i18n.t('parcelles.modifierParcelle')}
       subtitle={`Étape ${etape + 1}/${ETAPES.length} · ${ETAPES[etape]}`}
       onBack={etape === 0 ? onCancel : reculer}
       footer={
@@ -202,11 +203,11 @@ export function ParcelleWizard({
         <Card style={styles.carte}>
           <View style={styles.entete}>
             <Sprout size={16} color={colors.primary[700]} />
-            <Text style={styles.titre}>Informations de la parcelle</Text>
+            <Text style={styles.titre}>{i18n.t('libelles.informationsParcelle')}</Text>
           </View>
 
           <Input
-            label="Nom de la parcelle"
+            label={i18n.t('libelles.nomParcelle')}
             required
             value={nom}
             onChangeText={setNom}
@@ -219,14 +220,14 @@ export function ParcelleWizard({
             value={typeSol}
             options={TYPES_SOL}
             onChange={setTypeSol}
-            placeholder="Sélectionner un type de sol"
+            placeholder={i18n.t('parcelles.selectionnerTypeSol')}
           />
 
           <Input
             label="Description"
             value={description}
             onChangeText={setDescription}
-            placeholder="Culture envisagée, accès, particularités…"
+            placeholder={i18n.t('parcelles.descriptionPlaceholder')}
             multiline
           />
 
@@ -319,7 +320,7 @@ export function ParcelleWizard({
           <View style={styles.ligneResume}>
             <Text style={styles.cleResume}>Type de sol</Text>
             <Text style={styles.valeurResume}>
-              {TYPES_SOL.find((option) => option.value === typeSol)?.label ?? 'Non précisé'}
+              {TYPES_SOL.find((option) => option.value === typeSol)?.label ?? i18n.t('domaine.nonPrecise')}
             </Text>
           </View>
           <View style={styles.ligneResume}>
@@ -332,7 +333,7 @@ export function ParcelleWizard({
           </View>
           <View style={styles.ligneResume}>
             <Text style={styles.cleResume}>Superficie estimée</Text>
-            <Text style={styles.valeurResume}>{superficie ?? 'Non calculée'}</Text>
+            <Text style={styles.valeurResume}>{superficie ?? i18n.t('parcelles.nonCalculee')}</Text>
           </View>
 
           <Text style={styles.aide}>
@@ -352,8 +353,8 @@ export function ParcelleWizard({
 
           <Text style={styles.aide}>
             {creation
-              ? 'La parcelle sera créée avec les informations saisies. Vous pourrez ensuite y ajouter des cultures.'
-              : 'Les modifications seront envoyées au serveur. Le polygone n’est transmis que s’il comporte au moins 3 sommets.'}
+              ? i18n.t('divers.wizard.creation')
+              : i18n.t('divers.wizard.modification')}
           </Text>
 
           {superficie ? (
@@ -368,7 +369,7 @@ export function ParcelleWizard({
             disabled={submitting}
             leftIcon={<Save size={16} color={colors.neutral[0]} />}
           >
-            {creation ? 'Créer la parcelle' : 'Enregistrer les modifications'}
+            {creation ? i18n.t('parcelles.creer') : 'Enregistrer les modifications'}
           </Button>
         </Card>
       ) : null}

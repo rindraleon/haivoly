@@ -1,5 +1,7 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { WifiOff, RefreshCw, CheckCircle2, Clock3 } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
+
 import { colors, radius } from '@/theme';
 
 type Props = {
@@ -10,17 +12,21 @@ type Props = {
 };
 
 export function OfflineBanner({ isOnline, pendingCount, isSyncing, onSyncPress }: Props) {
+  const { t } = useTranslation();
+
   if (isOnline) {
     if (pendingCount > 0 || isSyncing) {
       return (
         <View style={[styles.banner, styles.syncing]}>
           <RefreshCw size={14} color={colors.info[600]} style={{ transform: [{ rotate: isSyncing ? '180deg' : '0deg' }] } as any} />
           <Text style={[styles.text, { color: colors.info[600] }]}>
-            {isSyncing ? 'Synchronisation en cours…' : `${pendingCount} action(s) en attente de synchronisation`}
+            {isSyncing
+              ? t('commun.etats.synchronisationEnCours')
+              : t('commun.etats.actionsEnAttente', { count: pendingCount })}
           </Text>
           {!isSyncing && pendingCount > 0 && onSyncPress && (
             <Pressable onPress={onSyncPress} style={styles.action}>
-              <Text style={styles.actionText}>Synchroniser</Text>
+              <Text style={styles.actionText}>{t('commun.etats.synchronisation')}</Text>
             </Pressable>
           )}
         </View>
@@ -35,18 +41,23 @@ export function OfflineBanner({ isOnline, pendingCount, isSyncing, onSyncPress }
     <View style={[styles.banner, styles.offline]}>
       <WifiOff size={14} color="#B54708" />
       <Text style={[styles.text, { color: '#B54708' }]}>
-        Hors connexion{pendingCount > 0 ? ` • ${pendingCount} action(s) enregistrée(s) localement` : ' • Vos actions seront enregistrées localement'}
+        {t('commun.etats.horsConnexion')}
+        {pendingCount > 0
+          ? t('commun.etats.enregistreLocalementCount', { count: pendingCount })
+          : t('commun.etats.enregistreLocalement')}
       </Text>
     </View>
   );
 }
 
 export function SyncedBanner({ visible }: { visible: boolean }) {
+  const { t } = useTranslation();
+
   if (!visible) return null;
   return (
     <View style={[styles.banner, { backgroundColor: '#ECFDF3', borderColor: '#ABEFC6' }]}>
       <CheckCircle2 size={14} color="#05603A" />
-      <Text style={[styles.text, { color: '#05603A' }]}>Vos données sont synchronisées.</Text>
+      <Text style={[styles.text, { color: '#05603A' }]}>{t('commun.etats.synchronisees')}</Text>
     </View>
   );
 }

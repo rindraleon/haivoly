@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import { i18n } from '@/i18n/instance';
 import {
   useCallback,
   useEffect,
@@ -934,7 +935,7 @@ if (
     ).addTo(map);
 
   parcellePolygon.bindPopup(
-    '<b>Parcelle</b>'
+    '<b>${i18n.t('libelles.parcelle')}</b>'
   );
 
 }
@@ -1075,7 +1076,7 @@ legend.onAdd =
       'style="background:#2e7d32">' +
       '</div>' +
 
-      'Parcelle' +
+      '${i18n.t('libelles.parcelle')}' +
 
       '</div>';
 

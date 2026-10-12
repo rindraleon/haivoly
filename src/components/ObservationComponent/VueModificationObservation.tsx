@@ -1,4 +1,5 @@
 import { formaterDate } from '@/screens/ObservationScreen/ObservationEditScreen.helpers';
+import { i18n } from '@/i18n/instance';
 import { DateTimeInput } from '@/components/CommonComponent/DateTimeInput';
 import { styles } from '@/screens/ObservationScreen/ObservationEditScreen.styles';
 import type { Observation, UpdateObservationPayload } from '@/types';
@@ -17,7 +18,7 @@ type Props = {
   parcelleNom: string;
   setDate: (valeur: string) => void;
   setDescription: (valeur: string) => void;
-  statutLabel: "PLANIFIÉE" | "EN COURS" | "RÉCOLTÉE" | "ABANDONNÉE" | "SUPPRIMÉE";
+  statutLabel: string;
   updateMutation: UseMutationResult<Observation, Error, { id: string; cultureId: string; body: UpdateObservationPayload; }, unknown>;
 };
 
@@ -53,9 +54,7 @@ export function VueModificationObservation({
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* ==================================================
-              HEADER
-          ================================================== */}
+          {}
 
           <View
             style={
@@ -112,9 +111,7 @@ export function VueModificationObservation({
             </View>
           </View>
 
-          {/* ==================================================
-              FICHE CULTURE
-          ================================================== */}
+          {}
 
           <View
             style={
@@ -164,7 +161,7 @@ export function VueModificationObservation({
                   numberOfLines={1}
                 >
                   {cultureNom ||
-                    'Culture'}
+                    i18n.t('libelles.culture')}
                 </Text>
 
                 <View
@@ -185,7 +182,7 @@ export function VueModificationObservation({
                     numberOfLines={1}
                   >
                     {parcelleNom ||
-                      'Parcelle non renseignée'}
+                      i18n.t('domaine.parcelleNonRenseignee')}
                   </Text>
                 </View>
               </View>
@@ -212,9 +209,7 @@ export function VueModificationObservation({
             </View>
           </View>
 
-          {/* ==================================================
-              SECTION OBSERVATION
-          ================================================== */}
+          {}
 
           <View
             style={
@@ -256,9 +251,7 @@ export function VueModificationObservation({
             </View>
           </View>
 
-          {/* ==================================================
-              INFORMATIONS EXISTANTES
-          ================================================== */}
+          {}
 
           <View
             style={
@@ -303,9 +296,7 @@ export function VueModificationObservation({
             </View>
           </View>
 
-          {/* ==================================================
-              DESCRIPTION
-          ================================================== */}
+          {}
 
           <View
             style={
@@ -354,7 +345,7 @@ export function VueModificationObservation({
               onChangeText={
                 setDescription
               }
-              placeholder="Décrire ce que vous observez dans la culture..."
+              placeholder={i18n.t('observations.placeholderDescription')}
               placeholderTextColor="#9CA3AF"
               multiline
               numberOfLines={7}
@@ -389,9 +380,7 @@ export function VueModificationObservation({
             </View>
           </View>
 
-          {/* ==================================================
-              CONSEIL
-          ================================================== */}
+          {}
 
           <View
             style={
@@ -435,9 +424,7 @@ export function VueModificationObservation({
             </View>
           </View>
 
-          {/* ==================================================
-              DATE
-          ================================================== */}
+          {}
 
           <View
             style={
@@ -514,16 +501,14 @@ export function VueModificationObservation({
                 onChange={setDate}
                 disabled={modificationAutorisee &&
                   updateMutation.isPending}
-                placeholder="Choisir la date et l’heure"
-                hint="Enregistré au format ISO-8601 (heure locale convertie en instant)"
+                placeholder={i18n.t('libelles.choisirDateHeure')}
+                hint={i18n.t('observations.hintHorodatage')}
               />
             </View>
           </View>
 
 
-          {/* ==================================================
-              ACTION
-          ================================================== */}
+          {}
 
           {modificationAutorisee ? (
             <TouchableOpacity

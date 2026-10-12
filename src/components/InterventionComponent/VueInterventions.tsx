@@ -1,4 +1,5 @@
 import type { Intervention } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
+import { i18n } from '@/i18n/instance';
 import { styles } from '@/screens/InterventionScreen/InterventionListScreen.styles';
 import type { InterventionPayload, Intervention as InterventionInterventions, UpdateInterventionPayload } from '@/types';
 import type { UseMutationResult } from '@tanstack/react-query';
@@ -91,10 +92,10 @@ export function VueInterventions({
               <Text style={styles.formTitle}>
                 {interventionEnModification
                   ? 'Modifier l’intervention'
-                  : 'Nouvelle intervention'}
+                  : i18n.t('libelles.nouvelleIntervention')}
               </Text>
               <Text style={styles.formSubtitle}>
-                {cultureLabel || 'Culture'} • {parcelleLabel || 'Parcelle'}
+                {cultureLabel || i18n.t('libelles.culture')} • {parcelleLabel || i18n.t('libelles.parcelle')}
               </Text>
             </View>
 
@@ -108,9 +109,9 @@ export function VueInterventions({
           </View>
 
           <AppSelect
-            label="Type d’intervention"
+            label={i18n.t('libelles.typeIntervention')}
             required
-            placeholder="Choisir un type"
+            placeholder={i18n.t('libelles.choisirType')}
             value={type || null}
             options={optionsType}
             onChange={setType}
@@ -122,7 +123,7 @@ export function VueInterventions({
             style={[styles.input, styles.textarea]}
             value={description}
             onChangeText={setDescription}
-            placeholder="Décrire l’intervention..."
+            placeholder={i18n.t('interventions.decrirePlaceholder')}
             placeholderTextColor="#9CA3AF"
             multiline
             numberOfLines={5}
@@ -131,17 +132,17 @@ export function VueInterventions({
           />
 
           <DateTimeInput
-            label="Date et heure"
+            label={i18n.t('libelles.dateEtHeure')}
             required
             value={date}
             onChange={setDate}
-            hint="Le statut est calculé par le serveur à partir de cette date"
+            hint={i18n.t('interventions.statutCalculeDepuisDate')}
             disabled={createMutation.isPending || updateMutation.isPending}
           />
 
           <AppSelect
             label="Produit"
-            placeholder="Choisir un produit"
+            placeholder={i18n.t('libelles.choisirProduit')}
             hint="Facultatif"
             value={produit || null}
             options={optionsProduit}
@@ -165,8 +166,8 @@ export function VueInterventions({
 
             <View style={styles.formColumn}>
               <AppSelect
-                label="Unité"
-                placeholder="Choisir une unité"
+                label={i18n.t('domaine.unite')}
+                placeholder={i18n.t('interventions.choisirUnite')}
                 value={unite || null}
                 options={optionsUnite}
                 onChange={setUnite}
@@ -203,7 +204,7 @@ export function VueInterventions({
               {createMutation.isPending || updateMutation.isPending ? (
                 <ActivityIndicator color="#FFFFFF" />
               ) : (
-                <Text style={styles.saveButtonText}>Enregistrer</Text>
+                <Text style={styles.saveButtonText}>{i18n.t('libelles.enregistrer')}</Text>
               )}
             </TouchableOpacity>
           </View>

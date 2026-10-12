@@ -1,4 +1,5 @@
  
+import { useTranslation } from 'react-i18next';
 
 import { useMemo, useState } from 'react';
 
@@ -11,20 +12,17 @@ import { Leaf } from 'lucide-react-native';
 import { useRegister } from '@/hooks/auth/useRegister';
 
 
-
-
-
-
-
 import { styles } from './RegisterScreen.styles';
 import { Errors } from '@/screens/AuthScreen/RegisterScreen.helpers';
 
 import { Keyboard } from '@/components/AuthComponent/Keyboard';
 import { estEmailValide } from '@/utils/email';
 import { erreursParChamp, estErreurDe, messageErreur } from '@/utils/erreur';
+import { i18n } from '@/i18n/instance';
 
 
 export default function RegisterScreen() {
+  const { t } = useTranslation();
 
 
   const [nom, setNom] =
@@ -85,26 +83,29 @@ export default function RegisterScreen() {
     useMemo(() => {
 
       if (!password) {
-        return 'Créez un mot de passe sécurisé';
+        return t('auth.register.securite.titre');
       }
 
       if (passwordScore <= 1) {
-        return 'Mot de passe faible';
+        return t('auth.register.securite.faible');
       }
 
       if (passwordScore === 2) {
-        return 'Mot de passe moyen';
+        return t('auth.register.securite.moyen');
       }
 
       if (passwordScore === 3) {
-        return 'Presque sécurisé';
+        return t('auth.register.securite.presque');
       }
 
-      return 'Mot de passe sécurisé';
+      return t('auth.register.securite.fort');
 
+      // `t` doit figurer dans les dépendances : sans lui, le libellé resterait
+      // figé dans la langue active au moment du premier rendu.
     }, [
       password,
       passwordScore,
+      t,
     ]);
 
 
@@ -121,7 +122,7 @@ export default function RegisterScreen() {
     if (!clean(nom)) {
 
       e.nom =
-        'Le nom est obligatoire.';
+        i18n.t('divers.nomObligatoire');
 
     } else if (
       !/^[A-Za-zÀ-ÿ\s'-]+$/.test(
@@ -142,14 +143,14 @@ export default function RegisterScreen() {
     ) {
 
       e.prenom =
-        'Prénom invalide.';
+        t('auth.register.prenomInvalide');
     }
 
 
     if (!clean(email)) {
 
       e.email =
-        "L'email est obligatoire.";
+        i18n.t('auth.lEmailObligatoire');
 
     } else if (
       !estEmailValide(
@@ -181,7 +182,7 @@ export default function RegisterScreen() {
       ) {
 
         e.telephone =
-          'Téléphone invalide.';
+          t('auth.register.telephoneInvalide');
 
       } else if (
         phone
@@ -190,7 +191,7 @@ export default function RegisterScreen() {
       ) {
 
         e.telephone =
-          'Téléphone trop court.';
+          t('auth.register.telephoneCourt');
       }
     }
 
@@ -198,14 +199,14 @@ export default function RegisterScreen() {
     if (!password) {
 
       e.password =
-        'Le mot de passe est obligatoire.';
+        i18n.t('auth.motPasseObligatoire');
 
     } else if (
       !pwdChecks.len
     ) {
 
       e.password =
-        'Au moins 8 caractères.';
+        t('auth.register.motDePasseCourt');
 
     } else if (
       !pwdChecks.upper ||
@@ -274,13 +275,13 @@ export default function RegisterScreen() {
             email:
               erreursServeur.email ??
               (estErreurDe(err, 'USER_EMAIL_ALREADY_EXISTS')
-                ? 'Cette adresse email est déjà utilisée.'
+                ? t('auth.register.emailDejaUtilise')
                 : undefined),
             telephone: erreursServeur.telephone,
             password: erreursServeur.password,
             general: messageErreur(
               err,
-              'Impossible de créer le compte.',
+              t('auth.register.echecCreation'),
             ),
           });
         },
@@ -331,9 +332,7 @@ export default function RegisterScreen() {
       }
     >
 
-      {/* =================================================
-          BACKGROUND DECORATIF
-      ================================================= */}
+      {}
 
       <View
         pointerEvents="none"
@@ -380,9 +379,7 @@ export default function RegisterScreen() {
 
       </View>
 
-      {/* =================================================
-          KEYBOARD
-      ================================================= */}
+      {}
 
       <Keyboard
         clearFieldError={clearFieldError}
@@ -407,6 +404,5 @@ export default function RegisterScreen() {
     </View>
   );
 }
-
 
 

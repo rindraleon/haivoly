@@ -1,4 +1,5 @@
 import type { StatutHistorique, TypeTri } from '@/screens/ParcelleScreen/ParcelleHistoryScreen';
+import { i18n } from '@/i18n/instance';
 import { styles } from '@/screens/ParcelleScreen/ParcelleHistoryScreen.styles';
 
 import { router } from 'expo-router';
@@ -41,9 +42,7 @@ export function VueHistoriqueParcelles({
   return (
 <View style={styles.container}>
 
-        {/* ======================================
-            TITRE
-        ====================================== */}
+        {}
 
         <Text style={styles.title}>
           Historique des parcelles
@@ -53,16 +52,14 @@ export function VueHistoriqueParcelles({
           Parcelles abandonnées, archivées et supprimées
         </Text>
 
-        {/* ======================================
-            RECHERCHE + FILTRE + TRI
-        ====================================== */}
+        {}
 
         <View style={styles.searchFilterRow}>
 
           <View style={styles.searchContainer}>
             <TextInput
               style={styles.searchInput}
-              placeholder="Rechercher une parcelle..."
+              placeholder={i18n.t('libelles.rechercheParcelle')}
               value={recherche}
               onChangeText={setRecherche}
             />
@@ -114,9 +111,7 @@ export function VueHistoriqueParcelles({
 
         </View>
 
-        {/* ======================================
-            PANNEAU FILTRE
-        ====================================== */}
+        {}
 
         {filtreOuvert && (
           <View style={styles.panel}>
@@ -193,9 +188,7 @@ export function VueHistoriqueParcelles({
           </View>
         )}
 
-        {/* ======================================
-            PANNEAU TRI
-        ====================================== */}
+        {}
 
         {triOuvert && (
           <View style={styles.panel}>
@@ -464,9 +457,7 @@ export function VueHistoriqueParcelles({
           </View>
         )}
 
-        {/* ======================================
-            LISTE
-        ====================================== */}
+        {}
 
         {parcellesHistoriques.length > 0 ? (
           <FlatList
@@ -662,18 +653,16 @@ export function VueHistoriqueParcelles({
 
             <Text style={styles.emptyText}>
               {recherche.trim() !== ''
-                ? 'Aucune parcelle historique ne correspond à votre recherche.'
+                ? i18n.t('parcelles.aucuneHistorique')
                 : statutFiltre !== 'TOUS'
-                ? 'Aucune parcelle ne correspond au statut sélectionné.'
-                : 'Aucune parcelle dans l’historique.'}
+                ? i18n.t('parcelles.aucuneStatut')
+                : i18n.t('parcelles.aucuneParcelleLHistorique')}
             </Text>
 
           </View>
         )}
 
-        {/* ======================================
-            RETOUR
-        ====================================== */}
+        {}
 
         <TouchableOpacity
           style={styles.backButton}

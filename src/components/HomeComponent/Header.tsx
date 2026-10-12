@@ -1,4 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { i18n } from '@/i18n/instance';
 import {
   Sprout,
   Bell,
@@ -123,7 +124,7 @@ export function HomeHeader({
               styles.avatar,
               pressed && styles.pressed,
             ]}
-            accessibilityLabel="Ouvrir mon profil"
+            accessibilityLabel={i18n.t('libelles.ouvrirProfil')}
             accessibilityRole="button"
             hitSlop={8}
           >
@@ -200,7 +201,7 @@ export function HomeHeader({
 
           <Text style={styles.statHint}>
             {isOnline
-              ? 'à synchroniser'
+              ? i18n.t('divers.aSynchroniser')
               : 'offline'}
           </Text>
         </View>

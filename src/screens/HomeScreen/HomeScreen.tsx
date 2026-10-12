@@ -1,4 +1,6 @@
-/* eslint-disable react-hooks/set-state-in-effect, react/no-unescaped-entities */
+/* eslint-disable react-hooks/set-state-in-effect */
+import { i18n } from '@/i18n/instance';
+import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
@@ -32,6 +34,7 @@ import { styles } from './HomeScreen.styles';
 
 import { formatDate } from '@/utils/date';
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { data: user, isLoading: loadingUser, isError, refetch: refetchUser } = useProfile();
   const {
@@ -53,9 +56,9 @@ export default function HomeScreen() {
 
   const greeting = (() => {
     const h = new Date().getHours();
-    if (h < 12) return 'Bonjour';
-    if (h < 18) return 'Bon après-midi';
-    return 'Bonsoir';
+    if (h < 12) return t('accueil.bonjour');
+    if (h < 18) return t('accueil.bonApresMidi');
+    return t('accueil.bonsoir');
   })();
 
   const refreshPending = useCallback(async () => {
@@ -81,9 +84,9 @@ export default function HomeScreen() {
   const confirm = useConfirm();
   const handleLogout = async () => {
     const ok = await confirm({
-      title: 'Se déconnecter ?',
-      description: 'Vous allez quitter votre session. Vous devrez vous reconnecter pour accéder à vos parcelles.',
-      confirmLabel: 'Se déconnecter',
+      title: t('accueil.deconnexion.titre'),
+      description: t('accueil.deconnexion.description'),
+      confirmLabel: t('accueil.deconnexion.confirmer'),
       cancelLabel: 'Annuler',
       variant: 'primary',
     });
@@ -101,12 +104,12 @@ export default function HomeScreen() {
     }
   }, [refetchUser, refetchParcelles, refreshPending]);
 
-  if (loadingUser) return <LoadingState message="Chargement de votre espace..." />;
+  if (loadingUser) return <LoadingState message={i18n.t('divers.chargementEspace')} />;
   if (isError || !user)
     return (
       <ErrorState
-        title="Impossible de charger le profil"
-        message="Vérifiez votre connexion et réessayez."
+        title={i18n.t('libelles.chargementProfilImpossible')}
+        message={t('accueil.erreurChargement')}
         onRetry={() => refetchUser()}
         onBack={handleLogout}
       />
@@ -141,24 +144,7 @@ export default function HomeScreen() {
   onSyncPress={handleSync}
 />
 
-          {/* Stats 
-          <View style={styles.statsRow}>
-            <Card style={[styles.statCard as any, { flex: 1.1 } as any]}>
-              <Text style={styles.statValue}>{loadingParcelles ? '—' : parcellesActives.length}</Text>
-              <Text style={styles.statLabel}>Parcelles actives</Text>
-              <Text style={styles.statHint}>{ha.toFixed(2)} ha au total</Text>
-            </Card>
-            <Card style={[styles.statCard as any, { flex: 1 } as any]}>
-              <Text style={styles.statValue}>{pendingCount}</Text>
-              <Text style={styles.statLabel}>En attente</Text>
-              <Text style={styles.statHint}>{isOnline ? 'à synchroniser' : 'offline'}</Text>
-            </Card>
-            <Card style={[styles.statCard as any, { flex: 1 } as any]}>
-              <Text style={styles.statValue}>{recommendations.filter((r) => !r.readAt).length}</Text>
-              <Text style={styles.statLabel}>Notifications</Text>
-              <Text style={styles.statHint}>recommandations</Text>
-            </Card>
-          </View>*/}
+          {}
         </View> 
 
         {/* Actions rapides — composant dédié */}
@@ -213,15 +199,15 @@ export default function HomeScreen() {
         {/* Parcelles récentes — reste atomique pour l’instant */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Parcelles récentes</Text>
+            <Text style={styles.sectionTitle}>{t('accueil.parcellesRecentes')}</Text>
             <Pressable onPress={() => router.push('/(app)/(parcelles)/parcelles' as any)} hitSlop={8}>
-              <Text style={styles.seeAll}>Voir tout</Text>
+              <Text style={styles.seeAll}>{t('commun.actions.voirTout')}</Text>
             </Pressable>
           </View>
 
           {loadingParcelles ? (
             <Card>
-              <Text style={{ color: colors.neutral[500], fontSize: 13 }}>Chargement...</Text>
+              <Text style={{ color: colors.neutral[500], fontSize: 13 }}>{t('commun.etats.chargement')}</Text>
             </Card>
           ) : parcellesActives.length === 0 ? (
             <Card>
@@ -230,15 +216,15 @@ export default function HomeScreen() {
                   <MapPinned size={20} color={colors.neutral[400]} />
                 </View>
                 <View style={{ gap: 4, alignItems: 'center' }}>
-                  <Text style={{ fontSize: 14, fontWeight: '700', color: colors.neutral[800] }}>Aucune parcelle pour l'instant</Text>
-                  <Text style={{ fontSize: 12.5, color: colors.neutral[500], textAlign: 'center' }}>Créez votre première parcelle pour commencer.</Text>
+                  <Text style={{ fontSize: 14, fontWeight: '700', color: colors.neutral[800] }}>{t('accueil.aucuneParcelle')}</Text>
+                  <Text style={{ fontSize: 12.5, color: colors.neutral[500], textAlign: 'center' }}>{t('accueil.aucuneParcelleHint')}</Text>
                 </View>
                 <Pressable
                   onPress={() => router.push('/(app)/(parcelles)/ajout-parcelle' as any)}
                   style={({ pressed }) => [styles.emptyCta, pressed && { opacity: 0.85 }]}
                 >
                   <Plus size={16} color="#FFFFFF" />
-                  <Text style={styles.emptyCtaText}>Créer une parcelle</Text>
+                  <Text style={styles.emptyCtaText}>{t('accueil.creerParcelle')}</Text>
                 </Pressable>
               </View>
             </Card>
@@ -260,7 +246,7 @@ export default function HomeScreen() {
                           {p.nom}
                         </Text>
                         <Text numberOfLines={1} style={styles.parcelleMeta}>
-                          {[p.typeSol, p.superficie ? `${(p.superficie / 10000).toFixed(2)} ha` : null].filter(Boolean).join(' • ') || 'Parcelle agricole'}
+                          {[p.typeSol, p.superficie ? `${(p.superficie / 10000).toFixed(2)} ha` : null].filter(Boolean).join(' • ') || t('accueil.parcelleAgricole')}
                         </Text>
                       </View>
                       <Badge label={p.statut} variant={p.statut === 'ACTIVE' ? 'success' : 'neutral'} dot />
@@ -283,7 +269,7 @@ export default function HomeScreen() {
           )}
         </View>
 
-        <Text style={styles.footer}>Haivoly — Plateforme de gestion agricole • Antananarivo</Text>
+        <Text style={styles.footer}>{t('accueil.piedDePage')}</Text>
       </ScrollView>
     </View>
   );

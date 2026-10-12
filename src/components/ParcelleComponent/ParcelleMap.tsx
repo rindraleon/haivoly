@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { i18n } from '@/i18n/instance';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
@@ -22,10 +23,6 @@ export interface ParcelleMapProps {
   editable?: boolean;
   onPointMove?: (index: number, position: LatLng) => void;
   onPress?: (position: LatLng) => void;
-  /**
-   * Centrage par défaut sur la ville de Madagascar la plus proche de la
-   * position GPS de l'utilisateur (utilisé à la création d'une parcelle).
-   */
   defaultToNearestCity?: boolean;
   style?: StyleProp<ViewStyle>;
 }
@@ -39,10 +36,6 @@ interface MapMessage {
   index?: number;
 }
 
-/**
- * Carte Leaflet + OpenStreetMap rendue dans une WebView.
- * Aucune dépendance Google Maps : tuiles OSM (standard) et Esri (satellite).
- */
 export function ParcelleMap({
   points = [],
   center = null,
@@ -334,7 +327,11 @@ window.renderPoints = function (points, centerLatitude, centerLongitude) {
         iconSize: [22, 22],
         iconAnchor: [11, 11],
       }),
-      title: 'Position enregistrée',
+      // Interpolation depuis le contexte React Native : cette ligne vit dans
+      // le HTML/JS injecte au WebView, ou i18n n'existe pas. Sans interpolation,
+      // l'appel serait du texte litteral et leverait une erreur cote WebView.
+      // NB : pas de backticks dans ce commentaire, on est dans un template.
+      title: ${JSON.stringify(i18n.t('parcelles.positionEnregistree'))},
     }).addTo(layerGroup);
   }
 

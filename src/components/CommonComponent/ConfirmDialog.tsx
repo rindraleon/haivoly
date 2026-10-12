@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Animated, Modal, Pressable, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { AlertTriangle, LogOut, Trash2, Info, X } from 'lucide-react-native';
 import { colors, radius, shadows, spacing, typography } from '@/theme';
@@ -47,6 +48,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: Props) {
+  const { t } = useTranslation();
   // Les valeurs animées sont créées une seule fois via un initialiseur de
   // `useState` : aucune référence n'est lue pendant le rendu.
   const [backdrop] = useState(() => new Animated.Value(0));
@@ -158,7 +160,7 @@ export function ConfirmDialog({
                   )}
                 </>
               )}
-              <Text style={styles.btnPrimaryText}>{loading ? 'Patientez…' : confirmLabel}</Text>
+              <Text style={styles.btnPrimaryText}>{loading ? t('commun.etats.patientez') : confirmLabel}</Text>
             </Pressable>
           </View>
         </Animated.View>

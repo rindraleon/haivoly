@@ -1,4 +1,5 @@
 import { ScreenHeader } from '@/components/CommonComponent/ScreenHeader';
+import { i18n } from '@/i18n/instance';
 import { FilterModal } from '@/components/InterventionComponent/FilterModal';
 import type { ContexteFormulaire, CultureGlobale, InterventionGlobale } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
 import { styles } from '@/screens/InterventionScreen/InterventionListScreen.styles';
@@ -111,7 +112,7 @@ export function VueInterventionsCulture({
                 />
                 <TextInput
                   style={styles.searchInput}
-                  placeholder="Rechercher intervention, culture, parcelle..."
+                  placeholder={i18n.t('libelles.rechercheIntervention')}
                   placeholderTextColor="#9CA3AF"
                   value={recherche}
                   onChangeText={setRecherche}
@@ -170,7 +171,7 @@ export function VueInterventionsCulture({
                   ? `pour "${recherche}"`
                   : filtreActif
                     ? 'Filtre actif'
-                    : 'Triées par date récente'}
+                    : i18n.t('domaine.trieesDateRecente')}
               </Text>
             </View>
           </View>
@@ -207,14 +208,14 @@ export function VueInterventionsCulture({
                               item =>
                                 item.id === cultureSelectionnee &&
                                 item.parcelleId === parcelleSelectionnee,
-                            )?.nom ?? 'Culture'
-                          : 'Culture'),
+                            )?.nom ?? i18n.t('libelles.culture')
+                          : i18n.t('libelles.culture')),
                       contexteParcelle?.nom ??
                         (contexteFormulaire?.parcelleId === parcelleSelectionnee
                           ? parcelles.find(
                               item => item.id === parcelleSelectionnee,
-                            )?.nom ?? 'Parcelle'
-                          : 'Parcelle'),
+                            )?.nom ?? i18n.t('libelles.parcelle')
+                          : i18n.t('libelles.parcelle')),
                     );
                   })()
                 : null}
@@ -264,7 +265,7 @@ export function VueInterventionsCulture({
                         ? ` • ${culturesGlobales.find(
                             item =>
                               item.id === cultureSelectionnee,
-                          )?.nom || 'Culture'}`
+                          )?.nom || i18n.t('libelles.culture')}`
                         : ''}
                     </Text>
                   </View>
@@ -313,10 +314,10 @@ export function VueInterventionsCulture({
                     </Text>
                     <Text style={styles.emptyText}>
                       {recherche
-                        ? 'Aucune intervention ne correspond à votre recherche.'
+                        ? i18n.t('interventions.aucuneRecherche')
                         : filtreActif
-                          ? 'Aucune intervention ne correspond au filtre sélectionné.'
-                          : "Aucune intervention n'a encore été enregistrée."}
+                          ? i18n.t('interventions.aucuneFiltre')
+                          : i18n.t('divers.aucuneIntervention')}
                     </Text>
                   </View>
                 </View>
@@ -333,7 +334,7 @@ export function VueInterventionsCulture({
           {formOuvert ? null : (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Ajouter une intervention"
+              accessibilityLabel={i18n.t('libelles.ajouterIntervention')}
               onPress={ouvrirAjoutGlobal}
               style={({ pressed }) => [
                 styles.fab,

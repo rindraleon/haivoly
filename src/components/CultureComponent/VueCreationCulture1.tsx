@@ -1,4 +1,5 @@
 import { ButtonNext } from '@/components/CultureComponent/ButtonNext';
+import { i18n } from '@/i18n/instance';
 
 
 import { FormGroup } from '@/components/CultureComponent/FormGroup';
@@ -89,9 +90,7 @@ export function VueCreationCulture1({
               false
             }
           >
-            {/* ==================================================
-                STEPPER
-            ================================================== */}
+            {}
 
             <View
               style={styles.stepperCard}
@@ -168,9 +167,7 @@ export function VueCreationCulture1({
               </View>
             </View>
 
-            {/* ==================================================
-                ÉTAPE 1
-            ================================================== */}
+            {}
 
             {currentStep === 1 ? (
               <View
@@ -244,7 +241,7 @@ export function VueCreationCulture1({
                     >
                       {parcelleNom ||
                         parcelleId ||
-                        'Parcelle non renseignée'}
+                        i18n.t('domaine.parcelleNonRenseignee')}
                     </Text>
                   </View>
 
@@ -267,9 +264,9 @@ export function VueCreationCulture1({
                       }
                     />
                   }
-                  label="Nom de la culture"
+                  label={i18n.t('libelles.nomCulture')}
                   required
-                  helper="Donnez un nom facile à reconnaître."
+                  helper={i18n.t('cultures.nomHint')}
                 >
                   <TextInput
                     style={styles.input}
@@ -293,11 +290,11 @@ export function VueCreationCulture1({
                     />
                   }
                   label="Type"
-                  helper="Exemple : céréale, légumineuse, tubercule..."
+                  helper={i18n.t('cultures.typeExemple')}
                 >
                   <TextInput
                     style={styles.input}
-                    placeholder="Ex. : Céréale"
+                    placeholder={i18n.t('cultures.typePlaceholder')}
                     placeholderTextColor="#A0AAA2"
                     value={type}
                     onChangeText={setType}
@@ -314,8 +311,8 @@ export function VueCreationCulture1({
                       color="#758178"
                     />
                   }
-                  label="Variété"
-                  helper="Précisez la variété cultivée si elle est connue."
+                  label={i18n.t('domaine.variete')}
+                  helper={i18n.t('cultures.varieteHint')}
                 >
                   <TextInput
                     style={styles.input}
@@ -334,9 +331,7 @@ export function VueCreationCulture1({
               </View>
             ) : null}
 
-            {/* ==================================================
-                ÉTAPE 2
-            ================================================== */}
+            {}
 
             {currentStep === 2 ? (
               <VueCreationCulture11
@@ -357,9 +352,7 @@ export function VueCreationCulture1({
               />
             ) : null}
 
-            {/* ==================================================
-                ÉTAPE 3
-            ================================================== */}
+            {}
 
             {currentStep === 3 ? (
               <VueCreationCulture12
@@ -381,16 +374,12 @@ export function VueCreationCulture1({
               />
             ) : null}
 
-            {/* ==================================================
-                DATE PICKER
-            ================================================== */}
+            {}
 
             {/* Le DateTimePicker est affiché dans l'étape 2
                 au moment de la sélection. */}
 
-            {/* ==================================================
-                FOOTER
-            ================================================== */}
+            {}
 
             <View
               style={styles.footer}

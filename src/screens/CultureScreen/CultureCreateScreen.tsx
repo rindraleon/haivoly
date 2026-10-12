@@ -1,4 +1,5 @@
  
+import { i18n } from '@/i18n/instance';
 
 import { useState } from 'react';
 
@@ -84,7 +85,7 @@ export default function AjouterCultureScreen() {
   const formaterDate =
     (date: Date | null) => {
       if (!date) {
-        return 'Choisir une date';
+        return i18n.t('domaine.choisirDate');
       }
 
       return formatDate(date);
@@ -94,16 +95,16 @@ export default function AjouterCultureScreen() {
   const enregistrer = () => {
     if (!parcelleId) {
       Alert.alert(
-        'Erreur',
-        'Identifiant de la parcelle introuvable.',
+        i18n.t('domaine.erreur'),
+        i18n.t('parcelles.identifiantParcelleIntrouvable'),
       );
       return;
     }
 
     if (!nom.trim()) {
       Alert.alert(
-        'Erreur',
-        'Le nom de la culture est obligatoire.',
+        i18n.t('domaine.erreur'),
+        i18n.t('cultures.nomCultureObligatoire'),
       );
 
       setCurrentStep(1);
@@ -119,8 +120,8 @@ export default function AjouterCultureScreen() {
         datePlantation
     ) {
       Alert.alert(
-        'Erreur',
-        'La date prévue de récolte doit être après la date de plantation.',
+        i18n.t('domaine.erreur'),
+        i18n.t('domaine.dateRecolteApresPlantation'),
       );
 
       setCurrentStep(2);
@@ -190,8 +191,8 @@ export default function AjouterCultureScreen() {
 
 
           Alert.alert(
-            'Succès',
-            'La culture a été ajoutée.',
+            i18n.t('domaine.succes'),
+            i18n.t('cultures.ajoutee'),
             [
               {
                 text: 'OK',
@@ -209,10 +210,10 @@ export default function AjouterCultureScreen() {
           logger.warn('CultureCreateScreen', 'Échec de la création de la culture');
 
           Alert.alert(
-            'Erreur',
+            i18n.t('domaine.erreur'),
             error?.response?.data
               ?.message ||
-              "Impossible d'ajouter la culture.",
+              i18n.t('cultures.impossibleDAjouterCulture'),
           );
         },
       },
@@ -224,7 +225,7 @@ export default function AjouterCultureScreen() {
     if (!nom.trim()) {
       Alert.alert(
         'Nom obligatoire',
-        'Veuillez saisir le nom de la culture.',
+        i18n.t('cultures.veuillezSaisirNomCulture'),
       );
       return;
     }
@@ -241,7 +242,7 @@ export default function AjouterCultureScreen() {
     ) {
       Alert.alert(
         'Dates invalides',
-        'La date prévue de récolte doit être après la date de plantation.',
+        i18n.t('domaine.dateRecolteApresPlantation'),
       );
       return;
     }
@@ -266,9 +267,9 @@ export default function AjouterCultureScreen() {
     !!datePrevueRecolte;
 
   const stepLabels = [
-    'Informations',
+    i18n.t('libelles.informations'),
     'Planification',
-    'Vérification',
+    i18n.t('cultures.verification'),
   ];
 
 

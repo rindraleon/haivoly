@@ -1,4 +1,5 @@
 import { ScreenHeader } from '@/components/CommonComponent/ScreenHeader';
+import { i18n } from '@/i18n/instance';
 import { ObservationCard } from '@/components/ObservationComponent/ObservationCard';
 import type { StatutCulture } from '@/screens/ObservationScreen/ObservationListScreen.helpers';
 import { styles } from '@/screens/ObservationScreen/ObservationListScreen.styles';
@@ -82,7 +83,7 @@ export function ModeCulture({
               parcelleId
             } • ${
               cultureNom ||
-              'Culture'
+              i18n.t('libelles.culture')
             }`}
             showBack
           />
@@ -123,10 +124,10 @@ export function ModeCulture({
                   ? 'Culture en cours'
                   : statut ===
                     'RECOLTEE'
-                  ? 'Culture récoltée'
+                  ? i18n.t('observations.cultureRecoltee')
                   : statut ===
                     'ABANDONNEE'
-                  ? 'Culture abandonnée'
+                  ? i18n.t('observations.cultureAbandonnee')
                   : `Statut : ${
                       statut ||
                       'INCONNU'
@@ -140,8 +141,8 @@ export function ModeCulture({
               }
             >
               {lectureSeule
-                ? 'Consultation uniquement. Les observations et leurs photos peuvent être consultées.'
-                : 'Les observations peuvent être ajoutées, modifiées et supprimées.'}
+                ? i18n.t('divers.consultation')
+                : i18n.t('observations.crudPossible')}
             </Text>
           </View>
 
@@ -293,11 +294,11 @@ export function ModeCulture({
                       }
                       cultureNom={
                         cultureNom ||
-                        'Culture'
+                        i18n.t('libelles.culture')
                       }
                       parcelleNom={
                         parcelleNom ||
-                        'Parcelle'
+                        i18n.t('libelles.parcelle')
                       }
                       statutCulture={
                         statut
@@ -322,7 +323,7 @@ export function ModeCulture({
           {modificationAutorisee ? (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Ajouter une observation"
+              accessibilityLabel={i18n.t('libelles.ajouterObservation')}
               onPress={
                 ouvrirAjout
               }

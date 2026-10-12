@@ -1,4 +1,5 @@
 import { styles } from '@/screens/CultureScreen/CultureEditScreen.styles';
+import { i18n } from '@/i18n/instance';
 
 import type { Culture, UpdateCulturePayload ,
   StatutCulture,
@@ -153,7 +154,7 @@ export function VueModificationCulture({
               styles.input
             }
 
-            placeholder="Ex : Céréale"
+            placeholder={i18n.t('cultures.varietePlaceholder')}
 
             value={
               type
@@ -399,7 +400,7 @@ export function VueModificationCulture({
               styles.textArea,
             ]}
 
-            placeholder="Description de la culture"
+            placeholder={i18n.t('libelles.descriptionCulture')}
 
             value={
               description

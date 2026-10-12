@@ -1,4 +1,5 @@
 import { DateTimeInput } from '@/components/CommonComponent/DateTimeInput';
+import { i18n } from '@/i18n/instance';
 import { styles } from '@/screens/ObservationScreen/ObservationCreateScreen.styles';
 import type { ObservationPayload, Observation } from '@/types';
 import type { UseMutationResult } from '@tanstack/react-query';
@@ -16,7 +17,7 @@ type Props = {
   parcelleNom: string;
   setDate: Dispatch<SetStateAction<string>>;
   setDescription: Dispatch<SetStateAction<string>>;
-  statutLabel: "PLANIFIÉE" | "EN COURS" | "RÉCOLTÉE" | "ABANDONNÉE" | "SUPPRIMÉE";
+  statutLabel: string;
 };
 
 export function VueCreationObservation({
@@ -46,9 +47,7 @@ export function VueCreationObservation({
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* ==================================================
-              HEADER
-          ================================================== */}
+          {}
 
           <View
             style={styles.header}
@@ -103,9 +102,7 @@ export function VueCreationObservation({
             </View>
           </View>
 
-          {/* ==================================================
-              FICHE CULTURE
-          ================================================== */}
+          {}
 
           <View
             style={
@@ -155,7 +152,7 @@ export function VueCreationObservation({
                   numberOfLines={1}
                 >
                   {cultureNom ||
-                    'Culture'}
+                    i18n.t('libelles.culture')}
                 </Text>
 
                 <View
@@ -176,7 +173,7 @@ export function VueCreationObservation({
                     numberOfLines={1}
                   >
                     {parcelleNom ||
-                      'Parcelle non renseignée'}
+                      i18n.t('domaine.parcelleNonRenseignee')}
                   </Text>
                 </View>
               </View>
@@ -203,9 +200,7 @@ export function VueCreationObservation({
             </View>
           </View>
 
-          {/* ==================================================
-              SECTION OBSERVATION
-          ================================================== */}
+          {}
 
           <View
             style={
@@ -247,9 +242,7 @@ export function VueCreationObservation({
             </View>
           </View>
 
-          {/* ==================================================
-              DESCRIPTION
-          ================================================== */}
+          {}
 
           <View
             style={
@@ -298,7 +291,7 @@ export function VueCreationObservation({
               onChangeText={
                 setDescription
               }
-              placeholder="Ex. feuilles jaunissantes, présence d'insectes, manque d'eau..."
+              placeholder={i18n.t('divers.observationPlaceholder')}
               placeholderTextColor="#9CA3AF"
               multiline
               numberOfLines={7}
@@ -332,9 +325,7 @@ export function VueCreationObservation({
             </View>
           </View>
 
-          {/* ==================================================
-              CONSEIL TERRAIN
-          ================================================== */}
+          {}
 
           <View
             style={
@@ -378,9 +369,7 @@ export function VueCreationObservation({
             </View>
           </View>
 
-          {/* ==================================================
-              DATE
-          ================================================== */}
+          {}
 
           <View
             style={
@@ -456,16 +445,14 @@ export function VueCreationObservation({
                 value={date}
                 onChange={setDate}
                 disabled={createMutation.isPending}
-                placeholder="Choisir la date et l’heure"
-                hint="Enregistré au format ISO-8601 (heure locale convertie en instant)"
+                placeholder={i18n.t('libelles.choisirDateHeure')}
+                hint={i18n.t('observations.hintHorodatage')}
               />
             </View>
           </View>
 
 
-          {/* ==================================================
-              ACTION
-          ================================================== */}
+          {}
 
           <TouchableOpacity
             style={[

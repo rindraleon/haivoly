@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { i18n } from '@/i18n/instance';
 
 import { router } from 'expo-router';
 
@@ -139,8 +140,8 @@ export default function ParcellesScreen() {
   if (isError) {
     return (
       <ErrorState
-        title="Impossible de charger les parcelles"
-        message="Vérifiez votre connexion."
+        title={i18n.t('libelles.chargementParcellesImpossible')}
+        message={i18n.t('parcelles.verifiezConnexion')}
         onRetry={() => refetch()}
         onBack={() => router.back()}
       />

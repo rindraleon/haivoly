@@ -8,6 +8,10 @@ import { Alert, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 
 import { ConfirmProvider } from '@/components/CommonComponent/ConfirmProvider';
+import { initialiserI18n } from '@/i18n';
+import { ThemeProvider } from '@/theme/ThemeProvider';
+import { initialiserTheme } from '@/theme/ThemeProvider';
+import { i18n } from '@/i18n/instance';
 import { setUnauthorizedHandler } from '@/services/http';
 import { startRecommendationPolling } from '@/services/offline/recommendationSync';
 import { useNetworkStatus } from '@/hooks/common/useNetwork';
@@ -66,9 +70,9 @@ function SyncProvider({ children }: { children: React.ReactNode }) {
       router.replace('/(auth)/login' as never);
 
       Alert.alert(
-        'Session expirée',
-        'Votre session a expiré. Veuillez vous reconnecter pour continuer.',
-        [{ text: 'Se reconnecter' }],
+        i18n.t('auth.sessionExpiree'),
+        i18n.t('auth.sessionExpireVeuillezReconnecter'),
+        [{ text: i18n.t('auth.seReconnecter') }],
       );
     });
 
@@ -110,17 +114,53 @@ function SyncProvider({ children }: { children: React.ReactNode }) {
   return <SyncContext.Provider value={value}>{children}</SyncContext.Provider>;
 }
 
+/**
+ * Lit les préférences persistées (langue, thème) avant le premier rendu.
+ *
+ * Le rendu est suspendu tant que la lecture n'a pas abouti : c'est ce qui
+ * évite le flash — sans cette attente, un utilisateur en thème sombre verrait
+ * l'interface s'afficher en clair puis basculer.
+ */
+function PreferencesBootstrap({ children }: { children: React.ReactNode }) {
+  const [pret, setPret] = useState(false);
+
+  useEffect(() => {
+    let actif = true;
+    Promise.all([
+      initialiserI18n().catch(() => {
+        // Un echec de lecture du choix persiste ne doit pas bloquer l'app :
+        // i18next retombe sur la langue par defaut.
+      }),
+      initialiserTheme().catch(() => {
+        // Même règle : on retombe sur `system`.
+      }),
+    ]).finally(() => {
+      if (actif) setPret(true);
+    });
+    return () => {
+      actif = false;
+    };
+  }, []);
+
+  if (!pret) return null;
+  return <>{children}</>;
+}
+
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <GestureHandlerRootView style={styles.root}>
-      <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <ConfirmProvider>
-            <SyncProvider>{children}</SyncProvider>
-          </ConfirmProvider>
-        </QueryClientProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <PreferencesBootstrap>
+      <ThemeProvider>
+        <GestureHandlerRootView style={styles.root}>
+          <SafeAreaProvider>
+            <QueryClientProvider client={queryClient}>
+              <ConfirmProvider>
+                <SyncProvider>{children}</SyncProvider>
+              </ConfirmProvider>
+            </QueryClientProvider>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </ThemeProvider>
+    </PreferencesBootstrap>
   );
 }
 

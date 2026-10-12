@@ -1,4 +1,5 @@
 
+import { i18n } from '@/i18n/instance';
 import { formatMontant } from '@/utils/formatNombre';
 import { formatDate } from '@/utils/date';
 import { logger } from '@/utils/logger';
@@ -54,8 +55,8 @@ export default function RecoltesScreen() {
       } else {
         logger.warn('RecolteListScreen', 'Échec du chargement de la récolte');
         Alert.alert(
-          'Erreur',
-          'Impossible de récupérer les informations de récolte.',
+          i18n.t('domaine.erreur'),
+          i18n.t('recoltes.recuperationImpossible'),
         );
       }
     } finally {

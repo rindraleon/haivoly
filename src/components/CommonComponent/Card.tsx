@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, View, type ViewStyle, type StyleProp } from 'react-native';
-import { colors, radius, shadows } from '@/theme';
+import { radius, shadows } from '@/theme';
+import { useTheme } from '@/hooks/common/useTheme';
+import type { Jetons } from '@/theme/jetons';
 
 interface CardProps {
   children: React.ReactNode;
@@ -12,7 +14,9 @@ interface CardProps {
 }
 
 export function Card({ children, onPress, style, padded = true, variant = 'default', disabled }: CardProps) {
-  const variantStyle = stylesByVariant[variant];
+  const { jetons } = useTheme();
+  const styles = useMemo(() => creerStyles(jetons), [jetons]);
+  const variantStyle = styles.parVariante[variant];
 
   if (onPress) {
     return (
@@ -30,21 +34,37 @@ export function Card({ children, onPress, style, padded = true, variant = 'defau
   return <View style={[styles.base, variantStyle, padded && styles.padded, style as any]}>{children}</View>;
 }
 
-const styles = StyleSheet.create({
-  base: {
-    borderRadius: radius.lg,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: colors.border.default,
-    overflow: 'hidden',
-  },
-  padded: { padding: 16 },
-  pressed: { opacity: 0.96, transform: [{ scale: 0.99 }] },
-});
-
-const stylesByVariant: Record<string, ViewStyle> = {
-  default: { ...shadows.card, borderColor: colors.border.default },
-  elevated: { ...shadows.md, borderColor: 'transparent' },
-  outline: { borderColor: colors.border.strong, backgroundColor: '#FFFFFF', shadowOpacity: 0, elevation: 0 },
-  muted: { backgroundColor: colors.neutral[100], borderColor: colors.border.default },
-};
+/**
+ * Les styles dépendent du thème : ils sont donc recalculés à chaque changement
+ * de jetons plutôt que figés au chargement du module. C'est la condition pour
+ * qu'un passage en sombre repeigne réellement la carte.
+ */
+function creerStyles(jetons: Jetons) {
+  return {
+    ...StyleSheet.create({
+      base: {
+        borderRadius: radius.lg,
+        backgroundColor: jetons.fond.carte,
+        borderWidth: 1,
+        borderColor: jetons.bordure.defaut,
+        overflow: 'hidden',
+      },
+      padded: { padding: 16 },
+      pressed: { opacity: 0.96, transform: [{ scale: 0.99 }] },
+    }),
+    parVariante: {
+      default: { ...shadows.card, borderColor: jetons.bordure.defaut },
+      elevated: { ...shadows.md, borderColor: 'transparent' },
+      outline: {
+        borderColor: jetons.bordure.appuyee,
+        backgroundColor: jetons.fond.carte,
+        shadowOpacity: 0,
+        elevation: 0,
+      },
+      muted: {
+        backgroundColor: jetons.fond.attenue,
+        borderColor: jetons.bordure.defaut,
+      },
+    } as Record<CardProps['variant'] & string, ViewStyle>,
+  };
+}

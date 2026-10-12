@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect, react/no-unescaped-entities */
+import { i18n } from '@/i18n/instance';
 import { useEffect, useState } from 'react';
 
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native';
@@ -157,7 +158,7 @@ export default function ModifierCultureScreen() {
   ) => {
 
     if (!date) {
-      return 'Choisir une date';
+      return i18n.t('domaine.choisirDate');
     }
 
     return formatDate(date);
@@ -170,8 +171,8 @@ export default function ModifierCultureScreen() {
     if (!nom.trim()) {
 
       Alert.alert(
-        'Erreur',
-        'Le nom de la culture est obligatoire.',
+        i18n.t('domaine.erreur'),
+        i18n.t('cultures.nomCultureObligatoire'),
       );
 
       return;
@@ -186,8 +187,8 @@ export default function ModifierCultureScreen() {
     ) {
 
       Alert.alert(
-        'Erreur',
-        'La date prévue de récolte doit être après la date de plantation.',
+        i18n.t('domaine.erreur'),
+        i18n.t('domaine.dateRecolteApresPlantation'),
       );
 
       return;
@@ -239,8 +240,8 @@ export default function ModifierCultureScreen() {
         onSuccess: () => {
 
           Alert.alert(
-            'Succès',
-            'La culture a été modifiée avec succès.',
+            i18n.t('domaine.succes'),
+            i18n.t('cultures.modifiee'),
             [
               {
                 text: 'OK',
@@ -262,12 +263,12 @@ export default function ModifierCultureScreen() {
           logger.warn('CultureEditScreen', 'Échec de la modification de la culture');
 
           Alert.alert(
-            'Erreur',
+            i18n.t('domaine.erreur'),
 
             error?.response?.data
               ?.message ||
 
-              'Impossible de modifier la culture.',
+              i18n.t('cultures.impossibleModifierCulture'),
           );
 
         },

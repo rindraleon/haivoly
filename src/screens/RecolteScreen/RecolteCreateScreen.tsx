@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { i18n } from '@/i18n/instance';
 import { Alert, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { CalendarDays, Wheat } from 'lucide-react-native';
@@ -21,7 +22,7 @@ const UNITES = [
   { value: 'tonne', label: 'Tonnes (t)' },
   { value: 'sac', label: 'Sacs' },
   { value: 'litre', label: 'Litres (L)' },
-  { value: 'unite', label: 'Unités' },
+  { value: 'unite', label: i18n.t('domaine.unites') },
 ];
 
 export default function AjoutRecolteScreen() {
@@ -49,7 +50,7 @@ export default function AjoutRecolteScreen() {
 
     const quantiteNombre = Number(quantite.replace(',', '.'));
     if (!quantite.trim() || !Number.isFinite(quantiteNombre) || quantiteNombre <= 0) {
-      suivantes.quantite = 'Saisissez une quantité supérieure à 0';
+      suivantes.quantite = i18n.t('recoltes.quantiteSuperieureZero');
     }
 
     setErreurs(suivantes);
@@ -76,8 +77,8 @@ export default function AjoutRecolteScreen() {
       });
 
       Alert.alert(
-        'Récolte enregistrée',
-        'La culture a été automatiquement marquée comme récoltée.',
+        i18n.t('recoltes.enregistree'),
+        i18n.t('recoltes.cultureMarquee'),
         [{ text: 'OK', onPress: () => router.back() }],
       );
     } catch (error) {
@@ -85,15 +86,15 @@ export default function AjoutRecolteScreen() {
         'Enregistrement impossible',
         error instanceof ApiError
           ? error.message
-          : 'Une erreur est survenue. Réessayez.',
+          : i18n.t('domaine.reessayerErreur'),
       );
     }
   };
 
   return (
     <ParcelleFormShell
-      title="Nouvelle récolte"
-      subtitle="La culture passera automatiquement en « Récoltée »"
+      title={i18n.t('recoltes.nouvelle')}
+      subtitle={i18n.t('recoltes.passageAutomatique')}
       onBack={() => router.back()}
       footer={
         <Button
@@ -107,19 +108,19 @@ export default function AjoutRecolteScreen() {
     >
       <Card style={styles.section}>
         <DateInput
-          label="Date de récolte"
+          label={i18n.t('recoltes.dateRecolte')}
           required
           value={dateRecolte}
           onChange={setDateRecolte}
           error={erreurs.date}
-          hint="Choisissez la date dans le calendrier"
+          hint={i18n.t('libelles.choisirDateCalendrier')}
           leftIcon={<CalendarDays size={16} color={colors.neutral[400]} />}
         />
 
         <View style={styles.rowFields}>
           <View style={styles.flex}>
             <Input
-              label="Quantité"
+              label={i18n.t('domaine.quantite')}
               required
               value={quantite}
               onChangeText={setQuantite}
@@ -131,7 +132,7 @@ export default function AjoutRecolteScreen() {
 
           <View style={styles.flex}>
             <AppSelect
-              label="Unité"
+              label={i18n.t('domaine.unite')}
               value={unite}
               options={UNITES}
               onChange={setUnite}
@@ -150,7 +151,7 @@ export default function AjoutRecolteScreen() {
           keyboardType="decimal-pad"
         />
         <Input
-          label="Coût de récolte"
+          label={i18n.t('recoltes.coutRecolte')}
           value={coutRecolte}
           onChangeText={setCoutRecolte}
           placeholder="En Ariary (facultatif)"
@@ -160,14 +161,14 @@ export default function AjoutRecolteScreen() {
           label="Description"
           value={description}
           onChangeText={setDescription}
-          placeholder="Conditions de récolte, qualité…"
+          placeholder={i18n.t('recoltes.conditions')}
           multiline
           numberOfLines={3}
         />
       </Card>
 
       <Card variant="muted">
-        <Text style={styles.noteTitle}>Règles appliquées par le serveur</Text>
+        <Text style={styles.noteTitle}>{i18n.t('libelles.reglesServeur')}</Text>
         <Text style={styles.noteText}>
           • Une seule récolte par culture : un second enregistrement est refusé.{'\n'}
           • La date de récolte ne peut pas précéder la date de plantation.{'\n'}

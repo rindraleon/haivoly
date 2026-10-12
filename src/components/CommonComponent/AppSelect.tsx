@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   FlatList,
   Modal,
@@ -36,7 +37,7 @@ interface AppSelectProps<T extends string = string> {
 
 export function AppSelect<T extends string = string>({
   label,
-  placeholder = 'Sélectionner…',
+  placeholder,
   value,
   options,
   onChange,
@@ -44,8 +45,13 @@ export function AppSelect<T extends string = string>({
   hint,
   required,
   disabled,
-  emptyLabel = 'Aucune option disponible',
+  emptyLabel,
 }: AppSelectProps<T>) {
+  const { t } = useTranslation();
+  // Libellés par défaut résolus dans le corps, pas dans la signature (voir
+  // ErrorState) : une valeur par défaut figée bloquerait la langue.
+  const placeholderAffiche = placeholder ?? t('commun.placeholders.selectionner');
+  const emptyLabelAffiche = emptyLabel ?? t('commun.etats.aucuneOption');
   const [open, setOpen] = useState(false);
 
   const selected = useMemo(
@@ -66,7 +72,7 @@ export function AppSelect<T extends string = string>({
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={label ?? placeholder}
+        accessibilityLabel={label ?? placeholderAffiche}
         disabled={disabled}
         onPress={() => setOpen(true)}
         style={[
@@ -79,7 +85,7 @@ export function AppSelect<T extends string = string>({
           numberOfLines={1}
           style={selected ? styles.valueText : styles.placeholderText}
         >
-          {selected?.label ?? placeholder}
+          {selected?.label ?? placeholderAffiche}
         </Text>
         <ChevronDown size={18} color={colors.neutral[400]} />
       </Pressable>
@@ -109,7 +115,7 @@ export function AppSelect<T extends string = string>({
           </View>
 
           {options.length === 0 ? (
-            <Text style={styles.empty}>{emptyLabel}</Text>
+            <Text style={styles.empty}>{emptyLabelAffiche}</Text>
           ) : (
             <FlatList
               data={options}

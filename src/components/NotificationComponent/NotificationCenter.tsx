@@ -1,4 +1,5 @@
 import { View, Text, Pressable, FlatList, StyleSheet } from 'react-native';
+import { i18n } from '@/i18n/instance';
 import { Bell, CheckCheck } from 'lucide-react-native';
 import { colors } from '@/theme';
 import { NotificationCard } from './NotificationCard';
@@ -30,14 +31,14 @@ export function NotificationCenter({
         {unread > 0 && onMarkAllRead && (
           <Pressable onPress={onMarkAllRead} style={styles.mark}>
             <CheckCheck size={12} color={colors.primary[600]} />
-            <Text style={styles.markText}>Tout marquer lu</Text>
+            <Text style={styles.markText}>{i18n.t('libelles.toutMarquerLu')}</Text>
           </Pressable>
         )}
       </View>
 
       {items.length === 0 ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyText}>Aucune recommandation pour l’instant.</Text>
+          <Text style={styles.emptyText}>{i18n.t('libelles.aucuneRecommandation')}</Text>
         </View>
       ) : (
         <FlatList

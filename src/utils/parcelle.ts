@@ -1,3 +1,4 @@
+import { baliseDeFormatage } from '@/i18n/instance';
 import type { PointGPS } from '@/types';
 
 
@@ -41,12 +42,12 @@ export function formatSuperficieValue(
   if (superficie == null || !Number.isFinite(superficie)) return null;
 
   if (superficie >= 10_000) {
-    return `${(superficie / 10_000).toLocaleString('fr-FR', {
+    return `${(superficie / 10_000).toLocaleString(baliseDeFormatage(), {
       maximumFractionDigits: 2,
     })} ha`;
   }
 
-  return `${Math.round(superficie).toLocaleString('fr-FR')} m²`;
+  return `${Math.round(superficie).toLocaleString(baliseDeFormatage())} m²`;
 }
 
 /** Nettoie une liste de points : entiers bornés, sans doublons consécutifs. */

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { AlertCircle } from 'lucide-react-native';
@@ -15,6 +16,7 @@ import { erreurChamp, messageErreur } from '@/utils/erreur';
 type FieldErrors = { email?: string; password?: string; general?: string };
 
 export default function LoginScreen() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -23,10 +25,10 @@ export default function LoginScreen() {
   const validate = (): boolean => {
     const e: FieldErrors = {};
     const norm = email.trim();
-    if (!norm) e.email = "L'adresse email est obligatoire.";
-    else if (!estEmailValide(norm)) e.email = 'Adresse email invalide.';
-    if (!password) e.password = 'Le mot de passe est obligatoire.';
-    else if (password.length < 6) e.password = 'Au moins 6 caractères.';
+    if (!norm) e.email = t('auth.login.emailObligatoire');
+    else if (!estEmailValide(norm)) e.email = t('auth.login.emailInvalide');
+    if (!password) e.password = t('auth.login.motDePasseObligatoire');
+    else if (password.length < 6) e.password = t('auth.login.motDePasseCourt');
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -46,14 +48,14 @@ export default function LoginScreen() {
             reinitialiserExpirationSession();
             router.replace('/(app)/home' as any);
           } catch {
-            setErrors({ general: "Erreur lors de l'enregistrement de la session." });
+            setErrors({ general: t('auth.login.echecSession') });
           }
         },
         onError: (error) => {
           setErrors({
             email: erreurChamp(error, 'email'),
             password: erreurChamp(error, 'password'),
-            general: messageErreur(error, 'Email ou mot de passe incorrect.'),
+            general: messageErreur(error, t('auth.login.identifiantsInvalides')),
           });
         },
       },
@@ -71,8 +73,8 @@ export default function LoginScreen() {
           <View style={styles.cardWrap}>
             <View style={styles.card}>
               <View style={styles.header}>
-                <Text style={styles.hTitle}>Bienvenue</Text>
-                <Text style={styles.hSubtitle}>Connectez-vous pour accéder à vos parcelles et cultures.</Text>
+                <Text style={styles.hTitle}>{t('auth.login.bienvenue')}</Text>
+                <Text style={styles.hSubtitle}>{t('auth.login.sousTitre')}</Text>
               </View>
 
               {errors.general && (
@@ -99,7 +101,7 @@ export default function LoginScreen() {
               />
             </View>
 
-            <Text style={styles.footer}>© {new Date().getFullYear()} Haivoly — Tous droits réservés</Text>
+            <Text style={styles.footer}>{t('auth.piedDePage', { annee: new Date().getFullYear() })}</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

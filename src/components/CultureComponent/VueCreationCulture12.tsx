@@ -1,4 +1,5 @@
 import { CultureCheckItem } from '@/components/CultureComponent/CultureCheckItem';
+import { i18n } from '@/i18n/instance';
 import { ReviewRow } from '@/components/CultureComponent/ReviewRow';
 import { styles } from '@/screens/CultureScreen/CultureCreateScreen.styles';
 import type { CulturePayload, Culture } from '@/types';
@@ -138,7 +139,7 @@ export function VueCreationCulture12({
                           color="#6D7A70"
                         />
                       }
-                      label="Parcelle"
+                      label={i18n.t('libelles.parcelle')}
                       value={
                         parcelleNom ||
                         parcelleId ||
@@ -170,7 +171,7 @@ export function VueCreationCulture12({
                       label="Type"
                       value={
                         type.trim() ||
-                        'Non renseigné'
+                        i18n.t('domaine.nonRenseigne')
                       }
                     />
 
@@ -181,10 +182,10 @@ export function VueCreationCulture12({
                           color="#6D7A70"
                         />
                       }
-                      label="Variété"
+                      label={i18n.t('domaine.variete')}
                       value={
                         variete.trim() ||
-                        'Non renseignée'
+                        i18n.t('cultures.nonRenseignee')
                       }
                     />
 
@@ -213,7 +214,7 @@ export function VueCreationCulture12({
                           color="#6D7A70"
                         />
                       }
-                      label="Récolte prévue"
+                      label={i18n.t('domaine.recoltePrevue')}
                       value={formaterDate(
                         datePrevueRecolte,
                       )}
@@ -234,7 +235,7 @@ export function VueCreationCulture12({
                       label="Stade"
                       value={
                         stade.trim() ||
-                        'Non renseigné'
+                        i18n.t('domaine.nonRenseigne')
                       }
                     />
 
@@ -245,11 +246,11 @@ export function VueCreationCulture12({
                           color="#6D7A70"
                         />
                       }
-                      label="Délimitation"
+                      label={i18n.t('domaine.delimitation')}
                       value={
                         demanderDelimitation
-                          ? 'À tracer après création'
-                          : 'Non demandée'
+                          ? i18n.t('cultures.aTracerApresCreation')
+                          : i18n.t('cultures.delimitationNonDemandee')
                       }
                       valueStyle={
                         demanderDelimitation
@@ -346,8 +347,8 @@ export function VueCreationCulture12({
                             }
                           >
                             {demanderDelimitation
-                              ? 'La zone sera tracée après l’enregistrement'
-                              : 'Délimitation facultative'}
+                              ? i18n.t('cultures.zoneTraceeApresEnregistrement')
+                              : i18n.t('cultures.delimitationFacultative')}
                           </Text>
                         </View>
                       </View>
@@ -478,17 +479,17 @@ export function VueCreationCulture12({
                     </Text>
 
                     <CultureCheckItem
-                      label="Nom de la culture renseigné"
+                      label={i18n.t('cultures.etapes.nomRenseigne')}
                       checked={!!nom.trim()}
                     />
 
                     <CultureCheckItem
-                      label="Parcelle associée"
+                      label={i18n.t('cultures.etapes.parcelleAssociee')}
                       checked={!!parcelleId}
                     />
 
                     <CultureCheckItem
-                      label="Dates cohérentes"
+                      label={i18n.t('cultures.datesCoherentes')}
                       checked={
                         !(
                           datePlantation &&
@@ -500,7 +501,7 @@ export function VueCreationCulture12({
                     />
 
                     <CultureCheckItem
-                      label="Délimitation configurée"
+                      label={i18n.t('cultures.etapes.delimitationConfiguree')}
                       checked={true}
                       last
                     />
