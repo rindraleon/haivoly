@@ -19,6 +19,7 @@ import {
   getSyncState,
   onSyncState,
   retryFailed,
+  setSyncCompletionHandler,
   startAutoSync,
   syncOnce,
   type SyncState,
@@ -48,6 +49,8 @@ export const SyncContext = React.createContext<SyncContextValue>({
   isSyncing: false,
   pendingCount: 0,
   failedCount: 0,
+  invalidCount: 0,
+  conflictCount: 0,
   isOnline: true,
   syncNow: async () => {},
   retry: async () => {},
@@ -77,6 +80,21 @@ function SyncProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => setUnauthorizedHandler(null);
+  }, []);
+
+  useEffect(() => {
+    setSyncCompletionHandler(async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['parcelles'] }),
+        queryClient.invalidateQueries({ queryKey: ['cultures'] }),
+        queryClient.invalidateQueries({ queryKey: ['cultures-parcelle'] }),
+        queryClient.invalidateQueries({ queryKey: ['interventions'] }),
+        queryClient.invalidateQueries({ queryKey: ['observations'] }),
+        queryClient.invalidateQueries({ queryKey: ['recoltes'] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard'] }),
+      ]);
+    });
+    return () => setSyncCompletionHandler(null);
   }, []);
 
   useEffect(() => {

@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { AlertCircle } from 'lucide-react-native';
 import { useLogin } from '@/hooks/auth/useLogin';
-import { saveToken } from '@/storage/authStorage';
+import { authApi } from '@/services';
+import { saveSession } from '@/storage/authStorage';
 import { reinitialiserExpirationSession } from '@/services/http';
 import { colors } from '@/theme';
 import { LoginHeader } from '@/components/AuthComponent/LoginHeader';
@@ -12,7 +13,7 @@ import { LoginForm } from '@/components/AuthComponent/LoginForm';
 
 import { styles } from './LoginScreen.styles';
 import { estEmailValide } from '@/utils/email';
-import { erreurChamp, messageErreur } from '@/utils/erreur';
+import { erreurChamp, estErreurDe, messageErreur } from '@/utils/erreur';
 type FieldErrors = { email?: string; password?: string; general?: string };
 
 export default function LoginScreen() {
@@ -20,7 +21,20 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [verificationRequise, setVerificationRequise] = useState(false);
+  const [renvoiEnCours, setRenvoiEnCours] = useState(false);
+  const [renvoiAccepte, setRenvoiAccepte] = useState(false);
+  const [secondesAvantRenvoi, setSecondesAvantRenvoi] = useState(0);
   const loginMutation = useLogin();
+
+  useEffect(() => {
+    if (secondesAvantRenvoi <= 0) return;
+    const timer = setTimeout(
+      () => setSecondesAvantRenvoi((secondes) => Math.max(0, secondes - 1)),
+      1000,
+    );
+    return () => clearTimeout(timer);
+  }, [secondesAvantRenvoi]);
 
   const validate = (): boolean => {
     const e: FieldErrors = {};
@@ -33,6 +47,29 @@ export default function LoginScreen() {
     return Object.keys(e).length === 0;
   };
 
+  const handleResendVerification = async () => {
+    const adresse = email.trim();
+    if (!estEmailValide(adresse)) {
+      setErrors((previous) => ({ ...previous, email: t('auth.login.emailInvalide') }));
+      return;
+    }
+
+    setRenvoiEnCours(true);
+    setRenvoiAccepte(false);
+    try {
+      await authApi.resendVerification(adresse);
+      setRenvoiAccepte(true);
+      setSecondesAvantRenvoi(60);
+    } catch (error) {
+      setErrors((previous) => ({
+        ...previous,
+        general: messageErreur(error, t('auth.verify.echecRenvoi')),
+      }));
+    } finally {
+      setRenvoiEnCours(false);
+    }
+  };
+
   const handleLogin = () => {
     setErrors({});
     if (!validate()) return;
@@ -42,7 +79,18 @@ export default function LoginScreen() {
       {
         onSuccess: async (data) => {
           try {
-            await saveToken(data.access_token);
+            await saveSession(
+              data.access_token,
+              data.utilisateur.id,
+              data.expires_at,
+            );
+            try {
+              const syncEngine = await import('@/services/offline/syncEngine');
+              await syncEngine.refreshCounters();
+              void syncEngine.syncOnce();
+            } catch {
+              // La connexion reste valide même si la lecture de la file locale échoue.
+            }
             // Nouvelle session : la prochaine expiration devra de nouveau être
             // signalée à l'utilisateur.
             reinitialiserExpirationSession();
@@ -52,6 +100,9 @@ export default function LoginScreen() {
           }
         },
         onError: (error) => {
+          const nonVerifie = estErreurDe(error, 'AUTH_EMAIL_NOT_VERIFIED');
+          setVerificationRequise(nonVerifie);
+          setRenvoiAccepte(false);
           setErrors({
             email: erreurChamp(error, 'email'),
             password: erreurChamp(error, 'password'),
@@ -91,6 +142,9 @@ export default function LoginScreen() {
                 loading={isLoading}
                 onEmailChange={(v) => {
                   setEmail(v);
+                  setVerificationRequise(false);
+                  setRenvoiAccepte(false);
+                  setSecondesAvantRenvoi(0);
                   if (errors.email || errors.general) setErrors((p) => ({ ...p, email: undefined, general: undefined }));
                 }}
                 onPasswordChange={(v) => {
@@ -99,6 +153,51 @@ export default function LoginScreen() {
                 }}
                 onSubmit={handleLogin}
               />
+
+              {verificationRequise && (
+                <View style={styles.verificationPanel}>
+                  <Text style={styles.verificationHint}>
+                    {t('auth.login.emailNonVerifie')}
+                  </Text>
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => void handleResendVerification()}
+                    disabled={renvoiEnCours || secondesAvantRenvoi > 0}
+                    style={({ pressed }) => [
+                      styles.verificationButton,
+                      (pressed || renvoiEnCours || secondesAvantRenvoi > 0) &&
+                        styles.verificationButtonDisabled,
+                    ]}
+                  >
+                    <Text style={styles.verificationButtonText}>
+                      {renvoiEnCours
+                        ? t('auth.verify.renvoiEnCours')
+                        : secondesAvantRenvoi > 0
+                          ? t('auth.verify.renvoiDans', { count: secondesAvantRenvoi })
+                          : t('auth.login.verificationAction')}
+                    </Text>
+                  </Pressable>
+                  {renvoiAccepte && (
+                    <Text accessibilityRole="status" style={styles.verificationSuccess}>
+                      {t('auth.verify.renvoiAccepte')}
+                    </Text>
+                  )}
+                  <Pressable
+                    accessibilityRole="link"
+                    onPress={() =>
+                      router.push({
+                        pathname: '/(auth)/verify-email',
+                        params: { email: email.trim() },
+                      } as never)
+                    }
+                    style={styles.verificationLink}
+                  >
+                    <Text style={styles.verificationLinkText}>
+                      {t('auth.login.ouvrirEcranVerification')}
+                    </Text>
+                  </Pressable>
+                </View>
+              )}
             </View>
 
             <Text style={styles.footer}>{t('auth.piedDePage', { annee: new Date().getFullYear() })}</Text>

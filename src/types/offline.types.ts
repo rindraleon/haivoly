@@ -1,5 +1,11 @@
-
-export type SyncStatus = 'PENDING' | 'SYNCING' | 'SYNCED' | 'FAILED' | 'DUPLICATE' | 'INVALID';
+export type SyncStatus =
+  | 'PENDING'
+  | 'SYNCING'
+  | 'SYNCED'
+  | 'FAILED'
+  | 'DUPLICATE'
+  | 'INVALID'
+  | 'CONFLICT';
 
 export type ActionType = 'CREATE' | 'UPDATE' | 'DELETE';
 
@@ -36,20 +42,21 @@ export function estActionSynchronisable(action: {
 }
 
 export interface OfflineAction {
-  /** UUID v4 local, idempotence key pour backend */
+  /** UUID aléatoire : clé d'idempotence unique sur le backend par utilisateur. */
   id: string;
   actionType: ActionType;
   entityType: EntityType;
-  /** id local temporaire si création offline (ex: temp_xxx), sinon id distant */
+  /** UUID local à résoudre après une création hors ligne. */
   entityId: string | null;
+  /** ID attribué par le serveur après un résultat SYNCED/DUPLICATE. */
+  serverEntityId?: string | null;
   payload: Record<string, unknown>;
-  createdAt: string; // ISO
+  createdAt: string;
   updatedAt: string;
   status: SyncStatus;
   retryCount: number;
   lastError?: string | null;
   syncedAt?: string | null;
-  /** pour debug / traçabilité */
   deviceId?: string | null;
 }
 
@@ -61,4 +68,4 @@ export interface EnqueueOptions {
 }
 
 export const MAX_RETRIES = 5;
-export const RETRY_DELAYS_MS = [1000, 3000, 10000, 30000, 60000]; // progressif
+export const RETRY_DELAYS_MS = [1000, 3000, 10000, 30000, 60000] as const;

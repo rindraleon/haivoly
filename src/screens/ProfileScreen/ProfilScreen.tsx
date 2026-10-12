@@ -64,6 +64,9 @@ export default function ProfilScreen() {
               // Purge du cache : sans cela, un autre compte connecté ensuite
               // verrait brièvement les données du précédent.
               queryClient.clear();
+              void import('@/services/offline/syncEngine')
+                .then((engine) => engine.refreshCounters())
+                .catch(() => {});
 
               router.replace(
                 '/(auth)/login',

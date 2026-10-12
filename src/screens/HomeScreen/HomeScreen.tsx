@@ -2,7 +2,7 @@
 import { i18n } from '@/i18n/instance';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useState } from 'react';
-import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { useConfirm } from '@/components/CommonComponent/ConfirmProvider';
 import { MapPinned, ChevronRight, Plus } from 'lucide-react-native';
@@ -10,7 +10,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useParcelles, useProfile } from '@/hooks';
 import { recommendationsApi } from '@/services';
-import { removeToken } from '@/storage/authStorage';
+import { getActiveAccountId, removeToken } from '@/storage/authStorage';
+import { queryClient } from '@/providers/AppProviders';
 import { colors } from '@/theme';
 import { Card } from '@/components/CommonComponent/Card';
 import { Badge } from '@/components/CommonComponent/Badge';
@@ -26,7 +27,7 @@ import { OfflineBanner } from '@/components/CommonComponent/OfflineBanner';
 import { useNetwork } from '@/hooks/common/useNetwork';
 import { getPendingCount } from '@/services/offline/queue';
 import { syncOnce } from '@/services/offline/syncEngine';
-import { getItem, setItem, StorageKeys } from '@/storage/database';
+import { accountStorageKey, getItem, setItem, StorageKeys } from '@/storage/database';
 import { markRecommendationReadLocal,} from '@/services/offline/recommendationSync';
 import type { Recommendation } from '@/types/notification.types';
 
@@ -62,9 +63,15 @@ export default function HomeScreen() {
   })();
 
   const refreshPending = useCallback(async () => {
+    const accountId = await getActiveAccountId();
+    if (!accountId) {
+      setPendingCount(0);
+      setRecommendations([]);
+      return;
+    }
     setPendingCount(await getPendingCount());
-    const recs = await getItem<Recommendation[]>(StorageKeys.RECOMMENDATIONS, []);
-    setRecommendations(recs);
+    const key = accountStorageKey(accountId, StorageKeys.RECOMMENDATIONS);
+    setRecommendations(await getItem<Recommendation[]>(key, []));
   }, []);
 
   useEffect(() => {
@@ -92,6 +99,10 @@ export default function HomeScreen() {
     });
     if (!ok) return;
     await removeToken();
+    queryClient.clear();
+    void import('@/services/offline/syncEngine')
+      .then((engine) => engine.refreshCounters())
+      .catch(() => {});
     router.replace('/(auth)/login' as any);
   };
 
@@ -155,43 +166,34 @@ export default function HomeScreen() {
   <NotificationCenter
     items={recommendations.slice(0, 3)}
     onMarkAllRead={async () => {
-      const now = new Date().toISOString();
-
-      const updated = recommendations.map((r) => ({
-        ...r,
-        readAt: r.readAt ?? now,
-      }));
-
-      setRecommendations(updated);
-
-      await setItem(
-        StorageKeys.RECOMMENDATIONS,
-        updated,
-      );
-
-      // Synchronisation backend
-      if (isOnline) {
-        try {
-          await recommendationsApi.markAllRead();
-        } catch {
-          // Le statut local reste conservé
-          // si le backend est momentanément indisponible.
-        }
+      if (isOnline !== true) {
+        Alert.alert(t('accueil.notificationsConnexionRequise'));
+        return;
+      }
+      try {
+        await recommendationsApi.markAllRead();
+        const updated = recommendations.map((r) => ({
+          ...r,
+          readAt: r.readAt ?? new Date().toISOString(),
+        }));
+        const accountId = await getActiveAccountId();
+        if (!accountId) return;
+        await setItem(accountStorageKey(accountId, StorageKeys.RECOMMENDATIONS), updated);
+        setRecommendations(updated);
+      } catch {
+        Alert.alert(t('accueil.notificationsEchec'));
       }
     }}
     onPressItem={async (item) => {
-      await markRecommendationReadLocal(item.id);
-
-      const updated = recommendations.map((r) =>
-        r.id === item.id
-          ? {
-              ...r,
-              readAt: r.readAt ?? new Date().toISOString(),
-            }
-          : r,
-      );
-
-      setRecommendations(updated);
+      try {
+        await markRecommendationReadLocal(item.id);
+        const updated = recommendations.map((r) =>
+          r.id === item.id ? { ...r, readAt: r.readAt ?? new Date().toISOString() } : r,
+        );
+        setRecommendations(updated);
+      } catch {
+        Alert.alert(t('accueil.notificationsConnexionRequise'));
+      }
     }}
   />
 )}

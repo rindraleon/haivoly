@@ -7,3 +7,4 @@ export * from './observation.types';
 export * from './recolte.types';
 export * from './photo.types';
 export * from './recommendation.types';
+export * from './offline.types';

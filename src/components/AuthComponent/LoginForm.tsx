@@ -1,6 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { i18n } from '@/i18n/instance';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/CommonComponent/Input';
 import { PasswordInput } from '@/components/CommonComponent/PasswordInput';
 import { Button } from '@/components/CommonComponent/Button';
@@ -16,12 +16,22 @@ type Props = {
   onSubmit: () => void;
 };
 
-export function LoginForm({ email, password, errors, loading, onEmailChange, onPasswordChange, onSubmit }: Props) {
+export function LoginForm({
+  email,
+  password,
+  errors,
+  loading,
+  onEmailChange,
+  onPasswordChange,
+  onSubmit,
+}: Props) {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.form}>
       <Input
-        label="Adresse email"
-        placeholder="exemple@email.com"
+        label={t('auth.login.emailLabel')}
+        placeholder={t('auth.login.emailPlaceholder')}
         value={email}
         onChangeText={onEmailChange}
         keyboardType="email-address"
@@ -36,8 +46,8 @@ export function LoginForm({ email, password, errors, loading, onEmailChange, onP
 
       <View style={{ gap: 6 }}>
         <PasswordInput
-          label={i18n.t('libelles.motDePasse')}
-          placeholder={i18n.t('libelles.votreMotDePasse')}
+          label={t('libelles.motDePasse')}
+          placeholder={t('libelles.votreMotDePasse')}
           value={password}
           onChangeText={onPasswordChange}
           editable={!loading}
@@ -46,29 +56,33 @@ export function LoginForm({ email, password, errors, loading, onEmailChange, onP
           error={errors.password}
           required
         />
-        <Pressable onPress={() => router.push('/(auth)/forgot-password' as any)} hitSlop={8} style={styles.forgotWrap}>
-          <Text style={styles.forgotText}>Mot de passe oublié ?</Text>
+        <Pressable
+          onPress={() => router.push('/(auth)/forgot-password' as never)}
+          hitSlop={8}
+          style={styles.forgotWrap}
+        >
+          <Text style={styles.forgotText}>{t('auth.login.motDePasseOublie')}</Text>
         </Pressable>
       </View>
 
       <Button onPress={onSubmit} loading={loading} fullWidth size="lg">
-        {loading ? 'Connexion...' : 'Se connecter'}
+        {loading ? t('auth.login.connexionEnCours') : t('auth.login.seConnecter')}
       </Button>
 
       <View style={styles.divider}>
         <View style={styles.line} />
-        <Text style={styles.or}>ou</Text>
+        <Text style={styles.or}>{t('auth.login.ou')}</Text>
         <View style={styles.line} />
       </View>
 
       <View style={styles.registerBox}>
-        <Text style={styles.registerHint}>Pas encore de compte ?</Text>
+        <Text style={styles.registerHint}>{t('auth.login.pasDeCompte')}</Text>
         <Pressable
-          onPress={() => router.push('/(auth)/register' as any)}
+          onPress={() => router.push('/(auth)/register' as never)}
           disabled={loading}
           style={({ pressed }) => [styles.registerBtn, pressed && { opacity: 0.7 }]}
         >
-          <Text style={styles.registerBtnText}>{i18n.t('libelles.creerCompte')}</Text>
+          <Text style={styles.registerBtnText}>{t('libelles.creerCompte')}</Text>
         </Pressable>
       </View>
     </View>

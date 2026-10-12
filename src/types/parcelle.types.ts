@@ -1,8 +1,9 @@
 import type { PointGPS } from './common.types';
+import type { WithSyncStatus } from './offline.types';
 
 export type StatutParcelle = 'ACTIVE' | 'ABANDONNEE' | 'ARCHIVEE' | 'SUPPRIMEE';
 
-export interface Parcelle {
+export interface Parcelle extends WithSyncStatus {
   id: string;
   nom: string;
   superficie: number | null;

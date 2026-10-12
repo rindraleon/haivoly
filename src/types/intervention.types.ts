@@ -1,4 +1,5 @@
 import type { StatutCulture } from './culture.types';
+import type { WithSyncStatus } from './offline.types';
 
 export type StatutIntervention = 'PLANIFIEE' | 'EN_COURS' | 'TERMINEE';
 
@@ -12,7 +13,7 @@ export type TypeIntervention =
   | 'INSPECTION'
   | 'AUTRE';
 
-export interface Intervention {
+export interface Intervention extends WithSyncStatus {
   id: string;
   type: TypeIntervention | string;
   description: string | null;

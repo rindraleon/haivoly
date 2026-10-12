@@ -131,7 +131,7 @@ export default function RegisterScreen() {
     ) {
 
       e.nom =
-        'Nom invalide.';
+        t('auth.register.nomInvalide');
     }
 
 
@@ -159,7 +159,7 @@ export default function RegisterScreen() {
     ) {
 
       e.email =
-        'Email invalide.';
+        t('auth.register.emailInvalide');
     }
 
 
@@ -215,7 +215,7 @@ export default function RegisterScreen() {
     ) {
 
       e.password =
-        'Ajoutez majuscule, minuscule et chiffre.';
+        t('auth.register.reglesMotDePasse');
     }
 
     setErrors(e);
@@ -254,11 +254,14 @@ export default function RegisterScreen() {
       },
 
       {
-        onSuccess: () => {
-
-          router.replace(
-            '/(auth)/login' as any,
-          );
+        onSuccess: (response) => {
+          router.replace({
+            pathname: '/(auth)/verify-email',
+            params: {
+              email: email.trim(),
+              emailEnvoye: response.emailEnvoye === false ? '0' : '1',
+            },
+          } as never);
         },
 
         onError: (

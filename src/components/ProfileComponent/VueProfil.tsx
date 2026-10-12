@@ -8,7 +8,7 @@ import { styles } from '@/screens/ProfileScreen/ProfilScreen.styles';
 import { colors } from '@/theme';
 import type { QueryObserverResult, RefetchOptions } from '@tanstack/query-core';
 import { ChevronRight, Languages, Moon, LogOut, Mail, Phone, ShieldCheck, Sprout, User } from 'lucide-react-native';
-import { Alert, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import type { EdgeInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
@@ -345,12 +345,7 @@ export function VueProfil({
                   pressed &&
                     styles.menuItemPressed,
                 ]}
-                onPress={() => {
-                  Alert.alert(
-                    'Modification du profil',
-                    i18n.t('divers.modificationProfilSeraDisponible'),
-                  );
-                }}
+                onPress={() => router.push('/(app)/(common)/modifier-profil' as never)}
                 accessibilityRole="button"
                 accessibilityLabel={i18n.t('libelles.modifierProfil')}
               >

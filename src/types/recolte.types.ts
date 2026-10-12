@@ -1,4 +1,6 @@
-export interface Recolte {
+import type { WithSyncStatus } from './offline.types';
+
+export interface Recolte extends WithSyncStatus {
   id: string;
   /** `YYYY-MM-DD` */
   dateRecolte: string;

@@ -1,4 +1,6 @@
-export interface Observation {
+import type { WithSyncStatus } from './offline.types';
+
+export interface Observation extends WithSyncStatus {
   id: string;
   description: string;
   date: string;

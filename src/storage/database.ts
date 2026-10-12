@@ -2,11 +2,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const StorageKeys = {
   OFFLINE_QUEUE: 'haivoly:offline:queue',
-  OFFLINE_ACTIONS: 'haivoly:offline:actions', // alias
+  OFFLINE_ACTIONS: 'haivoly:offline:actions', // alias historique
   SYNC_META: 'haivoly:sync:meta',
   NOTIFICATIONS: 'haivoly:notifications',
   RECOMMENDATIONS: 'haivoly:recommendations',
+  QUERY_CACHE: 'haivoly:query-cache',
 } as const;
+
+/** Les données métier locales sont toujours nommées par compte authentifié. */
+export function accountStorageKey(accountId: string, key: string): string {
+  return `haivoly:account:${encodeURIComponent(accountId)}:${key}`;
+}
 
 export async function getItem<T>(key: string, fallback: T): Promise<T> {
   try {

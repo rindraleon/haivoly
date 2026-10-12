@@ -20,7 +20,6 @@ export default function ForgotPasswordScreen() {
   const [error, setError] = useState<string | undefined>();
   const [generalError, setGeneralError] = useState<string | undefined>();
   const [state, setState] = useState<State>('idle');
-  const [devToken, setDevToken] = useState<string | undefined>();
 
   const demandeReinitialisation = useForgotPassword();
 
@@ -43,9 +42,8 @@ export default function ForgotPasswordScreen() {
     if (!validate()) return;
     setState('loading');
     try {
-      const res = await demandeReinitialisation.mutateAsync(email.trim());
+      await demandeReinitialisation.mutateAsync(email.trim());
       setState('success');
-      if (res?._devToken) setDevToken(res._devToken);
     } catch (error) {
       setGeneralError(
         messageErreur(
@@ -70,23 +68,6 @@ export default function ForgotPasswordScreen() {
               Si un compte est associé à <Text style={{ fontWeight: '700', color: colors.neutral[900] }}>{email.trim()}</Text>, vous
               recevrez un lien de réinitialisation. Pensez à vérifier vos spams.
             </Text>
-
-            {devToken && (
-              <View style={styles.devBox}>
-                <Text style={styles.devLabel}>{t('auth.forgot.modeDev')}</Text>
-                <Text selectable style={styles.devToken}>
-                  {devToken}
-                </Text>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onPress={() => router.push(`/(auth)/reset-password?token=${encodeURIComponent(devToken)}` as any)}
-                  style={{ marginTop: 8 }}
-                >
-                  Ouvrir la réinitialisation
-                </Button>
-              </View>
-            )}
 
             <View style={{ gap: 10, alignSelf: 'stretch', marginTop: 8 }}>
               <Button onPress={() => router.replace('/(auth)/login' as any)} fullWidth>

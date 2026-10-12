@@ -1,6 +1,7 @@
 import type { PointGPS } from './common.types';
 import type { Parcelle } from './parcelle.types';
 import type { Recolte } from './recolte.types';
+import type { WithSyncStatus } from './offline.types';
 
 export type StatutCulture =
   | 'PLANIFIEE'
@@ -9,7 +10,7 @@ export type StatutCulture =
   | 'ABANDONNEE'
   | 'SUPPRIMEE';
 
-export interface Culture {
+export interface Culture extends WithSyncStatus {
   id: string;
   nom: string;
   type: string | null;
