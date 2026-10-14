@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Check, Languages, Smartphone } from 'lucide-react-native';
@@ -18,7 +18,7 @@ import {
 import { colors, radius, spacing } from '@/theme';
 
 export function LangueScreen() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [choix, setChoix] = useState<ChoixLangue>(CHOIX_SYSTEME);
 
   useEffect(() => {
@@ -42,8 +42,6 @@ export function LangueScreen() {
     },
     []
   );
-
-  void i18n;
 
   const options: { valeur: ChoixLangue; libelle: string; detail?: string }[] = [
     {

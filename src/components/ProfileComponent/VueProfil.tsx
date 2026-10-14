@@ -7,7 +7,7 @@ import { styles } from '@/screens/ProfileScreen/ProfilScreen.styles';
 
 import { colors } from '@/theme';
 import type { QueryObserverResult, RefetchOptions } from '@tanstack/query-core';
-import { ChevronRight, Languages, Moon, LogOut, Mail, Phone, ShieldCheck, Sprout, User } from 'lucide-react-native';
+import { AtSign, ChevronRight, Languages, Moon, LogOut, Mail, Phone, ShieldCheck, Sprout, User } from 'lucide-react-native';
 import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import type { EdgeInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -284,6 +284,29 @@ export function VueProfil({
                   styles.separator
                 }
               />
+
+              {profile.username ? (
+                <>
+                  <InfoRow
+                    icon={
+                      <AtSign
+                        size={20}
+                        color={
+                          colors.primary[600]
+                        }
+                      />
+                    }
+                    label={i18n.t('pseudo.label')}
+                    value={`@${profile.username}`}
+                  />
+
+                  <View
+                    style={
+                      styles.separator
+                    }
+                  />
+                </>
+              ) : null}
 
               <InfoRow
                 icon={

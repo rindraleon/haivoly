@@ -13,7 +13,7 @@ export function useCreateParcelle(options?: UseMutationOptions<Parcelle, Error, 
     mutationFn: (body: ParcellePayload) => executeQueueableMutation({
       actionType: 'CREATE',
       entityType: 'PARCELLE',
-      payload: body as Record<string, unknown>,
+      payload: body,
       remote: () => parcellesApi.create(body),
       local: (action, accountId) => localParcelle(action, accountId),
     }),

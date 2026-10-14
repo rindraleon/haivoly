@@ -1,6 +1,7 @@
 import { Text, View } from 'react-native';
 import { styles } from '@/screens/ProfileScreen/ProfilScreen.styles';
 
+import React from 'react';
 export function InfoRow({
   icon,
   label,

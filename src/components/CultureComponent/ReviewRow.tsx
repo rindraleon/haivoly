@@ -1,6 +1,7 @@
 import { Text, View } from 'react-native';
 import { styles } from '@/screens/CultureScreen/CultureCreateScreen.styles';
 
+import React from 'react';
 export function ReviewRow({
   icon,
   label,

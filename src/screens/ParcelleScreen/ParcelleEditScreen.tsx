@@ -1,4 +1,3 @@
-import React from 'react';
 import { i18n } from '@/i18n/instance';
 import { Alert } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';

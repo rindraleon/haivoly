@@ -6,13 +6,6 @@ import {
   type ModeTheme,
 } from './jetons';
 
-/**
- * Préférence de thème, persistée et résolue.
- *
- * Le choix utilisateur est `light`, `dark` ou `system`. Seul `system` suit
- * l'appareil ; les deux autres priment. La persistance utilise AsyncStorage,
- * comme la préférence de langue — le SecureStore est réservé au jeton.
- */
 
 export const CHOIX_THEME = ['light', 'dark', 'system'] as const;
 export type ChoixTheme = (typeof CHOIX_THEME)[number];

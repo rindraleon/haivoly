@@ -5,7 +5,7 @@ import type { Utilisateur } from '@/types';
 import { queryKeys } from '../queryKeys';
 
 export type ProfileUpdate = Partial<
-  Pick<Utilisateur, 'nom' | 'prenom' | 'telephone'>
+  Pick<Utilisateur, 'nom' | 'prenom' | 'telephone' | 'username' | 'langue'>
 >;
 
 export function useUpdateProfile() {

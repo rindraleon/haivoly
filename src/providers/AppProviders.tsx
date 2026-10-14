@@ -9,8 +9,7 @@ import { router } from 'expo-router';
 
 import { ConfirmProvider } from '@/components/CommonComponent/ConfirmProvider';
 import { initialiserI18n } from '@/i18n';
-import { ThemeProvider } from '@/theme/ThemeProvider';
-import { initialiserTheme } from '@/theme/ThemeProvider';
+import { ThemeProvider, initialiserTheme } from '@/theme/ThemeProvider';
 import { i18n } from '@/i18n/instance';
 import { setUnauthorizedHandler } from '@/services/http';
 import { startRecommendationPolling } from '@/services/offline/recommendationSync';
@@ -132,13 +131,6 @@ function SyncProvider({ children }: { children: React.ReactNode }) {
   return <SyncContext.Provider value={value}>{children}</SyncContext.Provider>;
 }
 
-/**
- * Lit les préférences persistées (langue, thème) avant le premier rendu.
- *
- * Le rendu est suspendu tant que la lecture n'a pas abouti : c'est ce qui
- * évite le flash — sans cette attente, un utilisateur en thème sombre verrait
- * l'interface s'afficher en clair puis basculer.
- */
 function PreferencesBootstrap({ children }: { children: React.ReactNode }) {
   const [pret, setPret] = useState(false);
 

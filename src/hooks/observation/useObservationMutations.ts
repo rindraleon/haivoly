@@ -2,7 +2,6 @@ import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
 import { observationsApi } from '@/services';
 import type { Observation, ObservationPayload } from '@/types';
 import { executeQueueableMutation } from '@/services/offline/mutate';
-import { localObservation } from '@/services/offline/localEntities';
 import { useInvalidateDomain } from '../common/useInvalidateDomain';
 
 export function useUpdateObservation(

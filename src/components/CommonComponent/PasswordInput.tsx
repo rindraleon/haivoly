@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { i18n } from '@/i18n/instance';
 import { Pressable } from 'react-native';
 import { Eye, EyeOff, LockKeyhole } from 'lucide-react-native';

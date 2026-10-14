@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { AlertTriangle, CheckCircle2, CloudOff, RefreshCw } from 'lucide-react-native';

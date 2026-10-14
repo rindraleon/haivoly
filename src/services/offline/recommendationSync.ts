@@ -42,7 +42,7 @@ export async function markRecommendationReadLocal(id: string): Promise<void> {
   ));
 }
 
-export function startRecommendationPolling(intervalMs = 30000) {
+export function startRecommendationPolling(intervalMs = 15000) {
   const tick = async () => {
     await fetchRecommendationsFromBackend().catch(() => {});
   };

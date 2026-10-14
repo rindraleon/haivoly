@@ -309,7 +309,7 @@ export function PhotosIntervention({
                       mediaUrl: getMediaUrl(photo.url),
                     });
                   }}
-                  onError={event => {
+                  onError={() => {
                     logger.warn('PhotosIntervention', 'Photo non affichable');
                   }}
                 />

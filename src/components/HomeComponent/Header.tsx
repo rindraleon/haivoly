@@ -50,21 +50,14 @@ export function HomeHeader({
   };
 
   const ouvrirNotifications = () => {
-    // Pour le moment, l'action notification reste vide.
-    // Tu pourras ensuite connecter cette action à ton écran de notifications.
+    router.push('/(app)/(common)/notifications' as never);
   };
 
   return (
     <View style={styles.hero}>
-      {/* =====================================================
-          DECORATION
-      ====================================================== */}
       <View style={styles.glowOne} />
       <View style={styles.glowTwo} />
 
-      {/* =====================================================
-          HEADER TOP
-      ====================================================== */}
       <View style={styles.topRow}>
         {/* Logo / Nom */}
         <View style={styles.brandRow}>
@@ -135,9 +128,6 @@ export function HomeHeader({
         </View>
       </View>
 
-      {/* =====================================================
-          GREETING
-      ====================================================== */}
       <View style={styles.greetingBlock}>
         <Text style={styles.greeting}>
           {greeting}, {displayName} 👋
@@ -148,9 +138,6 @@ export function HomeHeader({
         </Text>
       </View>
 
-      {/* =====================================================
-          STATS
-      ====================================================== */}
       <View style={styles.statsRow}>
         {/* PARCELLES */}
         <View style={styles.statCard}>

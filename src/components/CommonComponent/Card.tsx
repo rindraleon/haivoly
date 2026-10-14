@@ -34,11 +34,6 @@ export function Card({ children, onPress, style, padded = true, variant = 'defau
   return <View style={[styles.base, variantStyle, padded && styles.padded, style as any]}>{children}</View>;
 }
 
-/**
- * Les styles dépendent du thème : ils sont donc recalculés à chaque changement
- * de jetons plutôt que figés au chargement du module. C'est la condition pour
- * qu'un passage en sombre repeigne réellement la carte.
- */
 function creerStyles(jetons: Jetons) {
   return {
     ...StyleSheet.create({

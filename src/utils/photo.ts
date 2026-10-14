@@ -32,9 +32,8 @@ export function fichierDepuisUri(uri: string): FichierPhoto {
   const mime = MIME_PAR_EXTENSION[extension];
 
   // Extension absente ou inconnue : on la déduit du type réellement envoyé.
-  const nom = mime
-    ? nomBrut
-    : `${nomBrut || `photo-${Date.now()}`}.jpg`;
+  const sansExtension = nomBrut || `photo-${Date.now()}`;
+  const nom = mime ? nomBrut : `${sansExtension}.jpg`;
 
   return {
     uri,

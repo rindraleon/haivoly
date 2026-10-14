@@ -132,9 +132,6 @@ export function VueObservations({
             } récentes`}
           />
 
-          {/* ==================================================
-              BARRE RECHERCHE / FILTRE
-          ================================================== */}
 
           <VueObservations1
             appliquerFiltre={appliquerFiltre}
@@ -162,9 +159,6 @@ export function VueObservations({
             setSelectionParcelleOuverte={setSelectionParcelleOuverte}
           />
 
-          {/* ==================================================
-              LISTE
-          ================================================== */}
 
           <Liste
             actualiser={actualiser}
@@ -182,9 +176,6 @@ export function VueObservations({
             reinitialiserFiltre={reinitialiserFiltre}
           />
 
-          {/* ==================================================
-              MODAL FILTRE
-          ================================================== */}
 
           <ModalFiltre
             appliquerFiltre={appliquerFiltre}
@@ -208,9 +199,6 @@ export function VueObservations({
             voirSuivi={voirSuivi}
           />
 
-          {/* ==================================================
-              MODAL AJOUT
-          ================================================== */}
 
           <ModalAjout
             ajoutOuvert={ajoutOuvert}

@@ -11,6 +11,7 @@ export interface ResetPasswordVariables {
 
 export function useResetPassword() {
   return useMutation({
-    mutationFn: (variables: ResetPasswordVariables) => authApi.resetPassword(variables),
+    mutationFn: ({ token, password, confirmPassword }: ResetPasswordVariables) =>
+      authApi.resetPassword({ token, newPassword: password, confirmPassword }),
   });
 }

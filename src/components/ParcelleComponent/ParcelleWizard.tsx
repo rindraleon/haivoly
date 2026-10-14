@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { i18n } from '@/i18n/instance';
 import { StyleSheet, Text, View } from 'react-native';
 import {
@@ -14,6 +14,7 @@ import {
 
 import { ParcelleFormShell } from '@/components/ParcelleComponent/ParcelleFormShell';
 import { ParcelleMap } from '@/components/ParcelleComponent/ParcelleMap';
+import { CapturePositionButton } from '@/components/ParcelleComponent/CapturePositionButton';
 import { AppSelect } from '@/components/CommonComponent/AppSelect';
 import { Badge } from '@/components/CommonComponent/Badge';
 import { Button } from '@/components/CommonComponent/Button';
@@ -173,7 +174,7 @@ export function ParcelleWizard({
       {/* Progression -------------------------------------------------- */}
       <View style={styles.progression}>
         {ETAPES.map((libelle, index) => (
-          <View key={libelle} style={styles.progressionEtape}>
+          <View key={index} style={styles.progressionEtape}>
             <View
               style={[
                 styles.progressionPastille,
@@ -254,8 +255,9 @@ export function ParcelleWizard({
           </View>
 
           <Text style={styles.aide}>
-            Touchez la carte pour ajouter des sommets, puis déplacez un sommet pour
-            l’ajuster. Un polygone valide comporte au moins 3 sommets.
+            Capturez votre position GPS à chaque coin, ou touchez la carte pour
+            ajouter des sommets, puis déplacez un sommet pour l’ajuster. Un polygone
+            valide comporte au moins 3 sommets.
           </Text>
 
           <View style={styles.carteMap}>
@@ -269,6 +271,8 @@ export function ParcelleWizard({
               style={styles.map}
             />
           </View>
+
+          <CapturePositionButton onCapture={ajouterPoint} disabled={submitting} />
 
           <View style={styles.rangee}>
             <View style={styles.rangeeGauche}>

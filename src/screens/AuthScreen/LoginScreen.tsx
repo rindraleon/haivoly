@@ -178,7 +178,7 @@ export default function LoginScreen() {
                     </Text>
                   </Pressable>
                   {renvoiAccepte && (
-                    <Text accessibilityRole="status" style={styles.verificationSuccess}>
+                    <Text accessibilityLiveRegion="polite" style={styles.verificationSuccess}>
                       {t('auth.verify.renvoiAccepte')}
                     </Text>
                   )}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -14,8 +14,10 @@ import { useTranslation } from 'react-i18next';
 import { Check, ChevronLeft, WifiOff } from 'lucide-react-native';
 
 import { useProfile, useUpdateProfile } from '@/hooks/profile';
+import type { Utilisateur } from '@/types';
 import { useNetwork } from '@/hooks/common/useNetwork';
 import { messageErreur, erreursParChamp } from '@/utils/erreur';
+import { CLE_ERREUR_PSEUDO, normaliserPseudo, validerPseudo } from '@/utils/pseudo';
 import { colors, radius } from '@/theme';
 
 export default function EditProfileScreen() {
@@ -26,25 +28,30 @@ export default function EditProfileScreen() {
   const [nom, setNom] = useState('');
   const [prenom, setPrenom] = useState('');
   const [telephone, setTelephone] = useState('');
+  const [username, setUsername] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState('');
   const [noticeKind, setNoticeKind] = useState<'success' | 'info' | 'error' | null>(null);
 
-  useEffect(() => {
-    if (!profile) return;
+  const [synchronise, setSynchronise] = useState<Utilisateur | null>(null);
+  if (profile && profile !== synchronise) {
+    setSynchronise(profile);
     setNom(profile.nom ?? '');
     setPrenom(profile.prenom ?? '');
     setTelephone(profile.telephone ?? '');
-  }, [profile]);
+    setUsername(profile.username ?? '');
+  }
 
   const dirty = useMemo(() => {
     if (!profile) return false;
     return (
       nom.trim() !== profile.nom ||
       prenom.trim() !== (profile.prenom ?? '') ||
-      telephone.trim() !== (profile.telephone ?? '')
+      telephone.trim() !== (profile.telephone ?? '') ||
+      // Comparer la forme normalisée : « @José » et « jose » sont le même nom.
+      normaliserPseudo(username) !== (profile.username ?? '')
     );
-  }, [nom, prenom, profile, telephone]);
+  }, [nom, prenom, profile, telephone, username]);
 
   const submit = async () => {
     if (!profile || mutation.isPending) return;
@@ -57,6 +64,15 @@ export default function EditProfileScreen() {
     if (nom.trim().length > 80) nextErrors.nom = t('profil.edition.nomTropLong');
     if (prenom.trim().length > 80) nextErrors.prenom = t('profil.edition.prenomTropLong');
     if (telephone.trim().length > 30) nextErrors.telephone = t('profil.edition.telephoneTropLong');
+
+    // Le nom d'utilisateur public ne peut pas être effacé une fois attribué, et
+    // doit respecter la même règle que le serveur (miroir dans utils/pseudo).
+    if (!username.trim() && profile.username) {
+      nextErrors.username = t('pseudo.erreur.requis');
+    } else if (username.trim() && username.trim() !== (profile.username ?? '')) {
+      const verdict = validerPseudo(username);
+      if (!verdict.valide && verdict.motif) nextErrors.username = t(CLE_ERREUR_PSEUDO[verdict.motif]);
+    }
     if (Object.keys(nextErrors).length) {
       setErrors(nextErrors);
       return;
@@ -68,10 +84,17 @@ export default function EditProfileScreen() {
       return;
     }
 
-    const patch: { nom?: string; prenom?: string | null; telephone?: string | null } = {};
+    const patch: {
+      nom?: string;
+      prenom?: string | null;
+      telephone?: string | null;
+      username?: string;
+    } = {};
     if (nom.trim() !== profile.nom) patch.nom = nom.trim();
     if (prenom.trim() !== (profile.prenom ?? '')) patch.prenom = prenom.trim() || null;
     if (telephone.trim() !== (profile.telephone ?? '')) patch.telephone = telephone.trim() || null;
+    const pseudo = normaliserPseudo(username);
+    if (pseudo && pseudo !== (profile.username ?? '')) patch.username = pseudo;
 
     if (Object.keys(patch).length === 0) {
       setNotice(t('profil.edition.aucunChangement'));
@@ -161,6 +184,19 @@ export default function EditProfileScreen() {
             keyboardType="phone-pad"
             autoComplete="tel"
           />
+          <Field
+            label={t('pseudo.label')}
+            value={username}
+            onChangeText={(value) => { setUsername(value); setNotice(''); setNoticeKind(null); setErrors((current) => ({ ...current, username: '' })); }}
+            error={errors.username}
+            hint={
+              username.trim() && username.trim() !== (profile.username ?? '')
+                ? t('pseudo.apercu', { pseudo: normaliserPseudo(username) })
+                : t('pseudo.nonModifiable')
+            }
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
           <View style={styles.readOnly}>
             <Text style={styles.label}>{t('profil.edition.email')}</Text>
             <Text style={styles.readOnlyValue}>{profile.email}</Text>
@@ -206,11 +242,25 @@ type FieldProps = {
   value: string;
   onChangeText: (value: string) => void;
   error?: string;
+  /** Aide sous le champ : aperçu de la forme enregistrée ou contrainte à connaître. */
+  hint?: string;
   autoComplete?: 'name' | 'given-name' | 'tel';
   keyboardType?: 'default' | 'phone-pad';
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  autoCorrect?: boolean;
 };
 
-function Field({ label, value, onChangeText, error, autoComplete, keyboardType = 'default' }: FieldProps) {
+function Field({
+  label,
+  value,
+  onChangeText,
+  error,
+  hint,
+  autoComplete,
+  keyboardType = 'default',
+  autoCapitalize,
+  autoCorrect,
+}: FieldProps) {
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
@@ -222,9 +272,12 @@ function Field({ label, value, onChangeText, error, autoComplete, keyboardType =
         aria-invalid={!!error}
         autoComplete={autoComplete}
         keyboardType={keyboardType}
+        autoCapitalize={autoCapitalize}
+        autoCorrect={autoCorrect}
         returnKeyType="next"
       />
       {!!error && <Text style={styles.fieldError}>{error}</Text>}
+      {!error && !!hint && <Text style={styles.helper}>{hint}</Text>}
     </View>
   );
 }

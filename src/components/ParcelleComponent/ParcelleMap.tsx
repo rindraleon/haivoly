@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useImperativeHandle, useMemo, useRef, useState, forwardRef } from 'react';
 import { i18n } from '@/i18n/instance';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
 import { villeLaPlusProche } from '@/data/madagascar-cities';
-import { getCurrentLocation } from '@/services/location.service';
+import { getApproximateLocation } from '@/services/location.service';
+import { logger } from '@/utils/logger';
 
 /** Coordonnée géographique simple (latitude/longitude en degrés décimaux). */
 export interface LatLng {
@@ -34,18 +35,25 @@ interface MapMessage {
   latitude?: number;
   longitude?: number;
   index?: number;
+  message?: string;
+  line?: number;
 }
 
-export function ParcelleMap({
-  points = [],
-  center = null,
-  showUserLocation = false,
-  editable = false,
-  onPointMove,
-  onPress,
-  defaultToNearestCity = false,
-  style,
-}: ParcelleMapProps) {
+export interface ParcelleMapHandle {
+  centerOnUser: () => Promise<void>;
+}
+
+export const ParcelleMap = forwardRef<ParcelleMapHandle, ParcelleMapProps>(
+  function ParcelleMap({
+    points = [],
+    center = null,
+    showUserLocation = false,
+    editable = false,
+    onPointMove,
+    onPress,
+    defaultToNearestCity = false,
+    style,
+  }: ParcelleMapProps, ref) {
   const webViewRef = useRef<WebView<object> | null>(null);
   const [ready, setReady] = useState(false);
   const centeredOnCityRef = useRef(false);
@@ -103,13 +111,18 @@ export function ParcelleMap({
     centeredOnCityRef.current = true;
     let cancelled = false;
 
-    getCurrentLocation()
-      .then((position) => villeLaPlusProche(position))
-      .then((ville) => {
-        if (cancelled || normalizedCountRef.current > 0) return;
+    getApproximateLocation()
+      .then((position) => {
+        if (cancelled) return null;
+        return { position, ville: villeLaPlusProche(position) };
+      })
+      .then((resultat) => {
+        if (!resultat || cancelled || normalizedCountRef.current > 0) return;
+
+        const { position, ville } = resultat;
 
         webViewRef.current?.injectJavaScript(
-          `window.setMapView(${ville.latitude}, ${ville.longitude}, 15); true;`,
+          `window.setUserArea(${position.latitude}, ${position.longitude}, ${ville.latitude}, ${ville.longitude}); true;`,
         );
       })
       .catch(() => {
@@ -120,6 +133,25 @@ export function ParcelleMap({
       cancelled = true;
     };
   }, [ready, defaultToNearestCity]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      centerOnUser: async () => {
+        try {
+          const position = await getApproximateLocation();
+          const ville = villeLaPlusProche(position);
+
+          webViewRef.current?.injectJavaScript(
+            `window.setUserArea(${position.latitude}, ${position.longitude}, ${ville.latitude}, ${ville.longitude}); true;`,
+          );
+        } catch (error) {
+          logger.warn('parcelle.map', 'Impossible de recentrer sur l\'utilisateur', error);
+        }
+      },
+    }),
+    [],
+  );
 
   const handleMessage = (event: WebViewMessageEvent) => {
     let data: MapMessage;
@@ -132,6 +164,11 @@ export function ParcelleMap({
 
     if (data.type === 'READY') {
       setReady(true);
+      return;
+    }
+
+    if (data.type === 'MAP_ERROR') {
+      logger.warn('parcelle.map', 'Erreur JavaScript dans la carte', data);
       return;
     }
 
@@ -160,12 +197,18 @@ export function ParcelleMap({
         javaScriptEnabled
         scrollEnabled={false}
         onMessage={handleMessage}
+        onError={(event) =>
+          logger.warn('parcelle.map', 'WebView : échec de chargement', event.nativeEvent)
+        }
+        onHttpError={(event) =>
+          logger.warn('parcelle.map', 'WebView : réponse HTTP en erreur', event.nativeEvent)
+        }
         style={styles.webview}
         source={{ html }}
       />
     </View>
   );
-}
+});
 
 interface BuildMapOptions {
   editable: boolean;
@@ -232,6 +275,19 @@ html, body, #map { margin: 0; padding: 0; width: 100%; height: 100%; }
 const editable = ${editable ? 'true' : 'false'};
 const showUserLocation = ${showUserLocation ? 'true' : 'false'};
 
+window.onerror = function (message, source, line) {
+  try {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'MAP_ERROR',
+        message: String(message),
+        line: line,
+      }));
+    }
+  } catch (error) {}
+  return false;
+};
+
 const map = L.map('map', {
   zoomControl: true,
   scrollWheelZoom: true,
@@ -251,10 +307,10 @@ const satellite = L.tileLayer(
   { attribution: 'Tiles &copy; Esri', maxZoom: 19 },
 );
 
-standard.addTo(map);
+satellite.addTo(map);
 
 L.control.layers(
-  { '🗺️ Standard': standard, '🛰️ Satellite': satellite },
+  { '🛰️ Satellite': satellite, '🗺️ Standard': standard },
   null,
   { position: 'topright' },
 ).addTo(map);
@@ -352,6 +408,32 @@ window.renderPoints = function (points, centerLatitude, centerLongitude) {
 
 window.setMapView = function (lat, lng, zoom) {
   map.setView([Number(lat), Number(lng)], zoom);
+};
+
+let userMarker = null;
+
+window.setUserArea = function (userLat, userLng, cityLat, cityLng) {
+  const user = [Number(userLat), Number(userLng)];
+  const city = [Number(cityLat), Number(cityLng)];
+
+  if (userMarker) {
+    userMarker.setLatLng(user);
+  } else {
+    userMarker = L.marker(user, {
+      icon: L.divIcon({
+        className: 'user-label',
+        html: '\\uD83D\\uDCCD',
+        iconSize: [22, 22],
+        iconAnchor: [11, 11],
+      }),
+      title: 'Ma position',
+    }).addTo(map);
+  }
+
+  map.fitBounds(L.latLngBounds([user, city]), {
+    padding: [40, 40],
+    maxZoom: 14,
+  });
 };
 
 map.on('click', function (event) {

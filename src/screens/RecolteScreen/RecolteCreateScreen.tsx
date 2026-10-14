@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { i18n } from '@/i18n/instance';
 import { Alert, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';

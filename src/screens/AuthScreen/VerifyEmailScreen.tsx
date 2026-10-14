@@ -210,7 +210,7 @@ export default function VerifyEmailScreen() {
 
 const styles = {
   root: { flex: 1, backgroundColor: colors.background.app },
-  scroll: { flexGrow: 1, justifyContent: 'center', padding: 20 },
+  scroll: { flexGrow: 1, justifyContent: 'center' as const, padding: 20 },
   card: {
     width: '100%' as const,
     maxWidth: 480,

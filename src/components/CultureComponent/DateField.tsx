@@ -3,6 +3,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { colors } from '@/theme';
 import { styles } from '@/screens/CultureScreen/CultureCreateScreen.styles';
 
+import React from 'react';
 export function DateField({
   label,
   value,

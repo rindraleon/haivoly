@@ -119,10 +119,6 @@ const textSizeBySize: Record<Size, TextStyle> = {
   lg: { fontSize: 16, lineHeight: 24 },
 };
 
-/**
- * Les variantes dépendent des jetons : recalculées à chaque changement de
- * thème, donc un passage en sombre repeint les boutons sans rechargement.
- */
 function creerStyles(jetons: Jetons) {
   return {
     ...StyleSheet.create({

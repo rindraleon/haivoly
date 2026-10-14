@@ -8,8 +8,7 @@ import { useConfirm } from '@/components/CommonComponent/ConfirmProvider';
 import { MapPinned, ChevronRight, Plus } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useParcelles, useProfile } from '@/hooks';
-import { recommendationsApi } from '@/services';
+import { useParcelles, useProfile, useRecommendationsFeed } from '@/hooks';
 import { getActiveAccountId, removeToken } from '@/storage/authStorage';
 import { queryClient } from '@/providers/AppProviders';
 import { colors } from '@/theme';
@@ -27,9 +26,6 @@ import { OfflineBanner } from '@/components/CommonComponent/OfflineBanner';
 import { useNetwork } from '@/hooks/common/useNetwork';
 import { getPendingCount } from '@/services/offline/queue';
 import { syncOnce } from '@/services/offline/syncEngine';
-import { accountStorageKey, getItem, setItem, StorageKeys } from '@/storage/database';
-import { markRecommendationReadLocal,} from '@/services/offline/recommendationSync';
-import type { Recommendation } from '@/types/notification.types';
 
 import { styles } from './HomeScreen.styles';
 
@@ -49,7 +45,13 @@ export default function HomeScreen() {
   const { isOnline } = useNetwork();
   const [pendingCount, setPendingCount] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
-  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const {
+    recommendations,
+    unreadCount,
+    refresh: refreshRecommendations,
+    markRead,
+    markAllRead,
+  } = useRecommendationsFeed();
 
   const parcellesActives = (parcelles ?? []).filter((p) => p.statut === 'ACTIVE');
   const totalSuperficie = parcellesActives.reduce((acc, p) => acc + (p.superficie ?? 0), 0);
@@ -62,29 +64,26 @@ export default function HomeScreen() {
     return t('accueil.bonsoir');
   })();
 
-  const refreshPending = useCallback(async () => {
+  const refreshQueueCount = useCallback(async () => {
     const accountId = await getActiveAccountId();
     if (!accountId) {
       setPendingCount(0);
-      setRecommendations([]);
       return;
     }
     setPendingCount(await getPendingCount());
-    const key = accountStorageKey(accountId, StorageKeys.RECOMMENDATIONS);
-    setRecommendations(await getItem<Recommendation[]>(key, []));
   }, []);
 
   useEffect(() => {
-    refreshPending();
+    void refreshQueueCount();
     void syncOnce();
-    const id = setInterval(refreshPending, 3000);
+    const id = setInterval(() => void refreshQueueCount(), 3000);
     return () => clearInterval(id);
-  }, [refreshPending]);
+  }, [refreshQueueCount]);
 
   const handleSync = async () => {
     setIsSyncing(true);
     await syncOnce();
-    await refreshPending();
+    await Promise.all([refreshQueueCount(), refreshRecommendations()]);
     setIsSyncing(false);
   };
 
@@ -109,11 +108,16 @@ export default function HomeScreen() {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refetchUser(), refetchParcelles(), refreshPending()]);
+      await Promise.all([
+        refetchUser(),
+        refetchParcelles(),
+        refreshQueueCount(),
+        refreshRecommendations(),
+      ]);
     } finally {
       setRefreshing(false);
     }
-  }, [refetchUser, refetchParcelles, refreshPending]);
+  }, [refetchUser, refetchParcelles, refreshQueueCount, refreshRecommendations]);
 
   if (loadingUser) return <LoadingState message={i18n.t('divers.chargementEspace')} />;
   if (isError || !user)
@@ -135,68 +139,53 @@ export default function HomeScreen() {
       >
         {/* Header composé */}
         <View style={styles.header}>
-<HomeHeader
-  user={user as any}
-  greeting={greeting}
-  loadingParcelles={loadingParcelles}
-  parcellesCount={parcellesActives.length}
-  superficieHa={ha}
-  pendingCount={pendingCount}
-  isOnline={isOnline ?? true}
-  notificationCount={
-    recommendations.filter((r) => !r.readAt).length
-  }
-/>
+          <HomeHeader
+            user={user as any}
+            greeting={greeting}
+            loadingParcelles={loadingParcelles}
+            parcellesCount={parcellesActives.length}
+            superficieHa={ha}
+            pendingCount={pendingCount}
+            isOnline={isOnline ?? true}
+            notificationCount={unreadCount}
+          />
 
-<OfflineBanner
-  isOnline={isOnline ?? true}
-  pendingCount={pendingCount}
-  isSyncing={isSyncing}
-  onSyncPress={handleSync}
-/>
-
-          {}
-        </View> 
+          <OfflineBanner
+            isOnline={isOnline ?? true}
+            pendingCount={pendingCount}
+            isSyncing={isSyncing}
+            onSyncPress={handleSync}
+          />
+        </View>
 
         {/* Actions rapides — composant dédié */}
         <ActionSection parcellesCount={parcellesActives.length} />
 
         {/* Notifications / Recommandations — centre */}
         {recommendations.length > 0 && (
-  <NotificationCenter
-    items={recommendations.slice(0, 3)}
-    onMarkAllRead={async () => {
-      if (isOnline !== true) {
-        Alert.alert(t('accueil.notificationsConnexionRequise'));
-        return;
-      }
-      try {
-        await recommendationsApi.markAllRead();
-        const updated = recommendations.map((r) => ({
-          ...r,
-          readAt: r.readAt ?? new Date().toISOString(),
-        }));
-        const accountId = await getActiveAccountId();
-        if (!accountId) return;
-        await setItem(accountStorageKey(accountId, StorageKeys.RECOMMENDATIONS), updated);
-        setRecommendations(updated);
-      } catch {
-        Alert.alert(t('accueil.notificationsEchec'));
-      }
-    }}
-    onPressItem={async (item) => {
-      try {
-        await markRecommendationReadLocal(item.id);
-        const updated = recommendations.map((r) =>
-          r.id === item.id ? { ...r, readAt: r.readAt ?? new Date().toISOString() } : r,
-        );
-        setRecommendations(updated);
-      } catch {
-        Alert.alert(t('accueil.notificationsConnexionRequise'));
-      }
-    }}
-  />
-)}
+          <NotificationCenter
+            items={recommendations.slice(0, 3)}
+            onSeeAll={() => router.push('/(app)/(common)/notifications' as any)}
+            onMarkAllRead={async () => {
+              if (isOnline !== true) {
+                Alert.alert(t('accueil.notificationsConnexionRequise'));
+                return;
+              }
+              try {
+                await markAllRead();
+              } catch {
+                Alert.alert(t('accueil.notificationsEchec'));
+              }
+            }}
+            onPressItem={async (item) => {
+              try {
+                await markRead(item.id);
+              } catch {
+                Alert.alert(t('accueil.notificationsConnexionRequise'));
+              }
+            }}
+          />
+        )}
 
         {/* Parcelles récentes — reste atomique pour l’instant */}
         <View style={styles.section}>

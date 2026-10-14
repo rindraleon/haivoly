@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, Text, type TextProps, type TextStyle } from 'react-native';
 
 import { colors, typography } from '@/theme';

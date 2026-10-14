@@ -2,7 +2,7 @@ import DateTimePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/components/CommonComponent/Button';

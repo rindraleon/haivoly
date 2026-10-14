@@ -402,7 +402,9 @@ export function FilterModal({
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.resetSmallButton}
-                onPress={onClose}
+                // En dehors du mode ajout, ce bouton annonce « Réinitialiser » :
+                // il doit vider les filtres, pas seulement fermer la feuille.
+                onPress={modeAjout ? onClose : onReset}
               >
                 <Text style={styles.resetSmallButtonText}>
                   {modeAjout ? 'Annuler' : i18n.t('domaine.reinitialiser')}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { i18n } from '@/i18n/instance';
 import { Alert, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -9,10 +9,12 @@ import { Button } from '@/components/CommonComponent/Button';
 import { Card } from '@/components/CommonComponent/Card';
 import { ErrorState } from '@/components/CommonComponent/ErrorState';
 import { LoadingState } from '@/components/CommonComponent/LoadingState';
+import { CapturePositionButton } from '@/components/ParcelleComponent/CapturePositionButton';
 import { ParcelleMap } from '@/components/ParcelleComponent/ParcelleMap';
 import { ParcelleFormShell } from '@/components/ParcelleComponent/ParcelleFormShell';
 import { useDelimiterParcelle, useParcelle } from '@/hooks';
 import { ApiError } from '@/services/http';
+import type { GPSPosition } from '@/services';
 import { messageDesDefauts, validerGeometrie } from '@/utils/geometrie';
 import { formatSuperficie, polishPolygon } from '@/utils/parcelle';
 import type { PointGPS } from '@/types';
@@ -79,6 +81,17 @@ export default function DelimiterParcelleScreen() {
     }
   };
 
+  const handleCapturerPosition = (position: GPSPosition) => {
+    setPoints([
+      ...pointsCourants,
+      {
+        latitude: position.latitude,
+        longitude: position.longitude,
+        ordre: pointsCourants.length,
+      },
+    ]);
+  };
+
   return (
     <ParcelleFormShell
       title={i18n.t('parcelles.delimiter')}
@@ -110,7 +123,8 @@ export default function DelimiterParcelleScreen() {
       <View style={styles.modeBanner}>
         <PenTool size={16} color={colors.primary[700]} />
         <Text style={styles.modeText}>
-          Mode délimitation actif — touchez la carte pour ajouter un sommet.
+          Mode délimitation actif — capturez votre position GPS ou touchez la carte
+          pour ajouter un sommet.
         </Text>
       </View>
 
@@ -119,6 +133,7 @@ export default function DelimiterParcelleScreen() {
           points={pointsCourants}
           center={center}
           editable
+          defaultToNearestCity={pointsCourants.length === 0}
           onPointMove={(index, position) =>
             setPoints(
               pointsCourants.map((point, position_) =>
@@ -149,6 +164,11 @@ export default function DelimiterParcelleScreen() {
           </View>
         </View>
       </Card>
+
+      <CapturePositionButton
+        onCapture={handleCapturerPosition}
+        disabled={delimitation.isPending}
+      />
 
       <View style={styles.actionsRow}>
         <Button
@@ -189,7 +209,8 @@ export default function DelimiterParcelleScreen() {
       <Card variant="muted">
         <Text style={styles.helpTitle}>Comment délimiter</Text>
         <Text style={styles.helpText}>
-          1. Touchez la carte à chaque coin de la parcelle, dans le sens horaire.{'\n'}
+          1. Placez-vous à chaque coin de la parcelle et utilisez « Capturer ma
+          position », ou touchez la carte, dans le sens horaire.{'\n'}
           2. Faites glisser un point pour l&apos;ajuster précisément.{'\n'}
           3. Au moins 3 sommets sont nécessaires : le serveur recalcule alors la
           superficie et le centre de la parcelle.

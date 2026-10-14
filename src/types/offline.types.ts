@@ -7,6 +7,11 @@ export type SyncStatus =
   | 'INVALID'
   | 'CONFLICT';
 
+export type WithSyncStatus = {
+  _localOnly?: boolean;
+  _syncStatus?: SyncStatus;
+};
+
 export type ActionType = 'CREATE' | 'UPDATE' | 'DELETE';
 
 export const ACTION_TYPES: readonly ActionType[] = ['CREATE', 'UPDATE', 'DELETE'];

@@ -35,10 +35,6 @@ export async function saveSession(
   await SecureStore.setItemAsync(TOKEN_KEY, token);
 }
 
-/**
- * Compatibilité pour les anciens appels : un token sans compte/expiration ne
- * constitue volontairement pas une session utilisable hors ligne.
- */
 export async function saveToken(token: string): Promise<void> {
   await SecureStore.setItemAsync(TOKEN_KEY, token);
 }

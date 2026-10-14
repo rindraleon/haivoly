@@ -1,21 +1,3 @@
-/**
- * Jetons sémantiques de couleur, pour les thèmes clair et sombre.
- *
- * Le thème sombre n'est PAS une inversion mécanique du clair. Trois raisons,
- * vérifiables à l'œil comme au contrastomètre :
- *
- * 1. **Fond jamais noir pur.** `#0F1512` est un vert-gris très foncé, aligné
- *    sur la teinte agricole de la marque. Un noir pur (`#000000`) produit un
- *    halo autour des textes clairs et écrase les ombres portées.
- * 2. **Texte jamais blanc pur.** `#E8EDE9` au lieu de `#FFFFFF` : le contraste
- *    reste très au-dessus de 7:1 sans l'éblouissement du blanc sur fond sombre.
- * 3. **Le vert primaire s'éclaircit.** `#2E7D32` (500) en clair devient
- *    `#5DBB63` (400) en sombre : sur fond foncé, le 500 ne passerait pas
- *    4,5:1 sur du texte, alors que le 400 le dépasse.
- *
- * Les couleurs sémantiques (succès, alerte, erreur, info) suivent la même
- * règle : on remonte d'un cran d'échelle en sombre.
- */
 
 export const jetonsClair = {
   fond: {
@@ -81,14 +63,6 @@ export const jetonsSombre = {
   ombre: '#000000',
 } as const;
 
-/**
- * Forme élargie des jetons.
- *
- * Les deux palettes sont déclarées `as const`, donc leurs feuilles sont des
- * littéraux de type (`'#F8FAF8'` et non `string`). Sans cet élargissement,
- * `jetonsSombre` ne serait pas assignable à `Jetons` et la table
- * `JETONS_PAR_MODE` refuserait de compiler.
- */
 type Elargir<T> = { [K in keyof T]: T[K] extends string ? string : Elargir<T[K]> };
 
 export type Jetons = Elargir<typeof jetonsClair>;

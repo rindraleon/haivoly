@@ -1,4 +1,3 @@
-import React from 'react';
 import { Pressable, StyleSheet, TextInput, View, type ViewStyle } from 'react-native';
 import { Search, X } from 'lucide-react-native';
 import { colors, radius } from '@/theme';

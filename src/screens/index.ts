@@ -3,6 +3,7 @@ export * from './CommonScreen';
 export * from './CultureScreen';
 export * from './HomeScreen';
 export * from './InterventionScreen';
+export * from './NotificationScreen';
 export * from './ObservationScreen';
 export * from './ParcelleScreen';
 export * from './ProfileScreen';

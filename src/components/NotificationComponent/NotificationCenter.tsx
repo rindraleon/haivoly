@@ -9,10 +9,12 @@ export function NotificationCenter({
   items,
   onMarkAllRead,
   onPressItem,
+  onSeeAll,
 }: {
   items: Recommendation[];
   onMarkAllRead?: () => void;
   onPressItem?: (item: Recommendation) => void;
+  onSeeAll?: () => void;
 }) {
   const unread = items.filter((i) => !i.readAt).length;
 
@@ -21,19 +23,26 @@ export function NotificationCenter({
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
           <Bell size={16} color={colors.primary[600]} />
-          <Text style={styles.title}>Recommandations</Text>
+          <Text style={styles.title}>{i18n.t('notifications.recommandations')}</Text>
           {unread > 0 && (
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>{unread} non lues</Text>
+              <Text style={styles.badgeText}>{unread}</Text>
             </View>
           )}
         </View>
-        {unread > 0 && onMarkAllRead && (
-          <Pressable onPress={onMarkAllRead} style={styles.mark}>
-            <CheckCheck size={12} color={colors.primary[600]} />
-            <Text style={styles.markText}>{i18n.t('libelles.toutMarquerLu')}</Text>
-          </Pressable>
-        )}
+        <View style={styles.headerActions}>
+          {unread > 0 && onMarkAllRead && (
+            <Pressable onPress={onMarkAllRead} style={styles.mark}>
+              <CheckCheck size={12} color={colors.primary[600]} />
+              <Text style={styles.markText}>{i18n.t('libelles.toutMarquerLu')}</Text>
+            </Pressable>
+          )}
+          {onSeeAll && (
+            <Pressable onPress={onSeeAll} style={styles.mark}>
+              <Text style={styles.markText}>{i18n.t('notifications.voirTout')}</Text>
+            </Pressable>
+          )}
+        </View>
       </View>
 
       {items.length === 0 ? (
@@ -55,7 +64,8 @@ export function NotificationCenter({
 
 const styles = StyleSheet.create({
   container: { gap: 12 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   title: { fontSize: 14, fontWeight: '800', color: colors.neutral[900] },
   badge: { backgroundColor: colors.error[500], paddingHorizontal: 7, paddingVertical: 2, borderRadius: 999 },
   badgeText: { color: 'white', fontSize: 11, fontWeight: '800' },

@@ -107,10 +107,6 @@ export function ScreenContainer({
   );
 }
 
-/**
- * Ce composant pose le fond de tous les écrans : c'est lui qui rend le thème
- * visible immédiatement. Ses styles dépendent donc des jetons.
- */
 function creerStyles(jetons: Jetons) {
   return StyleSheet.create({
     flex: { flex: 1 },

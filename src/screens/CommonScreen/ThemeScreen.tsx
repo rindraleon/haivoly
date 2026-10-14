@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Check, Moon, Smartphone, Sun } from 'lucide-react-native';
@@ -11,13 +11,6 @@ import { radius, spacing } from '@/theme';
 import { useTheme } from '@/hooks/common/useTheme';
 import { CHOIX_THEME, type ChoixTheme } from '@/theme/preference';
 
-/**
- * Choix du thème : clair, sombre ou système.
- *
- * Le changement est immédiat — `definirTheme` met à jour le contexte, donc
- * tous les écrans qui consomment `useTheme()` se repeignent sans navigation —
- * et persistant via AsyncStorage.
- */
 export function ThemeScreen() {
   const { t } = useTranslation();
   const { jetons, mode, choix, definirTheme } = useTheme();

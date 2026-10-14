@@ -18,16 +18,6 @@ import {
   type ChoixTheme,
 } from './preference';
 
-/**
- * Thème clair / sombre / système, persistant.
- *
- * **Absence de flash :** la préférence est lue avant le premier rendu utile
- * (`AppProviders` attend `initialiserTheme()`), donc l'écran ne s'affiche
- * jamais en clair pour basculer ensuite en sombre.
- *
- * `useColorScheme()` de React Native reste la source du mode système : il
- * réagit aux changements de l'OS sans rechargement.
- */
 
 interface ValeurTheme {
   /** Jetons de couleur du mode actif. */

@@ -23,7 +23,9 @@ export interface Parcelle extends WithSyncStatus {
 }
 
 /** Charge utile d'écriture d'une parcelle. */
-export interface ParcellePayload {
+// `type` et non `interface` : un payload envoyé dans la file de synchronisation
+// doit pouvoir être traité comme un objet de clés/valeurs, sans cast forcé.
+export type ParcellePayload = {
   nom: string;
   typeSol?: string | null;
   description?: string | null;

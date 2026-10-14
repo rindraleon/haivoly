@@ -101,9 +101,6 @@ export function ModalChoixParcelle1({
               showBack
             />
 
-            {/* ===========================================
-                SUMMARY
-            ============================================ */}
 
             <View
               style={
@@ -205,9 +202,6 @@ export function ModalChoixParcelle1({
 
             </View>
 
-            {/* ===========================================
-                MAP
-            ============================================ */}
 
             <View
               style={
@@ -297,9 +291,6 @@ export function ModalChoixParcelle1({
 
             </View>
 
-            {/* ===========================================
-                HISTORIQUE
-            ============================================ */}
 
             <Pressable
               style={({ pressed }) => [
@@ -349,9 +340,6 @@ export function ModalChoixParcelle1({
 
             </Pressable>
 
-            {/* ===========================================
-                SECTION CULTURES
-            ============================================ */}
 
             <View
               style={
@@ -387,9 +375,6 @@ export function ModalChoixParcelle1({
 
             </View>
 
-            {/* ===========================================
-                ZONE AGRICOLE
-            ============================================ */}
 
             <View
               style={

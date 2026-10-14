@@ -1484,9 +1484,7 @@ culturePoints.forEach(
 
       ).addTo(map);
 
-    // ================================================
     // DÉPLACEMENT
-    // ================================================
 
     marker.on(
       'dragend',
@@ -1529,9 +1527,7 @@ culturePoints.forEach(
           return;
         }
 
-        // ==============================================
         // CULTURES EXISTANTES
-        // ==============================================
 
         for (
           const culture of culturesExistantes
@@ -1608,9 +1604,7 @@ culturePoints.forEach(
   }
 );
 
-// =====================================================
 // AJUSTEMENT CARTE
-// =====================================================
 
 if (
   parcelleCoordinates.length >= 3

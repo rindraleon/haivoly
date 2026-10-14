@@ -3,12 +3,6 @@ import { baliseDeFormatage } from '@/i18n/instance';
 /** Valeur brute acceptée (nombre, chaîne numérique, absence). */
 type NombreBrut = number | string | null | undefined;
 
-/**
- * Formatteur entier pour la langue active.
- * Résolu à chaque appel et non au chargement du module : une instance figée
- * ici conserverait la balise du démarrage et ignorerait tout changement de
- * langue en cours de session.
- */
 function formatteurEntier(): Intl.NumberFormat | null {
   try {
     return new Intl.NumberFormat(baliseDeFormatage(), {

@@ -37,9 +37,20 @@ export interface OptionsAcquisition {
   timeoutMs?: number;
 }
 
-export async function getCurrentLocation(
-  options: OptionsAcquisition = {},
-): Promise<GPSPosition> {
+/** Convertit un objet Expo Location en position applicative. */
+function versPosition(position: Location.LocationObject): GPSPosition {
+  const { latitude, longitude, accuracy } = position.coords;
+
+  return {
+    latitude,
+    longitude,
+    accuracy: accuracy ?? undefined,
+    timestamp: position.timestamp ? new Date(position.timestamp) : undefined,
+  };
+}
+
+/** Vérifie permissions et services de localisation, sinon lève une `ErreurGPS`. */
+async function assurerAccesLocalisation(): Promise<void> {
   const { status } = await Location.requestForegroundPermissionsAsync();
 
   if (status === 'denied') {
@@ -63,6 +74,23 @@ export async function getCurrentLocation(
       'La localisation est désactivée sur cet appareil. Activez le GPS puis réessayez.',
     );
   }
+}
+
+/**
+ * Position courante fiable pour le relevé d'un sommet de parcelle.
+ *
+ * Combine trois sources pour ne jamais dépendre d'un seul fournisseur :
+ *   1. la dernière position connue (réponse quasi immédiate) ;
+ *   2. un fix ponctuel (`getCurrentPositionAsync`), qui fonctionne même à l'arrêt ;
+ *   3. un suivi continu qui affine la précision quand le signal s'améliore.
+ *
+ * La première mesure sous le seuil acceptable est retenue ; à l'expiration du
+ * délai, la meilleure mesure sous le seuil maximal est utilisée en repli.
+ */
+export async function getCurrentLocation(
+  options: OptionsAcquisition = {},
+): Promise<GPSPosition> {
+  await assurerAccesLocalisation();
 
   const timeoutMs = options.timeoutMs ?? env.gpsTimeout;
 
@@ -73,9 +101,10 @@ export async function getCurrentLocation(
   });
 
   return new Promise<GPSPosition>((resolve, reject) => {
-    let subscription: Location.LocationSubscription | null = null;
-    let meilleure: Location.LocationObject | null = null;
     let reglee = false;
+    let meilleure: Location.LocationObject | null = null;
+    let subscription: Location.LocationSubscription | null = null;
+    let timer: ReturnType<typeof setTimeout> | null = null;
 
     const nettoyer = () => {
       if (timer !== null) {
@@ -93,19 +122,13 @@ export async function getCurrentLocation(
       reglee = true;
       nettoyer();
 
-      const { latitude, longitude, accuracy } = position.coords;
       logger.debug('location.service', 'GPS : position retenue', {
-        latitude,
-        longitude,
-        accuracy,
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        accuracy: position.coords.accuracy,
       });
 
-      resolve({
-        latitude,
-        longitude,
-        accuracy: accuracy ?? undefined,
-        timestamp: position.timestamp ? new Date(position.timestamp) : undefined,
-      });
+      resolve(versPosition(position));
     };
 
     const echouer = (erreur: ErreurGPS) => {
@@ -115,7 +138,25 @@ export async function getCurrentLocation(
       reject(erreur);
     };
 
-    let timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+    const collecter = (position: Location.LocationObject) => {
+      if (reglee) return;
+
+      const precision = position.coords.accuracy;
+
+      if (
+        !meilleure ||
+        (precision ?? Number.MAX_SAFE_INTEGER) <
+          (meilleure.coords.accuracy ?? Number.MAX_SAFE_INTEGER)
+      ) {
+        meilleure = position;
+      }
+
+      if (precision !== null && precision <= env.gpsAccuracyAcceptable) {
+        valider(position);
+      }
+    };
+
+    timer = setTimeout(() => {
       const precision = meilleure?.coords.accuracy ?? null;
 
       // Repli : la meilleure position reçue reste exploitable si elle demeure
@@ -148,40 +189,94 @@ export async function getCurrentLocation(
       );
     }, timeoutMs);
 
-    void (async () => {
-      try {
-        subscription = await Location.watchPositionAsync(
-          {
-            accuracy: Location.Accuracy.BestForNavigation,
-            distanceInterval: 1,
-            timeInterval: 1000,
-          },
-          (position) => {
-            const precision = position.coords.accuracy;
+    // 1) Dernière position connue : réponse quasi immédiate si elle est récente.
+    void Location.getLastKnownPositionAsync({
+      maxAge: 30_000,
+      requiredAccuracy: env.gpsAccuracyMaximale,
+    })
+      .then((position) => position && collecter(position))
+      .catch(() => {});
 
-            if (
-              !meilleure ||
-              (precision ?? Number.MAX_SAFE_INTEGER) <
-                (meilleure.coords.accuracy ?? Number.MAX_SAFE_INTEGER)
-            ) {
-              meilleure = position;
-            }
+    // 2) Fix ponctuel : force l'obtention d'une position, même à l'arrêt.
+    void Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.BestForNavigation,
+    })
+      .then((position) => collecter(position))
+      .catch(() => {});
 
-            if (precision !== null && precision <= env.gpsAccuracyAcceptable) {
-              valider(position);
-            }
-          },
-        );
-      } catch (error) {
+    // 3) Suivi continu : affine la précision tant que le relevé n'est pas réglé.
+    void Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.BestForNavigation,
+        distanceInterval: 0,
+        timeInterval: 1000,
+      },
+      collecter,
+    )
+      .then((souscription) => {
+        if (reglee) {
+          souscription.remove();
+          return;
+        }
+        subscription = souscription;
+      })
+      .catch((error) => {
         logger.warn('location.service', 'GPS : échec du suivi', error);
-        echouer(
+        // Si les autres sources ont déjà fourni une position, on les laisse aboutir.
+        if (!reglee && !meilleure) {
+          echouer(
+            new ErreurGPS(
+              'ECHEC_ACQUISITION',
+              "Impossible d'acquérir une position GPS. Réessayez, ou ajoutez le point manuellement sur la carte.",
+            ),
+          );
+        }
+      });
+  });
+}
+
+/**
+ * Position approximative, pour recadrer la carte sans attendre un fix précis.
+ * Se contente de la dernière position connue, sinon d'un fix rapide.
+ */
+export async function getApproximateLocation(): Promise<GPSPosition> {
+  await assurerAccesLocalisation();
+
+  const derniere = await Location.getLastKnownPositionAsync().catch(() => null);
+  if (derniere) return versPosition(derniere);
+
+  return new Promise<GPSPosition>((resolve, reject) => {
+    let reglee = false;
+
+    const timer = setTimeout(() => {
+      if (reglee) return;
+      reglee = true;
+      reject(
+        new ErreurGPS(
+          'AUCUN_SIGNAL',
+          'Aucune position approximative disponible pour le moment.',
+        ),
+      );
+    }, Math.min(env.gpsTimeout, 8000));
+
+    Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced })
+      .then((position) => {
+        if (reglee) return;
+        reglee = true;
+        clearTimeout(timer);
+        resolve(versPosition(position));
+      })
+      .catch(() => {
+        if (reglee) return;
+        reglee = true;
+        clearTimeout(timer);
+        reject(
           new ErreurGPS(
             'ECHEC_ACQUISITION',
-            "Impossible d'acquérir une position GPS. Réessayez, ou ajoutez le point manuellement sur la carte.",
+            'Impossible de déterminer une position approximative.',
           ),
         );
-      }
-    })();
+      });
   });
 }
 

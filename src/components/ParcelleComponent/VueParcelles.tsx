@@ -52,9 +52,6 @@ export function VueParcelles({
           showBack
         />
 
-        {/* =================================================
-            TOP BAR
-        ================================================== */}
         <View style={styles.topBar}>
           <View style={styles.searchRow}>
             <View style={{ flex: 1 }}>
@@ -92,9 +89,6 @@ export function VueParcelles({
             </Pressable>
           </View>
 
-          {/* =================================================
-              FILTRES
-          ================================================== */}
           {showFiltres && (
             <View style={styles.filterPanel}>
               <Text
@@ -131,9 +125,6 @@ export function VueParcelles({
             </View>
           )}
 
-          {/* =================================================
-              STATS
-          ================================================== */}
           <View
             style={styles.statsBar}
           >
@@ -168,9 +159,6 @@ export function VueParcelles({
           </View>
         </View>
 
-        {/* =================================================
-            FOND AGRICOLE + LISTE
-        ================================================== */}
         <View style={styles.listArea}>
           {/* Décor champ agricole */}
           <View
@@ -273,9 +261,6 @@ export function VueParcelles({
           />
         </View>
 
-        {/* =================================================
-            FAB "+"
-        ================================================== */}
         <Pressable
           onPress={() =>
             router.push(

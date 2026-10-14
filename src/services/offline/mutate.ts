@@ -12,11 +12,6 @@ export interface QueueableMutation<T> {
   local: (action: OfflineAction, accountId: string) => T;
 }
 
-/**
- * N'essaie le REST que si Internet est disponible. En cas de coupure signalée,
- * enfile sous le compte/session valides; une erreur après une tentative REST
- * n'est jamais transformée en succès local (risque de doublon après timeout).
- */
 export async function executeQueueableMutation<T>(input: QueueableMutation<T>): Promise<T> {
   if (await getIsOnline()) return input.remote();
 

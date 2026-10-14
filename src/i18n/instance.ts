@@ -57,16 +57,6 @@ export function instancePreteOuNon(): boolean {
 export default i18n;
 
 
-/**
- * Balise BCP-47 pour Intl, dérivée de la langue active.
- *
- * Vit dans instance.ts (et non index.ts) pour rester pure : les utils de
- * formatage l'importent, et tout module atteignable depuis un test jest en
- * environnement `node` ne doit pas tirer expo-localization ni AsyncStorage.
- *
- * Le malgache n'a pas de données de formatage propres dans l'ICU : on retombe
- * sur fr-MG, cohérent avec l'usage administratif à Madagascar.
- */
 export function baliseDeFormatage(): string {
   const langue = resoudreLangue(i18n.language);
   if (langue === 'mg') return 'fr-MG';
