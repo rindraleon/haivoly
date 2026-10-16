@@ -9,6 +9,7 @@ export const queryKeys = {
   interventions: (cultureId: string) => ['interventions', cultureId] as const,
   observations: (cultureId: string) => ['observations', cultureId] as const,
   recoltes: ['recoltes'] as const,
+  membresProjet: ['membres-projet'] as const,
   recolte: (cultureId: string) => ['recolte', cultureId] as const,
   photosObservation: (parcelleId: string, cultureId: string, observationId: string) =>
     ['photos-observation', parcelleId, cultureId, observationId] as const,

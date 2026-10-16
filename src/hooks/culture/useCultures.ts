@@ -44,7 +44,11 @@ export function useCulture(parcelleId?: string, cultureId?: string) {
       const create = actions.find((action) => action.entityType === 'CULTURE' && action.actionType === 'CREATE' && (action.entityId ?? action.id) === cultureId);
       if (create) return localCulture(create);
 
-      let base = queryClient.getQueriesData<Paginated<Culture>>({ queryKey: ['cultures'] })
+      // Copie de liste utilisée seulement si elle est à jour : juste après une
+      // modification (statut…), la liste invalidée n'est pas encore relue et
+      // renverrait l'ancienne valeur — on interroge alors le serveur.
+      let base = queryClient
+        .getQueriesData<Paginated<Culture>>({ queryKey: ['cultures'], predicate: (query) => !query.state.isInvalidated })
         .flatMap(([, page]) => page?.items ?? [])
         .find((culture) => culture.id === cultureId);
       if (!base) {
@@ -111,4 +115,56 @@ export function useToutesLesCultures(parcelles: { id: string; nom: string }[] | 
     isError: results.some((result) => result.isError),
     refetch: () => Promise.all(results.map((result) => result.refetch())),
   };
+}
+
+/** Pages de 200 (plafond serveur) ; au-delà de 10 pages, la liste est tronquée et le dit. */
+const LIMITE_PAGE_CULTURES = 200;
+const PAGES_MAX_CULTURES = 10;
+
+/**
+ * Toutes les cultures du compte en une source (`GET /cultures`, paginé) au lieu
+ * d'une requête par parcelle (N+1 de la V1). Même cache hors ligne par compte,
+ * même fusion des saisies en file. Clé sous `['cultures']` : invalidée par
+ * toutes les mutations de culture et de parcelle.
+ */
+export function useCulturesDuCompte() {
+  return useQuery({
+    queryKey: queryKeys.cultures({ compte: true }),
+    queryFn: async (): Promise<Paginated<Culture>> => {
+      const serveur = await accountCachedQuery('cultures-compte', null, async () => {
+        const premiere = await culturesApi.list({ page: 1, limit: LIMITE_PAGE_CULTURES });
+        const pages = Math.min(premiere.totalPages ?? 1, PAGES_MAX_CULTURES);
+        const suivantes = await Promise.all(
+          Array.from({ length: Math.max(0, pages - 1) }, (_, index) =>
+            culturesApi.list({ page: index + 2, limit: LIMITE_PAGE_CULTURES }),
+          ),
+        );
+        return {
+          items: [premiere, ...suivantes].flatMap((page) => page.items),
+          total: premiere.total,
+        };
+      });
+      const items = await mergeCultureList(serveur.items);
+      return {
+        items,
+        total: Math.max(serveur.total, items.length),
+        page: 1,
+        limit: items.length,
+        totalPages: 1,
+      };
+    },
+    placeholderData: (previous) => previous,
+  });
+}
+
+/** Tracé d'une culture (cockpit) : une requête, en cache hors ligne par compte. */
+export function usePointsGPSCulture(parcelleId?: string, cultureId?: string) {
+  return useQuery({
+    queryKey: ['points-culture', cultureId ?? ''] as const,
+    queryFn: () =>
+      accountCachedQuery('points-culture', cultureId, () =>
+        culturesApi.pointsGPS(parcelleId as string, cultureId as string),
+      ),
+    enabled: Boolean(parcelleId && cultureId),
+  });
 }

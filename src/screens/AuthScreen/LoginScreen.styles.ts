@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.background.app },
   flex: { flex: 1 },
   scroll: { flexGrow: 1 },
+  sansScroll: { flex: 1, justifyContent: 'center', gap: 12, paddingBottom: 8 },
   cardWrap: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 24, gap: 14, marginTop: -12 },
   card: {
     backgroundColor: '#FFFFFF',

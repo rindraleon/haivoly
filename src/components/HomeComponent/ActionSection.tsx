@@ -123,7 +123,7 @@ export function ActionSection({
           accent={colors.primary[500]}
           onPress={() =>
             router.push(
-              '/(app)/(parcelles)/parcelles' as any,
+              '/parcelles' as any,
             )
           }
         />
@@ -136,7 +136,7 @@ export function ActionSection({
           accent={colors.info[500]}
           onPress={() =>
             router.push(
-              '/(app)/(cultures)/cultures' as any,
+              '/cultures' as any,
             )
           }
         />
@@ -162,7 +162,7 @@ export function ActionSection({
           accent={colors.success[500]}
           onPress={() =>
             router.push(
-              '/(app)/(observations)/observations' as any,
+              '/observations' as any,
             )
           }
         />

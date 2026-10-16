@@ -26,6 +26,7 @@ export interface ButtonProps {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   style?: ViewStyle;
+  testID?: string;
   textStyle?: TextStyle;
   accessibilityLabel?: string;
 }
@@ -41,6 +42,7 @@ export function Button({
   leftIcon,
   rightIcon,
   style,
+  testID,
   textStyle,
   accessibilityLabel,
 }: ButtonProps) {
@@ -55,7 +57,8 @@ export function Button({
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
       accessibilityState={{ disabled: isDisabled, busy: loading }}
-      style={({ pressed }) => [
+      
+      testID={testID}style={({ pressed }) => [
         styles.base,
         stylesBySize[size],
         styles.parVariante[variant].container,

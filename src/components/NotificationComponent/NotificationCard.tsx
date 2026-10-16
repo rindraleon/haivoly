@@ -20,7 +20,8 @@ const colorByPriority = {
 
 export function NotificationCard({ item, onPress }: { item: Recommendation; onPress?: () => void }) {
   const Icon = iconByType[item.type] ?? Bell;
-  const accent = colorByPriority[item.priority];
+  // Priorité absente (charge utile ancienne) : repli MEDIUM, jamais `undefined`.
+  const accent = colorByPriority[item.priority ?? 'MEDIUM'] ?? colorByPriority.MEDIUM;
   const isUnread = !item.readAt;
 
   return (

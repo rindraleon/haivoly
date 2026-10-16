@@ -13,8 +13,9 @@ import { useParcelles } from '@/hooks';
 
 import { styles } from './ParcelleHistoryScreen.styles';
 import { VueHistoriqueParcelles } from '@/components/ParcelleComponent/VueHistoriqueParcelles';
-import type {
-} from '@/types';
+import type { Parcelle } from '@/types';
+import { ChangementStatutSheet } from '@/features/parcelles';
+import { i18n } from '@/i18n/instance';
 const formatSuperficie = (superficie?: number | null) => {
   if (superficie === undefined || superficie === null) {
     return null;
@@ -68,6 +69,9 @@ export default function HistoriqueParcellesScreen() {
 
   const [tri, setTri] =
     useState<TypeTri>('DEFAUT');
+
+  // Lot 2 bis : parcelle dont la réactivation est en cours de confirmation.
+  const [aReactiver, setAReactiver] = useState<Parcelle | null>(null);
 
 
   const parcellesHistoriques = (parcelles ?? [])
@@ -204,6 +208,7 @@ export default function HistoriqueParcellesScreen() {
   }
 
   return (
+    <>
     <VueHistoriqueParcelles
       filtreOuvert={filtreOuvert}
       formatSuperficie={formatSuperficie}
@@ -217,6 +222,14 @@ export default function HistoriqueParcellesScreen() {
       statutFiltre={statutFiltre}
       tri={tri}
       triOuvert={triOuvert}
+      onReactiver={setAReactiver}
+      libelleReactiver={i18n.t('ecranParcelles.statut.actions.ACTIVE')}
     />
+    <ChangementStatutSheet
+      parcelle={aReactiver}
+      cible={aReactiver ? 'ACTIVE' : null}
+      onFermer={() => setAReactiver(null)}
+    />
+    </>
   );
 }

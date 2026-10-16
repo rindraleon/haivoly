@@ -23,7 +23,11 @@ export function useInvalidateDomain() {
           : []),
       ]);
     },
-    /** Invalide une culture — **dont son statut**, mis à jour par le serveur. */
+    /**
+     * Invalide une culture — **dont son statut**, mis à jour par le serveur —
+     * et son suivi (interventions, observations, récolte) : une observation
+     * ajoutée apparaît aussitôt dans le cockpit et les listes.
+     */
     culture: async (cultureId?: string) => {
       await Promise.all([
         client.invalidateQueries({ queryKey: ['cultures'] }),
@@ -35,6 +39,9 @@ export function useInvalidateDomain() {
               client.invalidateQueries({ queryKey: queryKeys.culture(cultureId) }),
               client.invalidateQueries({
                 queryKey: queryKeys.interventions(cultureId),
+              }),
+              client.invalidateQueries({
+                queryKey: queryKeys.observations(cultureId),
               }),
               client.invalidateQueries({
                 queryKey: queryKeys.recolte(cultureId),

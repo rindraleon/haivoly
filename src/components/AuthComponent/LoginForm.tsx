@@ -30,6 +30,7 @@ export function LoginForm({
   return (
     <View style={styles.form}>
       <Input
+        testID="login-email"
         label={t('auth.login.emailLabel')}
         placeholder={t('auth.login.emailPlaceholder')}
         value={email}
@@ -46,6 +47,7 @@ export function LoginForm({
 
       <View style={{ gap: 6 }}>
         <PasswordInput
+          testID="login-password"
           label={t('libelles.motDePasse')}
           placeholder={t('libelles.votreMotDePasse')}
           value={password}
@@ -65,7 +67,7 @@ export function LoginForm({
         </Pressable>
       </View>
 
-      <Button onPress={onSubmit} loading={loading} fullWidth size="lg">
+      <Button testID="login-submit" onPress={onSubmit} loading={loading} fullWidth size="lg">
         {loading ? t('auth.login.connexionEnCours') : t('auth.login.seConnecter')}
       </Button>
 
