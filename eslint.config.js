@@ -20,19 +20,4 @@ module.exports = defineConfig([
       "no-console": "off",
     },
   },
-  // Les scripts de maintenance (Node) ne sont pas du code applicatif :
-  // `__dirname`, `process` et `console` y sont légitimes.
-  {
-    files: ["scripts/**/*.js"],
-    languageOptions: {
-      globals: {
-        __dirname: "readonly",
-        __filename: "readonly",
-        process: "readonly",
-        console: "readonly",
-        require: "readonly",
-        module: "readonly",
-      },
-    },
-  },
 ]);

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Check, Moon, Smartphone, Sun } from 'lucide-react-native';
+import { Check, LayoutTemplate, Moon, Palette, Smartphone, Sparkles, Sun } from 'lucide-react-native';
 import { router } from 'expo-router';
 
 import { AppText } from '@/components/CommonComponent/AppText';
@@ -10,10 +10,13 @@ import { ScreenContainer } from '@/components/CommonComponent/ScreenContainer';
 import { radius, spacing } from '@/theme';
 import { useTheme } from '@/hooks/common/useTheme';
 import { CHOIX_THEME, type ChoixTheme } from '@/theme/preference';
+import { useVersionUi, type VersionUi } from '@/features/shell/versionUi';
+import { catalogueActif } from '@/features/catalogue/CatalogueScreen';
 
 export function ThemeScreen() {
   const { t } = useTranslation();
   const { jetons, mode, choix, definirTheme } = useTheme();
+  const { version, definirVersion } = useVersionUi();
 
   const selectionner = useCallback(
     (valeur: ChoixTheme) => {
@@ -110,6 +113,67 @@ export function ThemeScreen() {
         <AppText variant="caption" tone="muted" style={styles.rappel}>
           {t('theme.systeme')} : {mode === 'dark' ? t('theme.sombre') : t('theme.clair')}
         </AppText>
+
+        {/* Drapeau de migration V1 → V2 : l'ancien design reste disponible. */}
+        <AppText variant="label" weight="semibold" style={styles.titreSection} accessibilityRole="header">
+          {t('theme.designTitre')}
+        </AppText>
+        {(
+          [
+            { valeur: 'v2', libelle: t('theme.designV2'), detail: t('theme.designV2Detail'), Icone: Sparkles },
+            { valeur: 'v1', libelle: t('theme.designV1'), detail: t('theme.designV1Detail'), Icone: LayoutTemplate },
+          ] as { valeur: VersionUi; libelle: string; detail: string; Icone: typeof Sun }[]
+        ).map((option) => {
+          const actif = version === option.valeur;
+          const { Icone } = option;
+          return (
+            <Card
+              key={option.valeur}
+              onPress={() => definirVersion(option.valeur)}
+              style={[
+                styles.carte,
+                { borderColor: jetons.bordure.defaut, backgroundColor: jetons.fond.carte },
+                actif && { borderColor: jetons.primaire.base, backgroundColor: jetons.primaire.clair },
+              ]}
+            >
+              <View style={styles.ligne}>
+                <View
+                  style={[styles.vignette, { backgroundColor: actif ? jetons.primaire.clair : jetons.fond.attenue }]}
+                  accessibility-hidden
+                >
+                  <Icone size={20} color={actif ? jetons.primaire.base : jetons.texte.secondaire} />
+                </View>
+                <View style={styles.textes}>
+                  <AppText variant="body" weight="medium">
+                    {option.libelle}
+                  </AppText>
+                  <AppText variant="caption" tone="muted">
+                    {option.detail}
+                  </AppText>
+                </View>
+                {actif ? <Check size={20} color={jetons.primaire.base} accessibilityLabel={option.libelle} /> : null}
+              </View>
+            </Card>
+          );
+        })}
+
+        {catalogueActif() ? (
+          <Card
+            onPress={() => router.push('/catalogue')}
+            style={[styles.carte, { borderColor: jetons.bordure.defaut, backgroundColor: jetons.fond.carte }]}
+          >
+            <View style={styles.ligne}>
+              <View style={[styles.vignette, { backgroundColor: jetons.fond.attenue }]} accessibility-hidden>
+                <Palette size={20} color={jetons.texte.secondaire} />
+              </View>
+              <View style={styles.textes}>
+                <AppText variant="body" weight="medium">
+                  {t('theme.catalogue')}
+                </AppText>
+              </View>
+            </View>
+          </Card>
+        ) : null}
       </View>
     </ScreenContainer>
   );
@@ -147,5 +211,8 @@ const styles = StyleSheet.create({
   rappel: {
     marginTop: spacing.xs,
     textAlign: 'center',
+  },
+  titreSection: {
+    marginTop: spacing.lg,
   },
 });

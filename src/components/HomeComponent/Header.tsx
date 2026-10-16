@@ -46,7 +46,7 @@ export function HomeHeader({
     `${prenom?.[0] ?? ''}${user.nom?.[0] ?? ''}`.toUpperCase() || '?';
 
   const ouvrirProfil = () => {
-    router.push('/(app)/(common)/profil');
+    router.push('/profil');
   };
 
   const ouvrirNotifications = () => {

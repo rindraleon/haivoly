@@ -8,12 +8,16 @@ import { getLocalActions } from '@/services/offline/queue';
 import { localIntervention } from '@/services/offline/localEntities';
 import { getActiveAccountId } from '@/storage/authStorage';
 
-export function useInterventions(cultureId?: string) {
-  return useQuery({
-    queryKey: queryKeys.interventions(cultureId ?? ''),
+/**
+ * Options de requête réutilisables (lot 6) : agrégation multi-cultures
+ * via `useQueries` sans dupliquer la logique hors-ligne.
+ */
+export function interventionsQueryOptions(cultureId: string) {
+  return {
+    queryKey: queryKeys.interventions(cultureId),
     queryFn: async () => {
       const serverItems = await accountCachedQuery('interventions', cultureId, () =>
-        interventionsApi.listByCulture(cultureId as string, { limit: 200 }).then(asItems),
+        interventionsApi.listByCulture(cultureId, { limit: 200 }).then(asItems),
       );
       const accountId = await getActiveAccountId();
       if (!accountId) return serverItems;
@@ -22,7 +26,11 @@ export function useInterventions(cultureId?: string) {
         .filter((item) => item.cultureId === cultureId);
     },
     enabled: Boolean(cultureId),
-  });
+  };
+}
+
+export function useInterventions(cultureId?: string) {
+  return useQuery(interventionsQueryOptions(cultureId ?? ''));
 }
 
 export function useIntervention(id?: string) {

@@ -13,7 +13,7 @@ import { ErrorState } from '@/components/CommonComponent/ErrorState';
 import { LoadingState } from '@/components/CommonComponent/LoadingState';
 import { ParcelleMap } from '@/components/ParcelleComponent/ParcelleMap';
 import { ParcelleFormShell } from '@/components/ParcelleComponent/ParcelleFormShell';
-import { useCultures, useParcelle } from '@/hooks';
+import { useCulturesDeParcelle, useParcelle } from '@/hooks';
 import { formatSuperficieValue } from '@/utils/parcelle';
 import { formatDate } from '@/utils/date';
 import type { StatutCulture } from '@/types';
@@ -24,7 +24,9 @@ export default function DetailParcelleScreen() {
   const params = useLocalSearchParams<{ id?: string; parcelleId?: string }>();
   const id = params.id ?? params.parcelleId;
   const parcelle = useParcelle(id);
-  const cultures = useCultures({ parcelleId: id as string, limit: 50 });
+  // P0-2 : `GET /cultures?parcelleId` est refusé (400) ; la route imbriquée
+  // `/parcelles/:id/cultures` renvoie les cultures, file hors ligne fusionnée.
+  const cultures = useCulturesDeParcelle(id);
 
   const points = parcelle.data?.pointsGPS ?? [];
   const latitude = parcelle.data?.latitude ?? null;
@@ -147,7 +149,7 @@ export default function DetailParcelleScreen() {
 
         {cultures.isLoading ? (
           <Text style={styles.muted}>Chargement…</Text>
-        ) : (cultures.data?.items ?? []).length === 0 ? (
+        ) : (cultures.data ?? []).length === 0 ? (
           <EmptyState
             icon={Layers}
             title={i18n.t('libelles.aucuneCulture')}
@@ -161,7 +163,7 @@ export default function DetailParcelleScreen() {
             }
           />
         ) : (
-          (cultures.data?.items ?? []).map((culture) => (
+          (cultures.data ?? []).map((culture) => (
             <Card
               key={culture.id}
               variant="muted"

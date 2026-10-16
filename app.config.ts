@@ -24,7 +24,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // IMMUTABLE une fois publie sur le Play Store : a confirmer.
     package: 'mg.haivoly.app',
     adaptiveIcon: {
-      backgroundColor: '#E6F4FE',
+      backgroundColor: '#F6F9F4',
       foregroundImage: './assets/images/android-icon-foreground.png',
       backgroundImage: './assets/images/android-icon-background.png',
       monochromeImage: './assets/images/android-icon-monochrome.png',
@@ -42,9 +42,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-splash-screen',
       {
-        backgroundColor: '#208AEF',
+        backgroundColor: '#F6F9F4',
         image: './assets/images/splash-icon.png',
-        imageWidth: 76,
+        imageWidth: 160,
       },
     ],
     'expo-secure-store',

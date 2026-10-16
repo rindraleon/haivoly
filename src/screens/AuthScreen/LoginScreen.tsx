@@ -1,11 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { AlertCircle } from 'lucide-react-native';
 import { useLogin } from '@/hooks/auth/useLogin';
 import { authApi } from '@/services';
 import { saveSession } from '@/storage/authStorage';
+import {
+  correspondAuCoffre,
+  lireCoffre,
+  marquerSessionEnLigne,
+  ouvrirSessionHorsLigne,
+  scellerCoffre,
+} from '@/storage/coffreAuth';
+import { getIsOnline } from '@/hooks/common/useNetwork';
 import { reinitialiserExpirationSession } from '@/services/http';
 import { colors } from '@/theme';
 import { LoginHeader } from '@/components/AuthComponent/LoginHeader';
@@ -91,6 +99,14 @@ export default function LoginScreen() {
             } catch {
               // La connexion reste valide même si la lecture de la file locale échoue.
             }
+            // Coffre hors ligne : une empreinte scellée permettra de rouvrir
+            // une session locale si le réseau manque plus tard.
+            try {
+              await scellerCoffre({ email: email.trim(), password, profil: data.utilisateur });
+              await marquerSessionEnLigne();
+            } catch {
+              // Le coffre est un confort : jamais bloquant pour la session.
+            }
             // Nouvelle session : la prochaine expiration devra de nouveau être
             // signalée à l'utilisateur.
             reinitialiserExpirationSession();
@@ -100,14 +116,32 @@ export default function LoginScreen() {
           }
         },
         onError: (error) => {
-          const nonVerifie = estErreurDe(error, 'AUTH_EMAIL_NOT_VERIFIED');
+          // Sans réseau, une combinaison déjà scellée rouvre une session
+          // locale : toute action reste possible hors ligne.
+          void (async () => {
+            try {
+              const enLigne = await getIsOnline();
+              if (!enLigne && (await correspondAuCoffre(email, password))) {
+                const coffre = await lireCoffre();
+                if (coffre) {
+                  await ouvrirSessionHorsLigne(coffre.profil);
+                  reinitialiserExpirationSession();
+                  router.replace('/(app)/home' as any);
+                  return;
+                }
+              }
+            } catch {
+              // repli impossible : on affiche l'erreur classique ci-dessous.
+            }
+            const nonVerifie = estErreurDe(error, 'AUTH_EMAIL_NOT_VERIFIED');
           setVerificationRequise(nonVerifie);
           setRenvoiAccepte(false);
-          setErrors({
-            email: erreurChamp(error, 'email'),
-            password: erreurChamp(error, 'password'),
-            general: messageErreur(error, t('auth.login.identifiantsInvalides')),
-          });
+            setErrors({
+              email: erreurChamp(error, 'email'),
+              password: erreurChamp(error, 'password'),
+              general: messageErreur(error, t('auth.login.identifiantsInvalides')),
+            });
+          })();
         },
       },
     );
@@ -118,7 +152,7 @@ export default function LoginScreen() {
   return (
     <View style={styles.root}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <View style={styles.sansScroll}>
           <LoginHeader />
 
           <View style={styles.cardWrap}>
@@ -202,7 +236,7 @@ export default function LoginScreen() {
 
             <Text style={styles.footer}>{t('auth.piedDePage', { annee: new Date().getFullYear() })}</Text>
           </View>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </View>
   );

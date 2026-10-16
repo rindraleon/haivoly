@@ -252,6 +252,19 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  // Lot 2 bis : bouton secondaire (#1B5E20 sur #E8F5E9, contraste ≈ 7,9:1).
+  reactiverButton: {
+    backgroundColor: '#E8F5E9',
+    borderWidth: 1,
+    borderColor: '#1B5E20',
+  },
+
+  reactiverText: {
+    color: '#1B5E20',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+
   suppressionInfo: {
     marginTop: 10,
     padding: 10,

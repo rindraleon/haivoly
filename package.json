@@ -3,8 +3,10 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.4.2",
     "@expo/ui": "~57.0.12",
     "@expo/vector-icons": "^15.0.2",
+    "@hookform/resolvers": "^5.9.1",
     "@react-native-async-storage/async-storage": "^3.1.1",
     "@react-native-community/datetimepicker": "^9.1.0",
     "@react-native-picker/picker": "2.11.4",
@@ -36,39 +38,31 @@
     "lucide-react-native": "^1.45.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-hook-form": "^7.90.0",
     "react-i18next": "^17.0.16",
     "react-native": "0.86.2",
     "react-native-gesture-handler": "~2.32.0",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.4",
     "react-native-web": "~0.21.0",
     "react-native-webview": "13.16.1",
-    "react-native-worklets": "0.10.1"
+    "react-native-worklets": "0.10.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.14",
     "@types/react": "~19.2.2",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~57.0.2",
-    "eslint-plugin-sonarjs": "^4.2.2",
-    "jest": "^29.7.0",
     "typescript": "~6.0.3"
   },
   "scripts": {
     "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "sonar": "eslint --config eslint.sonar.config.js \"src/**/*.{ts,tsx}\"",
-    "verifier:api": "node scripts/verifier-api.mjs",
-    "verifier:routes": "node scripts/verifier-routes.mjs",
-    "verifier:composants": "node scripts/verifier-composants.mjs"
+    "lint": "expo lint"
   },
   "private": true
 }

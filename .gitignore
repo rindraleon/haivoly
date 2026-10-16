@@ -43,3 +43,10 @@ example
 /android
 .env
 .claude
+
+# tooling IA / éditeur (jamais versionné)
+AGENTS.md
+CLAUDE.md
+.vscode/
+.cursor/
+.aider*

@@ -1,6 +1,6 @@
 import { ApiError, toApiError, type ChampInvalide } from '@/services/http';
 // Import de la couche PURE de l'i18n : `@/i18n` tire expo-localization et
-// AsyncStorage, que l'environnement de test `node` de jest ne peut charger.
+// AsyncStorage.
 import { i18n } from '@/i18n/instance';
 
 type ReponseErreur = {

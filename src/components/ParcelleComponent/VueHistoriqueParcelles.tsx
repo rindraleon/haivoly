@@ -23,6 +23,9 @@ type Props = {
   statutFiltre: StatutHistorique;
   tri: TypeTri;
   triOuvert: boolean;
+  /** Lot 2 bis : réactivation d'une parcelle abandonnée ou archivée. */
+  onReactiver?: (parcelle: Parcelle) => void;
+  libelleReactiver?: string;
 };
 
 export function VueHistoriqueParcelles({
@@ -38,6 +41,8 @@ export function VueHistoriqueParcelles({
   statutFiltre,
   tri,
   triOuvert,
+  onReactiver,
+  libelleReactiver,
 }: Props) {
   return (
 <View style={styles.container}>
@@ -525,6 +530,22 @@ export function VueHistoriqueParcelles({
                       Voir le détail
                     </Text>
                   </TouchableOpacity>
+
+                  {/* RÉACTIVER (lot 2 bis) : abandonnée ou archivée uniquement */}
+
+                  {onReactiver &&
+                  libelleReactiver &&
+                  (item.statut === 'ABANDONNEE' || item.statut === 'ARCHIVEE') ? (
+                    <TouchableOpacity
+                      style={[styles.detailButton, styles.reactiverButton]}
+                      onPress={() => onReactiver(item)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`${libelleReactiver} : ${item.nom}`}
+                      testID={`historique-reactiver-${item.id}`}
+                    >
+                      <Text style={styles.reactiverText}>{libelleReactiver}</Text>
+                    </TouchableOpacity>
+                  ) : null}
 
                   {/* RAISON SUPPRESSION */}
 

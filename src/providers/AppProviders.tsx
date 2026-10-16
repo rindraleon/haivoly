@@ -7,9 +7,18 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Alert, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 
+import { useFonts } from 'expo-font';
+import { Inter_400Regular } from '@expo-google-fonts/inter/400Regular';
+import { Inter_500Medium } from '@expo-google-fonts/inter/500Medium';
+import { Inter_600SemiBold } from '@expo-google-fonts/inter/600SemiBold';
+import { Inter_700Bold } from '@expo-google-fonts/inter/700Bold';
+
 import { ConfirmProvider } from '@/components/CommonComponent/ConfirmProvider';
+import { VersionUiProvider, initialiserVersionUi } from '@/features/shell/versionUi';
+import { definirPolicesChargees } from '@/ui/tokens/typographie';
 import { initialiserI18n } from '@/i18n';
 import { ThemeProvider, initialiserTheme } from '@/theme/ThemeProvider';
+import { ToastProvider } from '@/ui';
 import { i18n } from '@/i18n/instance';
 import { setUnauthorizedHandler } from '@/services/http';
 import { startRecommendationPolling } from '@/services/offline/recommendationSync';
@@ -131,8 +140,16 @@ function SyncProvider({ children }: { children: React.ReactNode }) {
   return <SyncContext.Provider value={value}>{children}</SyncContext.Provider>;
 }
 
+/** Graisses d'Inter utilisées par le design system V2 (sous-chemins : 4 fichiers, pas 18). */
+const POLICES_INTER = { Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold };
+
+/** Au-delà, l'app démarre avec la police système plutôt que d'attendre. */
+const DELAI_MAX_POLICES_MS = 4000;
+
 function PreferencesBootstrap({ children }: { children: React.ReactNode }) {
   const [pret, setPret] = useState(false);
+  const [delaiPolicesEcoule, setDelaiPolicesEcoule] = useState(false);
+  const [policesChargees, erreurPolices] = useFonts(POLICES_INTER);
 
   useEffect(() => {
     let actif = true;
@@ -144,6 +161,9 @@ function PreferencesBootstrap({ children }: { children: React.ReactNode }) {
       initialiserTheme().catch(() => {
         // Même règle : on retombe sur `system`.
       }),
+      initialiserVersionUi().catch(() => {
+        // Même règle : on retombe sur la version par défaut.
+      }),
     ]).finally(() => {
       if (actif) setPret(true);
     });
@@ -152,7 +172,16 @@ function PreferencesBootstrap({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  if (!pret) return null;
+  useEffect(() => {
+    const minuteur = setTimeout(() => setDelaiPolicesEcoule(true), DELAI_MAX_POLICES_MS);
+    return () => clearTimeout(minuteur);
+  }, []);
+
+  const policesPretes = policesChargees || Boolean(erreurPolices) || delaiPolicesEcoule;
+  if (!pret || !policesPretes) return null;
+
+  // Inter indisponible : la typographie V2 retombe sur la police système.
+  definirPolicesChargees(policesChargees);
   return <>{children}</>;
 }
 
@@ -160,15 +189,19 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <PreferencesBootstrap>
       <ThemeProvider>
-        <GestureHandlerRootView style={styles.root}>
-          <SafeAreaProvider>
-            <QueryClientProvider client={queryClient}>
-              <ConfirmProvider>
-                <SyncProvider>{children}</SyncProvider>
-              </ConfirmProvider>
-            </QueryClientProvider>
-          </SafeAreaProvider>
-        </GestureHandlerRootView>
+        <VersionUiProvider>
+          <GestureHandlerRootView style={styles.root}>
+            <SafeAreaProvider>
+              <QueryClientProvider client={queryClient}>
+                <ToastProvider>
+                  <ConfirmProvider>
+                    <SyncProvider>{children}</SyncProvider>
+                  </ConfirmProvider>
+                </ToastProvider>
+              </QueryClientProvider>
+            </SafeAreaProvider>
+          </GestureHandlerRootView>
+        </VersionUiProvider>
       </ThemeProvider>
     </PreferencesBootstrap>
   );

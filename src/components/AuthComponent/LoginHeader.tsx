@@ -1,17 +1,15 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { i18n } from '@/i18n/instance';
-import { Sprout, ShieldCheck, TrendingUp } from 'lucide-react-native';
+import { ShieldCheck, TrendingUp } from 'lucide-react-native';
 import { colors, radius } from '@/theme';
+
+import { MarqueHaivoly } from './MarqueHaivoly';
 
 export function LoginHeader() {
   return (
     <View style={styles.brandBand}>
       <View style={styles.brandCard}>
-        <View style={styles.logoCircle}>
-          <Sprout size={28} color="#FFFFFF" strokeWidth={2.2} />
-        </View>
-        <Text style={styles.brandTitle}>Haivoly</Text>
-        <Text style={styles.brandSubtitle}>Gestion agricole intelligente</Text>
+        <MarqueHaivoly taille={96} />
       </View>
 
       <View style={styles.trustRow}>
@@ -32,8 +30,8 @@ export function LoginHeader() {
 const styles = StyleSheet.create({
   brandBand: {
     backgroundColor: colors.primary[500],
-    paddingTop: 56,
-    paddingBottom: 28,
+    paddingTop: 28,
+    paddingBottom: 20,
     paddingHorizontal: 24,
     gap: 16,
   },

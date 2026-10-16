@@ -8,12 +8,17 @@ import { getLocalActions } from '@/services/offline/queue';
 import { localObservation } from '@/services/offline/localEntities';
 import { getActiveAccountId } from '@/storage/authStorage';
 
-export function useObservations(cultureId?: string) {
-  return useQuery({
-    queryKey: queryKeys.observations(cultureId ?? ''),
+/**
+ * Options de requête réutilisables (lot 6) : permettent d'agréger les
+ * observations de plusieurs cultures via `useQueries` sans dupliquer la
+ * logique hors-ligne.
+ */
+export function observationsQueryOptions(cultureId: string) {
+  return {
+    queryKey: queryKeys.observations(cultureId),
     queryFn: async () => {
       const serverItems = await accountCachedQuery('observations', cultureId, () =>
-        observationsApi.listByCulture(cultureId as string, { limit: 200 }).then(asItems),
+        observationsApi.listByCulture(cultureId, { limit: 200 }).then(asItems),
       );
       const accountId = await getActiveAccountId();
       if (!accountId) return serverItems;
@@ -22,7 +27,11 @@ export function useObservations(cultureId?: string) {
         .filter((item) => item.cultureId === cultureId);
     },
     enabled: Boolean(cultureId),
-  });
+  };
+}
+
+export function useObservations(cultureId?: string) {
+  return useQuery(observationsQueryOptions(cultureId ?? ''));
 }
 
 export function useObservation(id?: string) {

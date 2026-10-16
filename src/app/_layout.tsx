@@ -1,15 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { useColorScheme } from 'react-native';
 
 import { AppProviders } from '@/providers/AppProviders';
+import { BarreEtat } from '@/features/shell/BarreEtat';
 import { i18n } from '@/i18n/instance';
 import { colors } from '@/theme';
 
 export default function RootLayout() {
-  const scheme = useColorScheme();
-
   const [versionLangue, setVersionLangue] = useState(0);
 
   useEffect(() => {
@@ -22,7 +19,7 @@ export default function RootLayout() {
 
   return (
     <AppProviders>
-      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+      <BarreEtat />
       <Stack
         key={versionLangue}
         screenOptions={{

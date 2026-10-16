@@ -191,7 +191,7 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{t('accueil.parcellesRecentes')}</Text>
-            <Pressable onPress={() => router.push('/(app)/(parcelles)/parcelles' as any)} hitSlop={8}>
+            <Pressable onPress={() => router.push('/parcelles' as any)} hitSlop={8}>
               <Text style={styles.seeAll}>{t('commun.actions.voirTout')}</Text>
             </Pressable>
           </View>
