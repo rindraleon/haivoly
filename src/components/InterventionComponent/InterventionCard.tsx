@@ -3,10 +3,10 @@ import { i18n } from '@/i18n/instance';
 import { CalendarDays, ChevronRight, Clock3, FileText, FlaskConical, MapPin, Package, Pencil, Sprout, Trash2 } from 'lucide-react-native';
 import { Card } from '@/components/CommonComponent/Card';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { colors } from '@/theme';
+import { useTheme } from '@/hooks/common/useTheme';
 import { Intervention, StatutCulture, badgeVariant, formaterDate, formaterMontant, interventionDate, libelleStatut } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
 import { PhotosIntervention } from '@/components/InterventionComponent/PhotosIntervention';
-import { styles } from '@/screens/InterventionScreen/InterventionListScreen.styles';
+import { useStylesInterventions } from '@/screens/InterventionScreen/stylesInterventions';
 
 export function InterventionCard({
   intervention,
@@ -18,7 +18,7 @@ export function InterventionCard({
   modificationAutorisee,
   onModifier,
   onSupprimer,
-}: {
+}: Readonly<{
   intervention: Intervention;
   parcelleId: string;
   cultureId: string;
@@ -28,7 +28,9 @@ export function InterventionCard({
   modificationAutorisee: boolean;
   onModifier: (intervention: Intervention) => void;
   onSupprimer: (intervention: Intervention) => void;
-}) {
+}>) {
+  const styles = useStylesInterventions();
+  const { jetons } = useTheme();
   return (
     <Card style={styles.interventionCard}>
       <View style={styles.interventionHeader}>
@@ -36,7 +38,7 @@ export function InterventionCard({
           <View style={styles.interventionIcon}>
             <Sprout
               size={21}
-              color={colors.primary[600]}
+              color={jetons.primaire.base}
               strokeWidth={2}
             />
           </View>
@@ -52,7 +54,7 @@ export function InterventionCard({
             <View style={styles.interventionSubtitleRow}>
               <Sprout
                 size={11}
-                color={colors.neutral[500]}
+                color={jetons.texte.secondaire}
                 strokeWidth={2}
               />
               <Text
@@ -64,7 +66,7 @@ export function InterventionCard({
 
               <MapPin
                 size={11}
-                color={colors.neutral[500]}
+                color={jetons.texte.secondaire}
                 strokeWidth={2}
               />
               <Text
@@ -93,7 +95,7 @@ export function InterventionCard({
           <View style={styles.infoCardIcon}>
             <CalendarDays
               size={16}
-              color={colors.primary[600]}
+              color={jetons.primaire.base}
               strokeWidth={2}
             />
           </View>
@@ -110,7 +112,7 @@ export function InterventionCard({
             <View style={styles.infoCardIcon}>
               <FlaskConical
                 size={16}
-                color={colors.primary[600]}
+                color={jetons.primaire.base}
                 strokeWidth={2}
               />
             </View>
@@ -132,7 +134,7 @@ export function InterventionCard({
             <View style={styles.infoCardIcon}>
               <Package
                 size={16}
-                color={colors.primary[600]}
+                color={jetons.primaire.base}
                 strokeWidth={2}
               />
             </View>
@@ -167,7 +169,7 @@ export function InterventionCard({
           <View style={styles.infoCardIcon}>
             <FileText
               size={15}
-              color={colors.primary[600]}
+              color={jetons.primaire.base}
               strokeWidth={2}
             />
           </View>
@@ -190,7 +192,7 @@ export function InterventionCard({
         <View style={styles.modifiedInfo}>
           <Clock3
             size={14}
-            color={colors.neutral[400]}
+            color={jetons.texte.discret}
             strokeWidth={1.9}
           />
           <Text style={styles.modifiedText} numberOfLines={1}>
@@ -202,7 +204,7 @@ export function InterventionCard({
           <Text style={styles.detailsButtonText}>Détails</Text>
           <ChevronRight
             size={16}
-            color={colors.primary[700]}
+            color={jetons.primaire.fonce}
             strokeWidth={2.2}
           />
         </View>
@@ -217,7 +219,7 @@ export function InterventionCard({
           >
             <Pencil
               size={16}
-              color="#166534"
+              color={jetons.primaire.fonce}
               strokeWidth={2.1}
             />
             <Text style={styles.editButtonText}>{i18n.t('libelles.modifier')}</Text>
@@ -230,7 +232,7 @@ export function InterventionCard({
           >
             <Trash2
               size={16}
-              color="#DC2626"
+              color={jetons.erreur.base}
               strokeWidth={2.1}
             />
             <Text style={styles.deleteButtonText}>{i18n.t('libelles.supprimer')}</Text>

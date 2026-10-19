@@ -1,18 +1,22 @@
 import type { Intervention } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
 import { i18n } from '@/i18n/instance';
-import { styles } from '@/screens/InterventionScreen/InterventionListScreen.styles';
+import { useStylesInterventions } from '@/screens/InterventionScreen/stylesInterventions';
+import { useTheme } from '@/hooks/common/useTheme';
 import type { InterventionPayload, Intervention as InterventionInterventions, UpdateInterventionPayload } from '@/types';
 import type { UseMutationResult } from '@tanstack/react-query';
 import { X } from 'lucide-react-native';
 import { useMemo, type Dispatch, type SetStateAction } from 'react';
 import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { AppSelect, type SelectOption } from '@/components/CommonComponent/AppSelect';
+import { PhotosSelection, type PhotoBrouillon } from '@/components/CommonComponent/PhotosSelection';
+import { PhotosIntervention } from '@/components/InterventionComponent/PhotosIntervention';
 import { DateTimeInput } from '@/components/CommonComponent/DateTimeInput';
 import {
   PRODUITS_INTERVENTION,
   TYPES_INTERVENTION,
   UNITES_INTERVENTION,
 } from '@/utils/intervention';
+
 
 type Props = {
   cout: string;
@@ -23,6 +27,12 @@ type Props = {
   enregistrerIntervention: () => Promise<void>;
   fermerFormulaire: () => void;
   interventionEnModification: Intervention | null;
+  /** Identifiants de contexte : requis pour la gestion des photos en modification. */
+  parcelleId?: string;
+  cultureId?: string;
+  /** Photos mises en attente à la création (envoyées après enregistrement). */
+  photosBrouillon?: PhotoBrouillon[];
+  onChangePhotosBrouillon?: (photos: PhotoBrouillon[]) => void;
   parcelleLabel: string;
   produit: string;
   quantite: string;
@@ -58,6 +68,10 @@ export function VueInterventions({
   enregistrerIntervention,
   fermerFormulaire,
   interventionEnModification,
+  parcelleId,
+  cultureId,
+  photosBrouillon,
+  onChangePhotosBrouillon,
   parcelleLabel,
   produit,
   quantite,
@@ -71,7 +85,9 @@ export function VueInterventions({
   type,
   unite,
   updateMutation,
-}: Props) {
+}: Readonly<Props>) {
+  const styles = useStylesInterventions();
+  const { jetons } = useTheme();
   const optionsType = useMemo(
     () => avecValeurCourante(TYPES_INTERVENTION, type),
     [type],
@@ -104,7 +120,7 @@ export function VueInterventions({
               onPress={fermerFormulaire}
               activeOpacity={0.8}
             >
-              <X size={19} color="#374151" />
+              <X size={19} color={jetons.texte.principal} />
             </TouchableOpacity>
           </View>
 
@@ -124,7 +140,7 @@ export function VueInterventions({
             value={description}
             onChangeText={setDescription}
             placeholder={i18n.t('interventions.decrirePlaceholder')}
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={jetons.texte.discret}
             multiline
             numberOfLines={5}
             textAlignVertical="top"
@@ -158,7 +174,7 @@ export function VueInterventions({
                 value={quantite}
                 onChangeText={setQuantite}
                 placeholder="0"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={jetons.texte.discret}
                 keyboardType="decimal-pad"
                 editable={!createMutation.isPending && !updateMutation.isPending}
               />
@@ -182,10 +198,27 @@ export function VueInterventions({
             value={cout}
             onChangeText={setCout}
             placeholder="0"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={jetons.texte.discret}
             keyboardType="decimal-pad"
             editable={!createMutation.isPending && !updateMutation.isPending}
           />
+
+          {/* Photos : en direct lors d'une modification, mises en attente à la création */}
+          {interventionEnModification && parcelleId && cultureId ? (
+            <PhotosIntervention
+              parcelleId={parcelleId}
+              cultureId={cultureId}
+              interventionId={interventionEnModification.id}
+              modificationAutorisee
+            />
+          ) : null}
+          {!interventionEnModification && photosBrouillon && onChangePhotosBrouillon ? (
+            <PhotosSelection
+              photos={photosBrouillon}
+              onChange={onChangePhotosBrouillon}
+              disabled={createMutation.isPending}
+            />
+          ) : null}
 
           <View style={styles.formButtons}>
             <TouchableOpacity
@@ -202,7 +235,7 @@ export function VueInterventions({
               disabled={createMutation.isPending || updateMutation.isPending}
             >
               {createMutation.isPending || updateMutation.isPending ? (
-                <ActivityIndicator color="#FFFFFF" />
+                <ActivityIndicator color={jetons.primaire.contraste} />
               ) : (
                 <Text style={styles.saveButtonText}>{i18n.t('libelles.enregistrer')}</Text>
               )}

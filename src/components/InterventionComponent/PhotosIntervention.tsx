@@ -3,7 +3,7 @@ import { i18n } from '@/i18n/instance';
 import { useTranslation } from 'react-i18next';
 import { Camera, Plus, X } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { colors } from '@/theme';
+import { useTheme } from '@/hooks/common/useTheme';
 import { getMediaUrl } from '@/utils/mediaUrl';
 import { getToken } from '@/storage/authStorage';
 import {
@@ -18,7 +18,7 @@ import {
   preparerFichierPhoto,
   type EtapeEnvoiPhoto,
 } from '@/utils/photo';
-import { styles } from '@/screens/InterventionScreen/InterventionListScreen.styles';
+import { useStylesInterventions } from '@/screens/InterventionScreen/stylesInterventions';
 import { logger } from '@/utils/logger';
 
 export function PhotosIntervention({
@@ -26,13 +26,15 @@ export function PhotosIntervention({
   cultureId,
   interventionId,
   modificationAutorisee,
-}: {
+}: Readonly<{
   parcelleId: string;
   cultureId: string;
   interventionId: string;
   modificationAutorisee: boolean;
-}) {
+}>) {
   const { t } = useTranslation();
+  const styles = useStylesInterventions();
+  const { jetons } = useTheme();
   const photosQuery = usePhotosIntervention(
     parcelleId,
     cultureId,
@@ -243,7 +245,7 @@ export function PhotosIntervention({
         <View style={styles.infoCardIcon}>
           <Camera
             size={15}
-            color={colors.primary[600]}
+            color={jetons.primaire.base}
             strokeWidth={2}
           />
         </View>
@@ -256,7 +258,7 @@ export function PhotosIntervention({
         <View style={styles.photoLoading}>
           <ActivityIndicator
             size="small"
-            color={colors.primary[600]}
+            color={jetons.primaire.base}
           />
           <Text style={styles.photoLoadingText}>
             Chargement des photos...
@@ -330,7 +332,7 @@ export function PhotosIntervention({
                   >
                     <X
                       size={15}
-                      color="#FFFFFF"
+                      color={jetons.primaire.contraste}
                       strokeWidth={2.8}
                     />
                   </TouchableOpacity>
@@ -350,13 +352,13 @@ export function PhotosIntervention({
                 {photoEnCours || etapeEnvoi !== 'inactif' ? (
                   <ActivityIndicator
                     size="small"
-                    color={colors.primary[600]}
+                    color={jetons.primaire.base}
                   />
                 ) : (
                   <View style={styles.photoAddIcon}>
                     <Plus
                       size={28}
-                      color={colors.primary[600]}
+                      color={jetons.primaire.base}
                       strokeWidth={2.2}
                     />
                   </View>
@@ -373,7 +375,7 @@ export function PhotosIntervention({
           accessibilityRole="progressbar"
           accessibilityLabel={LIBELLE_ETAPE_ENVOI[etapeEnvoi]}
         >
-          <ActivityIndicator size="small" color={colors.primary[700]} />
+          <ActivityIndicator size="small" color={jetons.primaire.base} />
           <Text style={styles.envoiPillText}>
             {LIBELLE_ETAPE_ENVOI[etapeEnvoi]}
           </Text>

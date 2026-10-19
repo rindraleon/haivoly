@@ -2,9 +2,9 @@ import { ScreenHeader } from '@/components/CommonComponent/ScreenHeader';
 import { i18n } from '@/i18n/instance';
 import { InterventionCard } from '@/components/InterventionComponent/InterventionCard';
 import { Intervention, StatutCulture, libelleStatut } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
-import { styles } from '@/screens/InterventionScreen/InterventionListScreen.styles';
+import { useStylesInterventions } from '@/screens/InterventionScreen/stylesInterventions';
 
-import { colors } from '@/theme';
+import { useTheme } from '@/hooks/common/useTheme';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { Plus, Search, SlidersHorizontal, Sprout, X } from 'lucide-react-native';
 import type { Dispatch, SetStateAction } from 'react';
@@ -53,7 +53,9 @@ export function ResumeInterventions({
   statistiquesCourantes,
   statut,
   supprimerIntervention,
-}: Props) {
+}: Readonly<Props>) {
+  const styles = useStylesInterventions();
+  const { jetons } = useTheme();
   return (
 <View style={styles.root}>
         <ScreenHeader
@@ -67,7 +69,7 @@ export function ResumeInterventions({
           <View style={styles.contextIcon}>
             <Sprout
               size={18}
-              color={colors.primary[700]}
+              color={jetons.primaire.fonce}
               strokeWidth={2.2}
             />
           </View>
@@ -88,13 +90,13 @@ export function ResumeInterventions({
             <View style={styles.searchContainer}>
               <Search
                 size={19}
-                color="#9CA3AF"
+                color={jetons.texte.discret}
                 strokeWidth={2}
               />
               <TextInput
                 style={styles.searchInput}
                 placeholder={i18n.t('libelles.rechercheInterventionCourte')}
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={jetons.texte.discret}
                 value={recherche}
                 onChangeText={setRecherche}
                 returnKeyType="search"
@@ -105,7 +107,7 @@ export function ResumeInterventions({
                   onPress={() => setRecherche('')}
                   style={styles.clearSearchButton}
                 >
-                  <X size={17} color="#6B7280" />
+                  <X size={17} color={jetons.texte.secondaire} />
                 </TouchableOpacity>
               ) : null}
             </View>
@@ -113,7 +115,7 @@ export function ResumeInterventions({
             <View style={styles.filterButtonDisabledVisual}>
               <SlidersHorizontal
                 size={19}
-                color="#166534"
+                color={jetons.primaire.fonce}
                 strokeWidth={2}
               />
             </View>
@@ -148,7 +150,7 @@ export function ResumeInterventions({
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={actualiser}
-                tintColor={colors.primary[600]}
+                tintColor={jetons.primaire.base}
               />
             }
             showsVerticalScrollIndicator={false}
@@ -193,7 +195,7 @@ export function ResumeInterventions({
 
             {interventionsQuery.isLoading ? (
               <View style={styles.loadingInline}>
-                <ActivityIndicator color={colors.primary[600]} />
+                <ActivityIndicator color={jetons.primaire.base} />
                 <Text style={styles.loadingInlineText}>
                   Chargement des interventions...
                 </Text>
@@ -265,7 +267,7 @@ export function ResumeInterventions({
           >
             <Plus
               size={27}
-              color="#FFFFFF"
+              color={jetons.primaire.contraste}
               strokeWidth={2.7}
             />
           </Pressable>

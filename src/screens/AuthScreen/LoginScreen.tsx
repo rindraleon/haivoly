@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, Pressable, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
-import { AlertCircle } from 'lucide-react-native';
+import { AlertCircle, ArrowLeft } from 'lucide-react-native';
 import { useLogin } from '@/hooks/auth/useLogin';
 import { authApi } from '@/services';
 import { saveSession } from '@/storage/authStorage';
@@ -16,7 +16,7 @@ import {
 import { getIsOnline } from '@/hooks/common/useNetwork';
 import { reinitialiserExpirationSession } from '@/services/http';
 import { colors } from '@/theme';
-import { LoginHeader } from '@/components/AuthComponent/LoginHeader';
+import { LoginHeaderSimple } from '@/components/AuthComponent/LoginHeaderSimple';
 import { LoginForm } from '@/components/AuthComponent/LoginForm';
 
 import { styles } from './LoginScreen.styles';
@@ -152,10 +152,28 @@ export default function LoginScreen() {
   return (
     <View style={styles.root}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <View style={styles.sansScroll}>
-          <LoginHeader />
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.contenu}>
+            <View style={styles.backWrap}>
+              {router.canGoBack() ? (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('commun.actions.retour')}
+                  onPress={() => router.back()}
+                  style={({ pressed }) => [styles.back, pressed && { opacity: 0.75 }]}
+                >
+                  <ArrowLeft size={19} color="#1B2B20" strokeWidth={2.2} />
+                </Pressable>
+              ) : null}
+            </View>
 
-          <View style={styles.cardWrap}>
+            <LoginHeaderSimple />
+
+            <View style={styles.cardWrap}>
             <View style={styles.card}>
               <View style={styles.header}>
                 <Text style={styles.hTitle}>{t('auth.login.bienvenue')}</Text>
@@ -236,7 +254,8 @@ export default function LoginScreen() {
 
             <Text style={styles.footer}>{t('auth.piedDePage', { annee: new Date().getFullYear() })}</Text>
           </View>
-        </View>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   );

@@ -17,12 +17,13 @@ import {
   useUpdateObservation,
 } from '@/hooks';
 
-import { styles } from './ObservationEditScreen.styles';
+import { useStylesEditionObservation } from './ObservationEditScreen.styles';
 
 import { StatutCulture } from '@/screens/ObservationScreen/ObservationEditScreen.helpers';
 import { VueModificationObservation } from '@/components/ObservationComponent/VueModificationObservation';
 import { logger } from '@/utils/logger';
 export default function ModifierObservationScreen() {
+  const styles = useStylesEditionObservation();
   const params =
     useLocalSearchParams<{
       parcelleId?: string;
@@ -413,6 +414,9 @@ export default function ModifierObservationScreen() {
 
   return (
     <VueModificationObservation
+      cultureId={cultureId}
+      observationId={observationId}
+      parcelleId={parcelleId}
       cultureNom={cultureNom}
       date={date}
       description={description}

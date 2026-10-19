@@ -1,283 +1,275 @@
+import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
+import { radius } from '@/theme';
+import { useTheme } from '@/hooks/common/useTheme';
+import type { Jetons } from '@/theme/jetons';
 
-  content: {
-    padding: 20,
-    paddingBottom: 40,
-  },
+/**
+ * Styles de l'écran de délimitation de culture, dérivés des jetons du thème
+ * actif : couleurs, rayons et espacements alignés sur le reste de
+ * l'application (parcelles, interventions, observations).
+ */
+export function creerStylesDelimitation(j: Jetons) {
+  return StyleSheet.create({
+    // ── États plein écran (chargement / erreur) ─────────────────────
+    container: { flex: 1, backgroundColor: j.fond.app },
+    content: { padding: 16, paddingBottom: 40, gap: 14 },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 24,
+      gap: 14,
+      backgroundColor: j.fond.app,
+    },
+    loadingTexte: { fontSize: 14.5, color: j.texte.secondaire, textAlign: 'center' },
+    errorText: {
+      fontSize: 18,
+      fontWeight: '800',
+      textAlign: 'center',
+      color: j.erreur.base,
+    },
+    errorDescription: {
+      fontSize: 14,
+      color: j.texte.secondaire,
+      textAlign: 'center',
+      lineHeight: 21,
+    },
 
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    gap: 15,
-  },
+    // ── En-tête ─────────────────────────────────────────────────────
+    enteteCarte: {
+      backgroundColor: j.fond.carte,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      borderColor: j.bordure.defaut,
+      padding: 16,
+      gap: 10,
+    },
+    enteteLigne: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    enteteIcone: {
+      width: 44,
+      height: 44,
+      borderRadius: 14,
+      backgroundColor: j.primaire.clair,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    enteteTextes: { flex: 1, minWidth: 0 },
+    enteteSurLigne: {
+      fontSize: 10.5,
+      fontWeight: '800',
+      letterSpacing: 0.9,
+      textTransform: 'uppercase',
+      color: j.primaire.base,
+    },
+    enteteTitre: {
+      marginTop: 2,
+      fontSize: 20,
+      fontWeight: '800',
+      letterSpacing: -0.3,
+      color: j.texte.principal,
+    },
+    enteteNom: {
+      fontSize: 13.5,
+      fontWeight: '600',
+      color: j.texte.secondaire,
+    },
+    enteteInfo: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 8,
+      backgroundColor: j.info.fond,
+      borderRadius: radius.md,
+      paddingHorizontal: 11,
+      paddingVertical: 10,
+    },
+    enteteInfoTexte: { flex: 1, fontSize: 12.5, lineHeight: 18, color: j.info.texte },
 
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
+    // ── Étapes ──────────────────────────────────────────────────────
+    etapesCarte: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: j.fond.carte,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      borderColor: j.bordure.defaut,
+      paddingHorizontal: 12,
+      paddingVertical: 12,
+    },
+    etape: { flex: 1, alignItems: 'center', gap: 5 },
+    etapePastille: {
+      width: 27,
+      height: 27,
+      borderRadius: 999,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: j.fond.attenue,
+      borderWidth: 1,
+      borderColor: j.bordure.defaut,
+    },
+    etapePastilleActive: { backgroundColor: j.primaire.clair, borderColor: j.primaire.base },
+    etapePastilleFaite: { backgroundColor: j.primaire.base, borderColor: j.primaire.base },
+    etapePastilleTexte: { fontSize: 12, fontWeight: '800', color: j.texte.secondaire },
+    etapePastilleTexteActive: { color: j.primaire.fonce },
+    etapePastilleTexteFaite: { color: j.primaire.contraste },
+    etapeLibelle: {
+      fontSize: 10.5,
+      fontWeight: '600',
+      color: j.texte.discret,
+      textAlign: 'center',
+      lineHeight: 14,
+    },
+    etapeLibelleActive: { color: j.primaire.fonce },
+    etapeSeparateur: { width: 14, height: 1, backgroundColor: j.bordure.defaut, marginTop: -16 },
 
-  cultureName: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#1565c0',
-    marginBottom: 12,
-  },
+    // ── Légende ─────────────────────────────────────────────────────
+    carte: {
+      backgroundColor: j.fond.carte,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      borderColor: j.bordure.defaut,
+      padding: 14,
+      gap: 10,
+    },
+    carteTitre: { fontSize: 14, fontWeight: '800', color: j.texte.principal },
+    legendRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+    legendParcelle: {
+      width: 18,
+      height: 18,
+      borderRadius: 5,
+      borderWidth: 3,
+      borderColor: '#2E7D32',
+      backgroundColor: 'transparent',
+    },
+    legendCultureExistante: {
+      width: 18,
+      height: 18,
+      borderRadius: 5,
+      backgroundColor: 'rgba(245, 124, 0, 0.55)',
+      borderWidth: 1.5,
+      borderColor: '#F57C00',
+    },
+    legendCulture: {
+      width: 18,
+      height: 18,
+      borderRadius: 5,
+      backgroundColor: 'rgba(21, 101, 192, 0.45)',
+      borderWidth: 1.5,
+      borderColor: '#1565C0',
+    },
+    legendText: { fontSize: 13, fontWeight: '600', color: j.texte.principal },
+    legendAide: { fontSize: 11.5, color: j.texte.secondaire, lineHeight: 17 },
 
-  info: {
-    fontSize: 15,
-    color: '#555',
-    lineHeight: 22,
-    marginBottom: 15,
-  },
+    // ── Cultures existantes ─────────────────────────────────────────
+    existingCulture: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 10,
+      paddingVertical: 8,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: j.bordure.defaut,
+    },
+    existingNom: { flex: 1, fontSize: 13.5, fontWeight: '600', color: j.texte.principal },
+    existingPoints: { fontSize: 12, color: j.texte.secondaire },
+    noCultureText: { fontSize: 12.5, color: j.texte.secondaire, lineHeight: 18 },
 
-  errorText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#d32f2f',
-  },
+    // ── Compteur + superficie ───────────────────────────────────────
+    jumeles: { flexDirection: 'row', gap: 12 },
+    compteCarte: {
+      flex: 1,
+      backgroundColor: j.fond.carte,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      borderColor: j.bordure.defaut,
+      padding: 13,
+      alignItems: 'center',
+      gap: 3,
+    },
+    compteLabel: { fontSize: 11, fontWeight: '700', color: j.texte.secondaire },
+    compteValeur: { fontSize: 24, fontWeight: '900', color: j.primaire.fonce },
+    compteAide: { fontSize: 11, color: j.texte.discret, textAlign: 'center' },
+    superficieValeur: { fontSize: 17, fontWeight: '800', color: j.texte.principal },
+    superficieHectare: { fontSize: 11.5, color: j.texte.secondaire },
 
-  errorDescription: {
-    fontSize: 15,
-    color: '#555',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
+    // ── Bascule manuel / GPS ────────────────────────────────────────
+    modeContainer: {
+      flexDirection: 'row',
+      gap: 4,
+      backgroundColor: j.fond.attenue,
+      borderRadius: radius.md,
+      padding: 4,
+    },
+    modeButton: {
+      flex: 1,
+      minHeight: 44,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 7,
+      borderRadius: radius.md - 4,
+    },
+    modeButtonActive: { backgroundColor: j.fond.carte, elevation: 1 },
+    modeText: { fontSize: 13.5, fontWeight: '700', color: j.texte.secondaire },
+    modeTextActive: { color: j.primaire.fonce },
 
-  legendContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
+    // ── Carte / WebView ─────────────────────────────────────────────
+    map: {
+      height: 380,
+      borderRadius: radius.lg,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: j.bordure.defaut,
+      backgroundColor: j.fond.attenue,
+    },
 
-  legendRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
+    // ── Points placés ───────────────────────────────────────────────
+    pointsEntete: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    pointsListe: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    pointPuce: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      backgroundColor: j.primaire.clair,
+      borderRadius: 999,
+      paddingHorizontal: 11,
+      paddingVertical: 7,
+      borderWidth: 1,
+      borderColor: j.bordure.defaut,
+    },
+    pointPuceNumero: { fontSize: 12, fontWeight: '800', color: j.primaire.fonce },
+    pointPuceCoord: { fontSize: 11, fontWeight: '600', color: j.texte.secondaire },
 
-  legendParcelle: {
-    width: 18,
-    height: 18,
-    borderWidth: 3,
-    borderColor: '#2e7d32',
-    marginRight: 8,
-  },
+    // ── Actions ─────────────────────────────────────────────────────
+    alerteInvalide: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 9,
+      backgroundColor: j.alerte.fond,
+      borderRadius: radius.md,
+      paddingHorizontal: 12,
+      paddingVertical: 11,
+    },
+    alerteInvalideTexte: { flex: 1, fontSize: 12.5, lineHeight: 18, color: j.alerte.texte },
 
-  legendCultureExistante: {
-    width: 18,
-    height: 18,
-    backgroundColor: '#f57c00',
-    opacity: 0.7,
-    marginRight: 8,
-  },
-
-  legendCulture: {
-    width: 18,
-    height: 18,
-    backgroundColor: '#1565c0',
-    opacity: 0.7,
-    marginRight: 8,
-  },
-
-  legendText: {
-    fontSize: 14,
-    color: '#444',
-  },
-
-  existingContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-
-  existingTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-
-  noCultureText: {
-    color: '#777',
-    fontSize: 14,
-  },
-
-  existingCulture: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-
-  existingCultureName: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#f57c00',
-  },
-
-  existingCulturePoints: {
-    fontSize: 13,
-    color: '#666',
-  },
-
-  counterContainer: {
-    backgroundColor: '#e3f2fd',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 15,
-  },
-
-  counter: {
-    color: '#1565c0',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  areaContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-
-  areaLabel: {
-    fontSize: 14,
-    color: '#666',
-  },
-
-  areaValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1565c0',
-    marginTop: 5,
-  },
-
-  areaHectare: {
-    fontSize: 14,
-    color: '#555',
-    marginTop: 3,
-  },
-
-  modeContainer: {
-    flexDirection: 'row',
-    marginBottom: 15,
-    gap: 10,
-  },
-
-  modeButton: {
-    flex: 1,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#1565c0',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-
-  modeButtonActive: {
-    backgroundColor: '#1565c0',
-  },
-
-  modeText: {
-    color: '#1565c0',
-    fontWeight: 'bold',
-  },
-
-  modeTextActive: {
-    color: '#fff',
-  },
-
-  map: {
-    width: '100%',
-    height: 600,
-    marginTop: 5,
-    marginBottom: 20,
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-
-  pointCard: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-
-  pointTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1565c0',
-    marginBottom: 8,
-  },
-
-  coordinate: {
-    fontSize: 15,
-    marginTop: 3,
-    color: '#444',
-  },
-
-  addButton: {
-    height: 52,
-    backgroundColor: '#1565c0',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-
-  addButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  finishButton: {
-    height: 52,
-    backgroundColor: '#2e7d32',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 15,
-  },
-
-  finishButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  cancelButton: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-
-  cancelText: {
-    color: '#d32f2f',
-    fontSize: 16,
-  },
+    // ── Erreurs plein écran / annulation ────────────────────────────
+    cancelButton: {
+      minHeight: 48,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: radius.md,
+      backgroundColor: j.fond.attenue,
+      paddingHorizontal: 16,
+    },
+    cancelText: { fontSize: 15, fontWeight: '700', color: j.texte.principal },
+  });
 }
-);
+
+export type StylesDelimitation = ReturnType<typeof creerStylesDelimitation>;
+
+/** Hook : styles de délimitation sur le thème actif. */
+export function useStylesDelimitation(): StylesDelimitation {
+  const { jetons } = useTheme();
+  return useMemo(() => creerStylesDelimitation(jetons), [jetons]);
+}

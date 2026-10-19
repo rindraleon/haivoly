@@ -92,6 +92,15 @@ const en: Traductions = {
 
   // ── Authentication ────────────────────────────────────────────────────
   auth: {
+    landing: {
+      titre: 'Your plots and crops, always at hand',
+      sousTitre: 'Map your plots, track your crops and log every farm task — even offline.',
+      foncParcelles: 'GPS-mapped plots',
+      foncCultures: 'Crop and harvest tracking',
+      foncTravaux: 'Interventions and observations with photos',
+      dejaCompte: 'Already have an account? Sign in',
+      pasCompte: 'No account yet? Create yours',
+    },
     login: {
       bienvenue: 'Welcome',
       sousTitre: 'Sign in to access your plots and crops.',
@@ -396,6 +405,19 @@ const en: Traductions = {
     voulezVraimentSupprimerPhoto: 'Do you really want to delete this photo?',
     impossiblePrendrePhoto: 'Cannot take the photo.',
     impossibleSupprimerPhoto: 'Cannot delete the photo.',
+    ajouterPhoto: 'Add a photo',
+    choisirSource: 'Choose a source.',
+    remplacerPhoto: 'Replace photo',
+    supprimerPhoto: 'Delete photo',
+    apercuPhoto: 'Preview of photo {{numero}}',
+    limiteAtteinte: 'Limit reached',
+    limiteTexte: 'You can attach up to {{max}} photos.',
+    aideSelection: 'No photo yet. Take a photo or import one from your device: it will be attached to the record.',
+    aideApresSelection: 'Tap a photo to enlarge it. Photos are compressed and sent with the record.',
+    envoiPhotosEnCours: 'Uploading photos… ({{envoyees}}/{{total}})',
+    photosJointesOk: '{{count}} photo(s) attached successfully.',
+    photosJointesPartiel: '{{envoyees}} photo(s) uploaded, {{echouees}} failed. You can retry from the record page.',
+    captureImpossible: 'Unable to take the photo.',
   },
 
   // ── Shared business labels across screens ─────────────────────────────

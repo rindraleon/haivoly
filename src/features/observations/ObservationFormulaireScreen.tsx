@@ -6,6 +6,13 @@ import { StyleSheet, View } from 'react-native';
 
 import { ChoixCultureSheet } from '@/features/commun/ChoixCultureSheet';
 import { validerObservation } from '@/features/observations/regles';
+import { observationPhotosApi } from '@/services';
+import {
+  PhotosSelection,
+  type PhotoBrouillon,
+} from '@/components/CommonComponent/PhotosSelection';
+import { PhotosObservation } from '@/components/ObservationComponent/PhotosObservation';
+import { envoyerPhotosEnAttente } from '@/utils/envoiPhotos';
 import {
   useCreateObservation,
   useCulturesDuCompte,
@@ -58,6 +65,9 @@ function Formulaire({
   const [date, setDate] = useState(initial.date);
   const [erreurDescription, setErreurDescription] = useState<string | undefined>();
   const [erreurDate, setErreurDate] = useState<string | undefined>();
+  // Photos jointes à la création (envoyées après enregistrement côté serveur).
+  const [photosBrouillon, setPhotosBrouillon] = useState<PhotoBrouillon[]>([]);
+  const [envoiPhotos, setEnvoiPhotos] = useState(false);
 
   const cultures = useCulturesDuCompte();
   const culture = useMemo(
@@ -87,7 +97,27 @@ function Formulaire({
       if (edition && idObservation) {
         await modification.mutateAsync({ id: idObservation, cultureId, body });
       } else {
-        await creation.mutateAsync({ cultureId, body });
+        const creee = await creation.mutateAsync({ cultureId, body });
+        // Photos mises en attente : téléversées dès que l'observation existe.
+        if (photosBrouillon.length > 0 && creee?.id && !creee._localOnly && culture?.parcelleId) {
+          setEnvoiPhotos(true);
+          try {
+            const bilan = await envoyerPhotosEnAttente(photosBrouillon, (fichier) =>
+              observationPhotosApi.upload(culture.parcelleId, cultureId, creee.id, fichier),
+            );
+            if (bilan.echouees > 0) {
+              toast({
+                message: t('photos.photosJointesPartiel', {
+                  envoyees: bilan.envoyees,
+                  echouees: bilan.echouees,
+                }),
+                tone: 'error',
+              });
+            }
+          } finally {
+            setEnvoiPhotos(false);
+          }
+        }
       }
       toast({ message: t(edition ? 'ecranObservations.modifiee' : 'ecranObservations.enregistree'), tone: 'success' });
       if (router.canGoBack()) router.back();
@@ -95,7 +125,7 @@ function Formulaire({
     } catch {
       toast({ message: t('ecranObservations.erreurEnvoi'), tone: 'error' });
     }
-  }, [cultureId, description, date, edition, idObservation, creation, modification, toast, t]);
+  }, [cultureId, culture, description, date, photosBrouillon, edition, idObservation, creation, modification, toast, t]);
 
   return (
     <FormScreen
@@ -109,7 +139,7 @@ function Formulaire({
           testID="observation-enregistrer"
           label={t(edition ? 'ecranObservations.enregistrerModifications' : 'ecranObservations.enregistrer')}
           onPress={() => void enregistrer()}
-          loading={creation.isPending || modification.isPending}
+          loading={creation.isPending || modification.isPending || envoiPhotos}
           disabled={lectureSeule}
         />
       }
@@ -152,6 +182,21 @@ function Formulaire({
           locale="fr-FR"
           error={erreurDate}
         />
+        {/* Photos : en direct en modification, mises en attente à la création */}
+        {edition && idObservation && culture?.parcelleId && cultureId ? (
+          <PhotosObservation
+            parcelleId={culture.parcelleId}
+            cultureId={cultureId}
+            observationId={idObservation}
+            modificationAutorisee={!lectureSeule}
+          />
+        ) : !lectureSeule ? (
+          <PhotosSelection
+            photos={photosBrouillon}
+            onChange={setPhotosBrouillon}
+            disabled={creation.isPending || envoiPhotos}
+          />
+        ) : null}
         <View style={styles.aide}>
           <ClipboardList size={16} color="#5F6F66" />
           <Text variant="caption">{t('ecranObservations.aide')}</Text>

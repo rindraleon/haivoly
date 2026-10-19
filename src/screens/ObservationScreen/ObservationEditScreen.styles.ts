@@ -1,9 +1,18 @@
+import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
-export const styles = StyleSheet.create({
+import { useTheme } from '@/hooks/common/useTheme';
+import type { Jetons } from '@/theme/jetons';
+
+/**
+ * Styles de l'écran de modification d'observation, dérivés des jetons du
+ * thème actif (clair/sombre cohérents avec le reste de l'application).
+ */
+export function creerStylesEditionObservation(j: Jetons) {
+  return StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F8F3',
+    backgroundColor: j.fond.app,
   },
 
   scrollContent: {
@@ -18,14 +27,14 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
-    backgroundColor: '#F4F8F3',
+    backgroundColor: j.fond.app,
   },
 
   loadingIcon: {
     width: 46,
     height: 46,
     borderRadius: 15,
-    backgroundColor: '#E8F5E4',
+    backgroundColor: j.primaire.clair,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
@@ -35,7 +44,7 @@ export const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 16,
-    backgroundColor: '#E8F5E4',
+    backgroundColor: j.primaire.clair,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
@@ -43,20 +52,20 @@ export const styles = StyleSheet.create({
 
   loadingText: {
     marginTop: 12,
-    color: '#6B7280',
+    color: j.texte.secondaire,
     fontSize: 14,
   },
 
   errorTitle: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#172018',
+    color: j.texte.principal,
     textAlign: 'center',
     marginBottom: 8,
   },
 
   errorText: {
-    color: '#6B7280',
+    color: j.texte.secondaire,
     fontSize: 14,
     lineHeight: 20,
     textAlign: 'center',
@@ -64,14 +73,14 @@ export const styles = StyleSheet.create({
   },
 
   backButtonLarge: {
-    backgroundColor: '#166534',
+    backgroundColor: j.primaire.fonce,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 12,
   },
 
   backButtonText: {
-    color: '#FFFFFF',
+    color: j.primaire.contraste,
     fontWeight: '800',
   },
 
@@ -86,9 +95,9 @@ export const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: j.fond.carte,
     borderWidth: 1,
-    borderColor: '#DCE7DA',
+    borderColor: j.bordure.defaut,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -102,7 +111,7 @@ export const styles = StyleSheet.create({
   eyebrow: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#4D7C55',
+    color: j.primaire.base,
     letterSpacing: 1,
     marginBottom: 3,
   },
@@ -111,7 +120,7 @@ export const styles = StyleSheet.create({
     fontSize: 24,
     lineHeight: 29,
     fontWeight: '800',
-    color: '#172018',
+    color: j.texte.principal,
     letterSpacing: -0.4,
   },
 
@@ -119,19 +128,19 @@ export const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 12,
     lineHeight: 18,
-    color: '#6B7280',
+    color: j.texte.secondaire,
   },
 
 
   contextCard: {
     position: 'relative',
     overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: j.fond.carte,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#DCE7DA',
+    borderColor: j.bordure.defaut,
     marginBottom: 24,
-    shadowColor: '#14532D',
+    shadowColor: j.primaire.fonce,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -147,7 +156,7 @@ export const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     width: 5,
-    backgroundColor: '#22C55E',
+    backgroundColor: j.primaire.base,
   },
 
   contextMain: {
@@ -163,7 +172,7 @@ export const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 16,
-    backgroundColor: '#ECFDF3',
+    backgroundColor: j.primaire.clair,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -178,7 +187,7 @@ export const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.9,
-    color: '#9CA3AF',
+    color: j.texte.discret,
   },
 
   contextCulture: {
@@ -186,7 +195,7 @@ export const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 21,
     fontWeight: '800',
-    color: '#172018',
+    color: j.texte.principal,
   },
 
   parcelleLine: {
@@ -199,7 +208,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 5,
     fontSize: 11,
-    color: '#6B7280',
+    color: j.texte.secondaire,
   },
 
   statusBadge: {
@@ -209,23 +218,23 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 9,
     paddingVertical: 7,
     borderRadius: 999,
-    backgroundColor: '#ECFDF3',
+    backgroundColor: j.primaire.clair,
     borderWidth: 1,
-    borderColor: '#BBF7D0',
+    borderColor: j.primaire.clair,
   },
 
   statusDot: {
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: '#22C55E',
+    backgroundColor: j.primaire.base,
     marginRight: 5,
   },
 
   statusText: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#166534',
+    color: j.primaire.fonce,
   },
 
 
@@ -240,7 +249,7 @@ export const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 11,
-    backgroundColor: '#E8F5E4',
+    backgroundColor: j.primaire.clair,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 9,
@@ -254,24 +263,24 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 18,
     fontWeight: '800',
-    color: '#172018',
+    color: j.texte.principal,
   },
 
   sectionSubtitle: {
     marginTop: 2,
     fontSize: 11,
     lineHeight: 16,
-    color: '#6B7280',
+    color: j.texte.secondaire,
   },
 
 
   existingCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: j.fond.carte,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#DCE7DA',
+    borderColor: j.bordure.defaut,
     padding: 12,
     marginBottom: 14,
   },
@@ -280,7 +289,7 @@ export const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 12,
-    backgroundColor: '#ECFDF3',
+    backgroundColor: j.primaire.clair,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
@@ -294,22 +303,22 @@ export const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.7,
-    color: '#9CA3AF',
+    color: j.texte.discret,
   },
 
   existingDate: {
     marginTop: 3,
     fontSize: 12,
     fontWeight: '700',
-    color: '#374151',
+    color: j.texte.principal,
   },
 
 
   descriptionCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: j.fond.carte,
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: '#DCE7DA',
+    borderColor: j.bordure.defaut,
     overflow: 'hidden',
     marginBottom: 14,
   },
@@ -321,7 +330,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
-    borderBottomColor: '#EEF3ED',
+    borderBottomColor: j.bordure.defaut,
   },
 
   fieldTitleWrap: {
@@ -334,13 +343,13 @@ export const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '800',
     letterSpacing: 0.8,
-    color: '#4B5563',
+    color: j.texte.secondaire,
   },
 
   requiredText: {
     fontSize: 9,
     fontWeight: '700',
-    color: '#16A34A',
+    color: j.primaire.base,
   },
 
   descriptionInput: {
@@ -350,7 +359,7 @@ export const styles = StyleSheet.create({
     paddingBottom: 12,
     fontSize: 14,
     lineHeight: 21,
-    color: '#172018',
+    color: j.texte.principal,
   },
 
   descriptionFooter: {
@@ -368,22 +377,22 @@ export const styles = StyleSheet.create({
     paddingRight: 12,
     fontSize: 10,
     lineHeight: 14,
-    color: '#9CA3AF',
+    color: j.texte.discret,
   },
 
   characterCount: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#9CA3AF',
+    color: j.texte.discret,
   },
 
 
   tipCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: '#F0FDF4',
+    backgroundColor: j.primaire.clair,
     borderWidth: 1,
-    borderColor: '#D1FAE5',
+    borderColor: j.primaire.clair,
     borderRadius: 15,
     padding: 12,
     marginBottom: 22,
@@ -393,7 +402,7 @@ export const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: '#DCFCE7',
+    backgroundColor: j.primaire.clair,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 9,
@@ -406,14 +415,14 @@ export const styles = StyleSheet.create({
   tipTitle: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#166534',
+    color: j.primaire.fonce,
   },
 
   tipText: {
     marginTop: 3,
     fontSize: 10,
     lineHeight: 15,
-    color: '#4B5563',
+    color: j.texte.secondaire,
   },
 
 
@@ -421,10 +430,10 @@ export const styles = StyleSheet.create({
     minHeight: 72,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: j.fond.carte,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#DCE7DA',
+    borderColor: j.bordure.defaut,
     paddingHorizontal: 12,
   },
 
@@ -432,7 +441,7 @@ export const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 12,
-    backgroundColor: '#ECFDF3',
+    backgroundColor: j.primaire.clair,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
@@ -446,7 +455,7 @@ export const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.7,
-    color: '#9CA3AF',
+    color: j.texte.discret,
     marginBottom: 2,
   },
 
@@ -456,7 +465,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 0,
     fontSize: 13,
     fontWeight: '700',
-    color: '#172018',
+    color: j.texte.principal,
   },
 
   dateHelp: {
@@ -465,18 +474,18 @@ export const styles = StyleSheet.create({
     marginBottom: 22,
     fontSize: 10,
     lineHeight: 15,
-    color: '#9CA3AF',
+    color: j.texte.discret,
   },
 
 
   saveButton: {
     minHeight: 58,
     borderRadius: 17,
-    backgroundColor: '#166534',
+    backgroundColor: j.primaire.fonce,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 14,
-    shadowColor: '#166534',
+    shadowColor: j.primaire.fonce,
     shadowOffset: {
       width: 0,
       height: 5,
@@ -494,7 +503,7 @@ export const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 12,
-    backgroundColor: '#22C55E',
+    backgroundColor: j.primaire.base,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
@@ -505,14 +514,14 @@ export const styles = StyleSheet.create({
   },
 
   saveText: {
-    color: '#FFFFFF',
+    color: j.primaire.contraste,
     fontSize: 14,
     fontWeight: '800',
   },
 
   saveSubtext: {
     marginTop: 2,
-    color: '#DCFCE7',
+    color: j.primaire.clair,
     fontSize: 10,
     fontWeight: '500',
   },
@@ -520,9 +529,9 @@ export const styles = StyleSheet.create({
   readOnlyBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF7ED',
+    backgroundColor: j.alerte.fond,
     borderWidth: 1,
-    borderColor: '#FED7AA',
+    borderColor: j.alerte.fond,
     borderRadius: 16,
     padding: 14,
   },
@@ -531,7 +540,7 @@ export const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 11,
-    backgroundColor: '#FFEDD5',
+    backgroundColor: j.alerte.fond,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
@@ -542,14 +551,14 @@ export const styles = StyleSheet.create({
   },
 
   readOnlyTitle: {
-    color: '#9A3412',
+    color: j.alerte.texte,
     fontSize: 12,
     fontWeight: '800',
   },
 
   readOnlyText: {
     marginTop: 3,
-    color: '#9A3412',
+    color: j.alerte.texte,
     fontSize: 10,
     lineHeight: 15,
   },
@@ -559,7 +568,16 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 10,
     lineHeight: 15,
-    color: '#9CA3AF',
+    color: j.texte.discret,
   },
 }
 );
+}
+
+export type StylesEditionObservation = ReturnType<typeof creerStylesEditionObservation>;
+
+/** Hook : styles d'édition d'observation sur le thème actif. */
+export function useStylesEditionObservation(): StylesEditionObservation {
+  const { jetons } = useTheme();
+  return useMemo(() => creerStylesEditionObservation(jetons), [jetons]);
+}

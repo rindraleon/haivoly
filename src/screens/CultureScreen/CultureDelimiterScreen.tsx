@@ -17,7 +17,7 @@ import type { PointGPS } from '@/types';
 
 import { getCurrentLocation , culturesApi } from '@/services';
 
-import { styles } from './CultureDelimiterScreen.styles';
+import { useStylesDelimitation } from './CultureDelimiterScreen.styles';
 
 import { VueDelimitation } from '@/components/CultureComponent/VueDelimitation';
 import {
@@ -36,6 +36,7 @@ interface ParcelleGPSPoint {
 }
 
 export default function DelimiterCultureScreen() {
+  const styles = useStylesDelimitation();
 
   const {
     parcelleId,
@@ -1341,7 +1342,7 @@ map.on(
     if (!autorise) {
 
       alert(
-        i18n.t('cultures.delimitation.pointHorsParcelle')
+        '${i18n.t('cultures.delimitation.pointHorsParcelle')}'
       );
 
       return;
@@ -1362,7 +1363,7 @@ map.on(
       if (interdit) {
 
         alert(
-          i18n.t('divers.zoneOccupeeCulture', { nom: culture.cultureNom })
+          '${i18n.t('divers.zoneOccupeeCulture', { nom: '@@NOM@@' })}'.replace(/@@NOM@@/g, culture.cultureNom)
         );
 
         return;
@@ -1507,7 +1508,7 @@ culturePoints.forEach(
         if (!dansParcelle) {
 
           alert(
-            i18n.t('cultures.delimitation.pointDoitResterDedans')
+            '${i18n.t('cultures.delimitation.pointDoitResterDedans')}'
           );
 
           window.ReactNativeWebView.postMessage(
@@ -1542,7 +1543,7 @@ culturePoints.forEach(
           ) {
 
             alert(
-              i18n.t('divers.pointDansCulture', { nom: culture.cultureNom })
+              '${i18n.t('divers.pointDansCulture', { nom: '@@NOM@@' })}'.replace(/@@NOM@@/g, culture.cultureNom)
             );
 
             window.ReactNativeWebView.postMessage(

@@ -1,7 +1,9 @@
 import { formaterDate } from '@/screens/ObservationScreen/ObservationEditScreen.helpers';
 import { i18n } from '@/i18n/instance';
 import { DateTimeInput } from '@/components/CommonComponent/DateTimeInput';
-import { styles } from '@/screens/ObservationScreen/ObservationEditScreen.styles';
+import { PhotosObservation } from '@/components/ObservationComponent/PhotosObservation';
+import { useStylesEditionObservation } from '@/screens/ObservationScreen/ObservationEditScreen.styles';
+import { useTheme } from '@/hooks/common/useTheme';
 import type { Observation, UpdateObservationPayload } from '@/types';
 import type { UseMutationResult } from '@tanstack/react-query';
 import { router } from 'expo-router';
@@ -9,6 +11,10 @@ import { ArrowLeft, CalendarDays, Check, FileText, MapPin, Pencil, Sprout } from
 import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type Props = {
+  /** Identifiants pour la gestion des photos en direct. */
+  parcelleId?: string;
+  cultureId?: string;
+  observationId?: string;
   cultureNom: string;
   date: string;
   description: string;
@@ -23,6 +29,9 @@ type Props = {
 };
 
 export function VueModificationObservation({
+  parcelleId,
+  cultureId,
+  observationId,
   cultureNom,
   date,
   description,
@@ -34,7 +43,9 @@ export function VueModificationObservation({
   setDescription,
   statutLabel,
   updateMutation,
-}: Props) {
+}: Readonly<Props>) {
+  const styles = useStylesEditionObservation();
+  const { jetons } = useTheme();
   if (!observation) return null;
   return (
 <KeyboardAvoidingView
@@ -75,7 +86,7 @@ export function VueModificationObservation({
             >
               <ArrowLeft
                 size={21}
-                color="#172018"
+                color={jetons.texte.principal}
                 strokeWidth={2.2}
               />
             </TouchableOpacity>
@@ -136,7 +147,7 @@ export function VueModificationObservation({
               >
                 <Sprout
                   size={24}
-                  color="#166534"
+                  color={jetons.primaire.fonce}
                   strokeWidth={2.2}
                 />
               </View>
@@ -171,7 +182,7 @@ export function VueModificationObservation({
                 >
                   <MapPin
                     size={14}
-                    color="#6B7280"
+                    color={jetons.texte.secondaire}
                     strokeWidth={2}
                   />
 
@@ -223,7 +234,7 @@ export function VueModificationObservation({
             >
               <Pencil
                 size={17}
-                color="#166534"
+                color={jetons.primaire.fonce}
                 strokeWidth={2.2}
               />
             </View>
@@ -265,7 +276,7 @@ export function VueModificationObservation({
             >
               <CalendarDays
                 size={17}
-                color="#166534"
+                color={jetons.primaire.fonce}
                 strokeWidth={2.1}
               />
             </View>
@@ -315,7 +326,7 @@ export function VueModificationObservation({
               >
                 <FileText
                   size={16}
-                  color="#166534"
+                  color={jetons.primaire.fonce}
                   strokeWidth={2.1}
                 />
 
@@ -346,7 +357,7 @@ export function VueModificationObservation({
                 setDescription
               }
               placeholder={i18n.t('observations.placeholderDescription')}
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={jetons.texte.discret}
               multiline
               numberOfLines={7}
               textAlignVertical="top"
@@ -394,7 +405,7 @@ export function VueModificationObservation({
             >
               <Sprout
                 size={16}
-                color="#166534"
+                color={jetons.primaire.fonce}
                 strokeWidth={2}
               />
             </View>
@@ -438,7 +449,7 @@ export function VueModificationObservation({
             >
               <CalendarDays
                 size={17}
-                color="#166534"
+                color={jetons.primaire.fonce}
                 strokeWidth={2.2}
               />
             </View>
@@ -478,7 +489,7 @@ export function VueModificationObservation({
             >
               <CalendarDays
                 size={19}
-                color="#166534"
+                color={jetons.primaire.fonce}
                 strokeWidth={2.1}
               />
             </View>
@@ -510,8 +521,18 @@ export function VueModificationObservation({
 
           {}
 
+          {/* Photos : ajout, remplacement et suppression en direct */}
+          {modificationAutorisee && parcelleId && cultureId && observationId ? (
+            <PhotosObservation
+              parcelleId={parcelleId}
+              cultureId={cultureId}
+              observationId={observationId}
+              modificationAutorisee
+            />
+          ) : null}
+
           {modificationAutorisee ? (
-            <TouchableOpacity
+          <TouchableOpacity
               style={[
                 styles.saveButton,
                 updateMutation.isPending &&
@@ -529,7 +550,7 @@ export function VueModificationObservation({
                 <>
                   <ActivityIndicator
                     size="small"
-                    color="#FFFFFF"
+                    color={jetons.primaire.contraste}
                   />
 
                   <Text
@@ -549,7 +570,7 @@ export function VueModificationObservation({
                   >
                     <Check
                       size={18}
-                      color="#FFFFFF"
+                      color={jetons.primaire.contraste}
                       strokeWidth={2.8}
                     />
                   </View>
@@ -591,7 +612,7 @@ export function VueModificationObservation({
               >
                 <FileText
                   size={17}
-                  color="#9A3412"
+                  color={jetons.alerte.texte}
                   strokeWidth={2}
                 />
               </View>

@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { i18n } from '@/i18n/instance';
 import { StyleSheet, Text, View } from 'react-native';
 import {
   ArrowLeft,
   ArrowRight,
   Check,
+  FileText,
   Layers,
   Save,
+  SkipForward,
   Sprout,
   Trash2,
   X,
@@ -20,7 +22,9 @@ import { Badge } from '@/components/CommonComponent/Badge';
 import { Button } from '@/components/CommonComponent/Button';
 import { Card } from '@/components/CommonComponent/Card';
 import { Input } from '@/components/CommonComponent/Input';
-import { colors, radius } from '@/theme';
+import { radius } from '@/theme';
+import { useTheme } from '@/hooks/common/useTheme';
+import type { Jetons } from '@/theme/jetons';
 import { centroid, formatSuperficie, polishPolygon } from '@/utils/parcelle';
 import type { PointGPS } from '@/types';
 
@@ -57,7 +61,17 @@ const TYPES_SOL = [
   { value: 'AUTRE', label: 'Autre' },
 ];
 
-const ETAPES = ['Informations', i18n.t('domaine.delimitation'), i18n.t('parcelles.resume'), 'Enregistrement'];
+/**
+ * Assistant de parcelle : Informations → Délimitation → Description →
+ * Résumé & validation → Enregistrement.
+ *
+ * Règle d'or : aucune étape ne doit pouvoir piéger l'utilisateur. La
+ * délimitation est facultative (elle peut être faite plus tard depuis la
+ * fiche parcelle) ; si elle est commencée, 3 sommets distincts minimum sont
+ * exigés, avec un message expliquant précisément ce qui manque.
+ */
+
+const NB_ETAPES = 4;
 
 export function ParcelleWizard({
   mode,
@@ -67,6 +81,8 @@ export function ParcelleWizard({
   onCancel,
   onSubmit,
 }: Readonly<ParcelleWizardProps>) {
+  const { jetons } = useTheme();
+  const styles = useMemo(() => creerStyles(jetons), [jetons]);
   const creation = mode === 'create';
   const [etape, setEtape] = useState(0);
   const [nom, setNom] = useState(initialValues?.nom ?? '');
@@ -76,19 +92,29 @@ export function ParcelleWizard({
     () => polishPolygon(initialValues?.pointsGPS ?? []) ?? [],
   );
 
+  const ETAPES = [
+    i18n.t('parcelles.etapeInformations', { defaultValue: 'Informations' }),
+    i18n.t('domaine.delimitation'),
+    i18n.t('parcelles.etapeDescription', { defaultValue: 'Description' }),
+    i18n.t('parcelles.etapeValidation', { defaultValue: 'Validation' }),
+  ];
+
   const centre = centroid(points);
   const superficie = formatSuperficie(points);
 
   // ── Validation de chaque étape ──
   const etapeValide = (index: number): boolean => {
     if (index === 0) return nom.trim().length >= 2;
-    if (index === 1) return points.length >= 3;
+    // Délimitation : 0 point (ignorée) ou ≥ 3 sommets (polygone valide).
+    if (index === 1) return points.length === 0 || points.length >= 3;
     return true;
   };
 
   const motifBlocage = (index: number): string | null => {
     if (index === 0) return i18n.t('parcelles.nomRequis');
-    if (index === 1) return i18n.t('parcelles.ajoutezMoins3Sommets');
+    if (index === 1) {
+      return i18n.t('parcelles.ajoutezMoins3Sommets');
+    }
     return null;
   };
 
@@ -99,11 +125,18 @@ export function ParcelleWizard({
     pointsGPS: points,
   };
 
-  const dernier = etape === ETAPES.length - 1;
+  const derniere = etape === NB_ETAPES - 1;
   const suivantPossible = etapeValide(etape);
+  // L'étape délimitation ne doit jamais piéger : on peut l'ignorer tant
+  // qu'aucun sommet n'a été posé, ou la terminer dès 3 sommets valides.
+  const etapeDelimitationIgnorable = etape === 1 && points.length < 3;
 
   const reculer = () => setEtape((valeur) => Math.max(valeur - 1, 0));
-  const avancer = () => setEtape((valeur) => (etapeValide(etape) ? valeur + 1 : valeur));
+  const avancer = () => setEtape((valeur) => Math.min(valeur + 1, NB_ETAPES - 1));
+  const ignorerDelimitation = () => {
+    setPoints([]);
+    setEtape(2);
+  };
 
   const deplacerPoint = (index: number, position: { latitude: number; longitude: number }) => {
     setPoints((actuels) =>
@@ -124,7 +157,7 @@ export function ParcelleWizard({
   return (
     <ParcelleFormShell
       title={creation ? 'Nouvelle parcelle' : i18n.t('parcelles.modifierParcelle')}
-      subtitle={`Étape ${etape + 1}/${ETAPES.length} · ${ETAPES[etape]}`}
+      subtitle={`Étape ${etape + 1}/${NB_ETAPES} · ${ETAPES[etape]}`}
       onBack={etape === 0 ? onCancel : reculer}
       footer={
         <View style={styles.footer}>
@@ -132,7 +165,7 @@ export function ParcelleWizard({
             <Button
               variant="outline"
               onPress={reculer}
-              leftIcon={<ArrowLeft size={16} color={colors.neutral[700]} />}
+              leftIcon={<ArrowLeft size={16} color={jetons.texte.principal} />}
               style={styles.footerButton}
             >
               Précédent
@@ -141,28 +174,37 @@ export function ParcelleWizard({
             <Button
               variant="ghost"
               onPress={onCancel}
-              leftIcon={<X size={16} color={colors.neutral[700]} />}
+              leftIcon={<X size={16} color={jetons.texte.principal} />}
               style={styles.footerButton}
             >
               Annuler
             </Button>
           )}
 
-          {dernier ? (
+          {derniere ? (
             <Button
               onPress={() => onSubmit(valeurs)}
               loading={submitting}
               disabled={submitting}
-              leftIcon={<Save size={16} color={colors.neutral[0]} />}
+              leftIcon={<Save size={16} color={jetons.primaire.contraste} />}
               style={styles.footerButton}
             >
               Enregistrer
+            </Button>
+          ) : etapeDelimitationIgnorable ? (
+            <Button
+              onPress={ignorerDelimitation}
+              variant="outline"
+              leftIcon={<SkipForward size={16} color={jetons.texte.principal} />}
+              style={styles.footerButton}
+            >
+              Ignorer pour l’instant
             </Button>
           ) : (
             <Button
               onPress={avancer}
               disabled={!suivantPossible}
-              leftIcon={<ArrowRight size={16} color={colors.neutral[0]} />}
+              leftIcon={<ArrowRight size={16} color={jetons.primaire.contraste} />}
               style={styles.footerButton}
             >
               Suivant
@@ -182,7 +224,7 @@ export function ParcelleWizard({
               ]}
             >
               {index < etape ? (
-                <Check size={12} color={colors.neutral[0]} />
+                <Check size={12} color={jetons.primaire.contraste} />
               ) : (
                 <Text style={[styles.progressionNumero, index <= etape && styles.texteActif]}>
                   {index + 1}
@@ -203,7 +245,7 @@ export function ParcelleWizard({
       {etape === 0 ? (
         <Card style={styles.carte}>
           <View style={styles.entete}>
-            <Sprout size={16} color={colors.primary[700]} />
+            <Sprout size={16} color={jetons.primaire.base} />
             <Text style={styles.titre}>{i18n.t('libelles.informationsParcelle')}</Text>
           </View>
 
@@ -224,31 +266,23 @@ export function ParcelleWizard({
             placeholder={i18n.t('parcelles.selectionnerTypeSol')}
           />
 
-          <Input
-            label="Description"
-            value={description}
-            onChangeText={setDescription}
-            placeholder={i18n.t('parcelles.descriptionPlaceholder')}
-            multiline
-          />
-
           {!etapeValide(0) && motifBlocage(0) ? (
             <Text style={styles.aide}>{motifBlocage(0)}</Text>
           ) : null}
         </Card>
       ) : null}
 
-      {/* Étape 2 — Délimitation --------------------------------------- */}
+      {/* Étape 2 — Délimitation (facultative) -------------------------- */}
       {etape === 1 ? (
         <Card style={styles.carte}>
           <View style={styles.entete}>
-            <Layers size={16} color={colors.primary[700]} />
+            <Layers size={16} color={jetons.primaire.base} />
             <Text style={styles.titre}>Délimitation du terrain</Text>
           </View>
 
           {/* État « mode délimitation » visible en permanence */}
           <View style={styles.bandeau}>
-            <Layers size={14} color={colors.primary[700]} />
+            <Layers size={14} color={jetons.primaire.base} />
             <Text style={styles.bandeauTexte}>
               Mode délimitation actif · {points.length} sommet(s)
             </Text>
@@ -257,7 +291,8 @@ export function ParcelleWizard({
           <Text style={styles.aide}>
             Capturez votre position GPS à chaque coin, ou touchez la carte pour
             ajouter des sommets, puis déplacez un sommet pour l’ajuster. Un polygone
-            valide comporte au moins 3 sommets.
+            valide comporte au moins 3 sommets. Cette étape est facultative : vous
+            pourrez délimiter la parcelle plus tard depuis sa fiche.
           </Text>
 
           <View style={styles.carteMap}>
@@ -278,7 +313,7 @@ export function ParcelleWizard({
             <View style={styles.rangeeGauche}>
               <Badge
                 label={`${points.length} sommet(s)`}
-                variant={points.length >= 3 ? 'success' : 'warning'}
+                variant={points.length >= 3 ? 'success' : points.length > 0 ? 'warning' : 'neutral'}
               />
               {superficie ? <Badge label={`≈ ${superficie}`} variant="neutral" /> : null}
             </View>
@@ -288,7 +323,7 @@ export function ParcelleWizard({
                 variant="ghost"
                 onPress={retirerDernierPoint}
                 disabled={points.length === 0}
-                leftIcon={<Trash2 size={14} color={colors.neutral[700]} />}
+                leftIcon={<Trash2 size={14} color={jetons.texte.principal} />}
               >
                 Dernier point
               </Button>
@@ -303,18 +338,38 @@ export function ParcelleWizard({
             </View>
           </View>
 
-          {!etapeValide(1) && motifBlocage(1) ? (
-            <Text style={styles.aide}>{motifBlocage(1)}</Text>
+          {points.length > 0 && !etapeValide(1) && motifBlocage(1) ? (
+            <Text style={styles.avertissement}>{motifBlocage(1)}</Text>
           ) : null}
         </Card>
       ) : null}
 
-      {/* Étape 3 — Résumé --------------------------------------------- */}
+      {/* Étape 3 — Description ----------------------------------------- */}
       {etape === 2 ? (
         <Card style={styles.carte}>
           <View style={styles.entete}>
-            <Check size={16} color={colors.primary[700]} />
-            <Text style={styles.titre}>Résumé</Text>
+            <FileText size={16} color={jetons.primaire.base} />
+            <Text style={styles.titre}>Description</Text>
+          </View>
+
+          <Input
+            label="Description"
+            value={description}
+            onChangeText={setDescription}
+            placeholder={i18n.t('parcelles.descriptionPlaceholder')}
+            multiline
+            numberOfLines={4}
+            hint="Facultatif — culture prévue, accès, irrigation…"
+          />
+        </Card>
+      ) : null}
+
+      {/* Étape 4 — Résumé & validation ---------------------------------- */}
+      {etape === 3 ? (
+        <Card style={styles.carte}>
+          <View style={styles.entete}>
+            <Check size={16} color={jetons.primaire.base} />
+            <Text style={styles.titre}>Résumé et validation</Text>
           </View>
 
           <View style={styles.ligneResume}>
@@ -332,38 +387,28 @@ export function ParcelleWizard({
             <Text style={styles.valeurResume}>{description.trim() || '—'}</Text>
           </View>
           <View style={styles.ligneResume}>
-            <Text style={styles.cleResume}>Sommets</Text>
-            <Text style={styles.valeurResume}>{points.length}</Text>
+            <Text style={styles.cleResume}>Délimitation</Text>
+            <Text style={styles.valeurResume}>
+              {points.length >= 3
+                ? `${points.length} sommet(s)`
+                : i18n.t('parcelles.sansDelimitation', { defaultValue: 'Aucune (à faire plus tard)' })}
+            </Text>
           </View>
           <View style={styles.ligneResume}>
             <Text style={styles.cleResume}>Superficie estimée</Text>
             <Text style={styles.valeurResume}>{superficie ?? i18n.t('parcelles.nonCalculee')}</Text>
           </View>
 
+          {points.length >= 3 ? (
+            <View style={styles.carteMap}>
+              <ParcelleMap points={points} center={centre} style={styles.mapResume} />
+            </View>
+          ) : null}
+
           <Text style={styles.aide}>
             La superficie définitive est recalculée par le serveur à partir du polygone
             envoyé, et non par l’application mobile.
           </Text>
-        </Card>
-      ) : null}
-
-      {/* Étape 4 — Enregistrement ------------------------------------- */}
-      {etape === 3 ? (
-        <Card style={styles.carte}>
-          <View style={styles.entete}>
-            <Save size={16} color={colors.primary[700]} />
-            <Text style={styles.titre}>Enregistrement</Text>
-          </View>
-
-          <Text style={styles.aide}>
-            {creation
-              ? i18n.t('divers.wizard.creation')
-              : i18n.t('divers.wizard.modification')}
-          </Text>
-
-          {superficie ? (
-            <Badge label={`Superficie estimée : ${superficie}`} variant="neutral" />
-          ) : null}
 
           {errorMessage ? <Text style={styles.erreur}>{errorMessage}</Text> : null}
 
@@ -371,62 +416,66 @@ export function ParcelleWizard({
             onPress={() => onSubmit(valeurs)}
             loading={submitting}
             disabled={submitting}
-            leftIcon={<Save size={16} color={colors.neutral[0]} />}
+            leftIcon={<Save size={16} color={jetons.primaire.contraste} />}
           >
             {creation ? i18n.t('parcelles.creer') : 'Enregistrer les modifications'}
           </Button>
         </Card>
       ) : null}
 
-      {errorMessage && etape !== 3 ? <Text style={styles.erreur}>{errorMessage}</Text> : null}
+      {errorMessage && !derniere ? <Text style={styles.erreur}>{errorMessage}</Text> : null}
     </ParcelleFormShell>
   );
 }
 
-const styles = StyleSheet.create({
-  footer: { flexDirection: 'row', gap: 10 },
-  footerButton: { flex: 1 },
-  progression: { flexDirection: 'row', gap: 6, alignItems: 'flex-start' },
-  progressionEtape: { flex: 1, alignItems: 'center', gap: 4 },
-  progressionPastille: {
-    width: 24,
-    height: 24,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.neutral[150],
-  },
-  progressionPastilleActive: { backgroundColor: colors.primary[500] },
-  progressionNumero: { fontSize: 11, fontWeight: '700', color: colors.neutral[500] },
-  texteActif: { color: colors.neutral[0] },
-  progressionLabel: { fontSize: 10, color: colors.neutral[500], textAlign: 'center' },
-  progressionLabelActif: { color: colors.primary[700], fontWeight: '700' },
-  carte: { gap: 12 },
-  entete: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  titre: { fontSize: 15, fontWeight: '700', color: colors.neutral[900] },
-  aide: { fontSize: 12.5, color: colors.neutral[600], lineHeight: 18 },
-  bandeau: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    padding: 10,
-    borderRadius: radius.md,
-    backgroundColor: colors.primary[50],
-    borderWidth: 1,
-    borderColor: colors.primary[200],
-  },
-  bandeauTexte: { flex: 1, fontSize: 12.5, fontWeight: '600', color: colors.primary[700] },
-  carteMap: { borderRadius: radius.md, overflow: 'hidden' },
-  map: { height: 300 },
-  rangee: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 8,
-  },
-  rangeeGauche: { flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' },
-  ligneResume: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
-  cleResume: { width: 130, fontSize: 12.5, color: colors.neutral[600] },
-  valeurResume: { flex: 1, fontSize: 13, color: colors.neutral[900], fontWeight: '600' },
-  erreur: { fontSize: 12.5, color: colors.error[600], lineHeight: 18 },
-});
+function creerStyles(jetons: Jetons) {
+  return StyleSheet.create({
+    footer: { flexDirection: 'row', gap: 10 },
+    footerButton: { flex: 1 },
+    progression: { flexDirection: 'row', gap: 6, alignItems: 'flex-start' },
+    progressionEtape: { flex: 1, alignItems: 'center', gap: 4 },
+    progressionPastille: {
+      width: 24,
+      height: 24,
+      borderRadius: radius.full,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: jetons.fond.attenue,
+    },
+    progressionPastilleActive: { backgroundColor: jetons.primaire.base },
+    progressionNumero: { fontSize: 11, fontWeight: '700', color: jetons.texte.secondaire },
+    texteActif: { color: jetons.primaire.contraste },
+    progressionLabel: { fontSize: 10, color: jetons.texte.secondaire, textAlign: 'center' },
+    progressionLabelActif: { color: jetons.primaire.base, fontWeight: '700' },
+    carte: { gap: 12 },
+    entete: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    titre: { fontSize: 15, fontWeight: '700', color: jetons.texte.principal },
+    aide: { fontSize: 12.5, color: jetons.texte.secondaire, lineHeight: 18 },
+    avertissement: { fontSize: 12.5, color: jetons.alerte.texte, lineHeight: 18, fontWeight: '600' },
+    bandeau: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      padding: 10,
+      borderRadius: radius.md,
+      backgroundColor: jetons.primaire.clair,
+      borderWidth: 1,
+      borderColor: jetons.primaire.base,
+    },
+    bandeauTexte: { flex: 1, fontSize: 12.5, fontWeight: '600', color: jetons.primaire.base },
+    carteMap: { borderRadius: radius.md, overflow: 'hidden' },
+    map: { height: 300 },
+    mapResume: { height: 180 },
+    rangee: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 8,
+    },
+    rangeeGauche: { flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' },
+    ligneResume: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+    cleResume: { width: 130, fontSize: 12.5, color: jetons.texte.secondaire },
+    valeurResume: { flex: 1, fontSize: 13, color: jetons.texte.principal, fontWeight: '600' },
+    erreur: { fontSize: 12.5, color: jetons.erreur.texte, lineHeight: 18 },
+  });
+}

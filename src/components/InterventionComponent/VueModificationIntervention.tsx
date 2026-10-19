@@ -1,8 +1,9 @@
 import { AppSelect } from '@/components/CommonComponent/AppSelect';
 import { i18n } from '@/i18n/instance';
 import { DateInput } from '@/components/CommonComponent/DateInput';
-import { styles } from '@/screens/InterventionScreen/InterventionEditScreen.styles';
-import { colors } from '@/theme';
+import { PhotosIntervention } from '@/components/InterventionComponent/PhotosIntervention';
+import { useStylesEditionIntervention } from '@/screens/InterventionScreen/InterventionEditScreen.styles';
+import { useTheme } from '@/hooks/common/useTheme';
 import {
   PRODUITS_INTERVENTION,
   TYPES_INTERVENTION,
@@ -17,6 +18,10 @@ import type { Dispatch, SetStateAction } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type Props = {
+  /** Identifiants permettant la gestion des photos en direct. */
+  parcelleId?: string;
+  cultureId?: string;
+  interventionId?: string;
   cout: string;
   cultureNom: string;
   date: string;
@@ -38,6 +43,9 @@ type Props = {
 };
 
 export function VueModificationIntervention({
+  parcelleId,
+  cultureId,
+  interventionId,
   cout,
   cultureNom,
   date,
@@ -57,6 +65,8 @@ export function VueModificationIntervention({
   unite,
   updateMutation,
 }: Props) {
+  const styles = useStylesEditionIntervention();
+  const { jetons } = useTheme();
   return (
 <KeyboardAvoidingView
         style={styles.container}
@@ -119,7 +129,7 @@ export function VueModificationIntervention({
             leftIcon={
               <CalendarDays
                 size={16}
-                color={colors.neutral[400]}
+                color={jetons.texte.discret}
               />
             }
             hint={
@@ -147,7 +157,7 @@ export function VueModificationIntervention({
             value={description}
             onChangeText={setDescription}
             placeholder={i18n.t('libelles.descriptionIntervention')}
-            placeholderTextColor="#999"
+            placeholderTextColor={jetons.texte.discret}
             multiline
             numberOfLines={4}
             textAlignVertical="top"
@@ -176,7 +186,7 @@ export function VueModificationIntervention({
             value={quantite}
             onChangeText={setQuantite}
             placeholder="Ex : 30"
-            placeholderTextColor="#999"
+            placeholderTextColor={jetons.texte.discret}
             keyboardType="decimal-pad"
             editable={
               !updateMutation.isPending
@@ -202,12 +212,24 @@ export function VueModificationIntervention({
             value={cout}
             onChangeText={setCout}
             placeholder="Ex : 180000"
-            placeholderTextColor="#999"
+            placeholderTextColor={jetons.texte.discret}
             keyboardType="decimal-pad"
             editable={
               !updateMutation.isPending
             }
           />
+
+          {/* PHOTOS — ajout, remplacement et suppression en direct */}
+          {parcelleId && cultureId && interventionId ? (
+            <View style={styles.photosSection}>
+              <PhotosIntervention
+                parcelleId={parcelleId}
+                cultureId={cultureId}
+                interventionId={interventionId}
+                modificationAutorisee
+              />
+            </View>
+          ) : null}
 
           {/* BOUTON ENREGISTRER */}
           <TouchableOpacity
@@ -222,7 +244,7 @@ export function VueModificationIntervention({
             }
           >
             {updateMutation.isPending ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={jetons.primaire.contraste} />
             ) : (
               <Text
                 style={styles.saveButtonText}

@@ -3,7 +3,7 @@ import { i18n } from '@/i18n/instance';
 import { Pressable } from 'react-native';
 import { Eye, EyeOff, LockKeyhole } from 'lucide-react-native';
 import { Input } from './Input';
-import { colors } from '@/theme';
+import { useTheme } from '@/hooks/common/useTheme';
 import type { TextInputProps, ViewStyle } from 'react-native';
 
 interface PasswordInputProps extends Omit<TextInputProps, 'secureTextEntry'> {
@@ -26,6 +26,7 @@ export function PasswordInput({
 }: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
   const [focused, setFocused] = useState(false);
+  const { jetons } = useTheme();
 
   return (
     <Input
@@ -50,7 +51,7 @@ export function PasswordInput({
         showIcon ? (
           <LockKeyhole
             size={19}
-            color={error ? colors.error[500] : focused ? colors.primary[500] : colors.neutral[500]}
+            color={error ? jetons.erreur.base : focused ? jetons.primaire.base : jetons.texte.secondaire}
             strokeWidth={1.9}
           />
         ) : undefined
@@ -63,7 +64,7 @@ export function PasswordInput({
           accessibilityLabel={visible ? i18n.t('auth.masquerMotPasse') : 'Afficher le mot de passe'}
           accessibilityRole="button"
         >
-          {visible ? <EyeOff size={19} color={colors.neutral[500]} /> : <Eye size={19} color={colors.neutral[500]} />}
+          {visible ? <EyeOff size={19} color={jetons.texte.secondaire} /> : <Eye size={19} color={jetons.texte.secondaire} />}
         </Pressable>
       }
       {...props}

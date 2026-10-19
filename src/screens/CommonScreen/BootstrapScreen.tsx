@@ -42,5 +42,5 @@ export default function BootstrapScreen() {
     );
   }
 
-  return <Redirect href={token ? '/home' : '/(auth)/login'} />;
+  return <Redirect href={token ? '/home' : '/(auth)/bienvenue'} />;
 }

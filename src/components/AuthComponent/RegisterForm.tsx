@@ -10,6 +10,7 @@ import { MarqueHaivoly } from '@/components/AuthComponent/MarqueHaivoly';
 import { PwdCheck } from '@/components/AuthComponent/PwdCheck';
 import { AppSelect } from '@/components/CommonComponent/AppSelect';
 import { Button } from '@/components/CommonComponent/Button';
+import { Card } from '@/components/CommonComponent/Card';
 import { Input } from '@/components/CommonComponent/Input';
 import { PasswordInput } from '@/components/CommonComponent/PasswordInput';
 import { estEmailValide } from '@/utils/email';
@@ -43,12 +44,6 @@ export type RegisterFormProps = {
   setRole: Dispatch<SetStateAction<Role>>;
 };
 
-/**
- * Inscription « pro » en deux étapes, sans défilement : chaque étape tient
- * dans l'écran (grille compacte, clavier géré par KeyboardAvoidingView).
- * Étape 1 : identité. Étape 2 : contact + sécurité. La validation serveur
- * complète reste portée par `handleRegister` à l'étape 2.
- */
 export function RegisterForm({
   clearFieldError,
   email,
@@ -71,7 +66,7 @@ export function RegisterForm({
   username,
   role,
   setRole,
-}: RegisterFormProps) {
+}: Readonly<RegisterFormProps>) {
   const [etape, setEtape] = useState<1 | 2>(1);
   const [erreursEtape, setErreursEtape] = useState<{
     nom?: string;
@@ -95,9 +90,9 @@ export function RegisterForm({
       style={styles.kav}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <View style={styles.sansScroll} testID={`register-etape-${etape}`}>
+        <View style={styles.sansScroll} testID={`register-etape-${etape}`}>
         <View style={styles.enteteCompacte}>
-          <MarqueHaivoly taille={56} testID="register-logo" />
+          
           <View style={styles.progression}>
             <View style={styles.progressionRail}>
               <View style={[styles.progressionTrait, { width: etape === 1 ? '50%' : '100%' }]} />
@@ -260,7 +255,7 @@ export function RegisterForm({
             </View>
           </View>
         )}
-      </View>
+        </View>
     </KeyboardAvoidingView>
   );
 }

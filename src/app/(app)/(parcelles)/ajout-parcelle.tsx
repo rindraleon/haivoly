@@ -1,6 +1,7 @@
-import { ParcelleFormulaireScreen } from '@/features/parcelles/ParcelleFormulaireScreen';
-import { avecVersionUi } from '@/features/shell/versionUi';
 import ParcelleCreateScreen from '@/screens/ParcelleScreen/ParcelleCreateScreen';
 
-// V2 : nom + type de sol puis proposition de délimitation (lot 4) · V1 : assistant.
-export default avecVersionUi({ v1: ParcelleCreateScreen, v2: ParcelleFormulaireScreen });
+// Création d'une parcelle : assistant unique en 4 étapes (informations →
+// délimitation facultative → description → résumé & validation), identique
+// en V1 et en V2 — le formulaire V2 allégé empêchait d'atteindre la
+// validation finale et ne proposait ni délimitation ni description.
+export default ParcelleCreateScreen;
