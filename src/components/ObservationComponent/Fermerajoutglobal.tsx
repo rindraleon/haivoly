@@ -40,39 +40,39 @@ export function Fermerajoutglobal({
   setParcelleAjout,
   setSelectionCultureAjoutOuverte,
   setSelectionParcelleAjoutOuverte,
-}: Props) {
+}: Readonly<Props>) {
   return (
 <View
-                  style={
-                    styles.modalOverlay
-                  }
-                >
-                  <TouchableOpacity
-                    style={
-                      styles.modalBackdrop
-                    }
-                    activeOpacity={1}
-                    onPress={
-                      fermerAjoutGlobal
-                    }
-                  />
+  style={
+    styles.modalOverlay
+  }
+>
+  <TouchableOpacity
+    style={
+      styles.modalBackdrop
+    }
+    activeOpacity={1}
+    onPress={
+      fermerAjoutGlobal
+    }
+  />
 
-                  <Fermerajoutglobal2
-                    continuerAjoutGlobal={continuerAjoutGlobal}
-                    cultureAjout={cultureAjout}
-                    culturesAjout={culturesAjout}
-                    culturesAjoutQuery={culturesAjoutQuery}
-                    fermerAjoutGlobal={fermerAjoutGlobal}
-                    parcelleAjout={parcelleAjout}
-                    parcelles={parcelles}
-                    parcellesQuery={parcellesQuery}
-                    selectionCultureAjoutOuverte={selectionCultureAjoutOuverte}
-                    selectionParcelleAjoutOuverte={selectionParcelleAjoutOuverte}
-                    setCultureAjout={setCultureAjout}
-                    setParcelleAjout={setParcelleAjout}
-                    setSelectionCultureAjoutOuverte={setSelectionCultureAjoutOuverte}
-                    setSelectionParcelleAjoutOuverte={setSelectionParcelleAjoutOuverte}
-                  />
-                </View>
+  <Fermerajoutglobal2
+    continuerAjoutGlobal={continuerAjoutGlobal}
+    cultureAjout={cultureAjout}
+    culturesAjout={culturesAjout}
+    culturesAjoutQuery={culturesAjoutQuery}
+    fermerAjoutGlobal={fermerAjoutGlobal}
+    parcelleAjout={parcelleAjout}
+    parcelles={parcelles}
+    parcellesQuery={parcellesQuery}
+    selectionCultureAjoutOuverte={selectionCultureAjoutOuverte}
+    selectionParcelleAjoutOuverte={selectionParcelleAjoutOuverte}
+    setCultureAjout={setCultureAjout}
+    setParcelleAjout={setParcelleAjout}
+    setSelectionCultureAjoutOuverte={setSelectionCultureAjoutOuverte}
+    setSelectionParcelleAjoutOuverte={setSelectionParcelleAjoutOuverte}
+  />
+</View>
   );
 }

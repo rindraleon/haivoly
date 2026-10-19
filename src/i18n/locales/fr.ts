@@ -94,6 +94,15 @@ const fr = {
 
   // ── Authentification ──────────────────────────────────────────────────
   auth: {
+    landing: {
+      titre: 'Vos parcelles et cultures, toujours en main',
+      sousTitre: 'Tracez vos parcelles, suivez vos cultures et consignez chaque travail agricole — même hors ligne.',
+      foncParcelles: 'Parcelles délimitées au GPS',
+      foncCultures: 'Suivi des cultures et récoltes',
+      foncTravaux: 'Interventions et observations avec photos',
+      dejaCompte: 'Déjà un compte ? Se connecter',
+      pasCompte: 'Pas encore de compte ? Créer le vôtre',
+    },
     login: {
       bienvenue: 'Bienvenue',
       sousTitre: 'Connectez-vous pour accéder à vos parcelles et cultures.',
@@ -398,6 +407,19 @@ const fr = {
     voulezVraimentSupprimerPhoto: 'Voulez-vous vraiment supprimer cette photo ?',
     impossiblePrendrePhoto: 'Impossible de prendre la photo.',
     impossibleSupprimerPhoto: 'Impossible de supprimer la photo.',
+    ajouterPhoto: 'Ajouter une photo',
+    choisirSource: 'Choisissez une source.',
+    remplacerPhoto: 'Remplacer la photo',
+    supprimerPhoto: 'Supprimer la photo',
+    apercuPhoto: 'Aperçu de la photo {{numero}}',
+    limiteAtteinte: 'Limite atteinte',
+    limiteTexte: 'Vous pouvez joindre jusqu’à {{max}} photos.',
+    aideSelection: 'Aucune photo. Prenez une photo ou importez-la depuis votre appareil : elle sera jointe à l’enregistrement.',
+    aideApresSelection: 'Touchez une photo pour l’agrandir. Les photos sont compressées puis envoyées avec l’enregistrement.',
+    envoiPhotosEnCours: 'Envoi des photos… ({{envoyees}}/{{total}})',
+    photosJointesOk: '{{count}} photo(s) jointe(s) avec succès.',
+    photosJointesPartiel: '{{envoyees}} photo(s) envoyée(s), {{echouees}} en échec. Vous pourrez les renvoyer depuis la fiche.',
+    captureImpossible: 'Impossible de prendre la photo.',
   },
 
   // ── Libellés métier partagés entre écrans ─────────────────────────────

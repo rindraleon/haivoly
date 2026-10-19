@@ -1,6 +1,11 @@
 import { DateTimeInput } from '@/components/CommonComponent/DateTimeInput';
 import { i18n } from '@/i18n/instance';
-import { styles } from '@/screens/ObservationScreen/ObservationCreateScreen.styles';
+import {
+  PhotosSelection,
+  type PhotoBrouillon,
+} from '@/components/CommonComponent/PhotosSelection';
+import { useStylesCreationObservation } from '@/screens/ObservationScreen/ObservationCreateScreen.styles';
+import { useTheme } from '@/hooks/common/useTheme';
 import type { ObservationPayload, Observation } from '@/types';
 import type { UseMutationResult } from '@tanstack/react-query';
 import { router } from 'expo-router';
@@ -11,6 +16,10 @@ import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Text, Te
 type Props = {
   createMutation: UseMutationResult<Observation, Error, { cultureId: string; body: ObservationPayload; }, unknown>;
   cultureNom: string;
+  /** Photos mises en attente, envoyées après création de l'observation. */
+  photos?: PhotoBrouillon[];
+  onChangePhotos?: (photos: PhotoBrouillon[]) => void;
+  envoiPhotosEnCours?: boolean;
   date: string;
   description: string;
   enregistrer: () => Promise<void>;
@@ -23,6 +32,9 @@ type Props = {
 export function VueCreationObservation({
   createMutation,
   cultureNom,
+  photos,
+  onChangePhotos,
+  envoiPhotosEnCours,
   date,
   description,
   enregistrer,
@@ -30,7 +42,10 @@ export function VueCreationObservation({
   setDate,
   setDescription,
   statutLabel,
-}: Props) {
+}: Readonly<Props>) {
+  const styles = useStylesCreationObservation();
+  const { jetons } = useTheme();
+  const saisieVerrouillee = createMutation.isPending || !!envoiPhotosEnCours;
   return (
 <KeyboardAvoidingView
         style={styles.container}
@@ -59,14 +74,12 @@ export function VueCreationObservation({
               onPress={() =>
                 router.back()
               }
-              disabled={
-                createMutation.isPending
-              }
+              disabled={saisieVerrouillee}
               activeOpacity={0.8}
             >
               <ArrowLeft
                 size={21}
-                color="#172018"
+                color={jetons.texte.principal}
                 strokeWidth={2.2}
               />
             </TouchableOpacity>
@@ -127,7 +140,7 @@ export function VueCreationObservation({
               >
                 <Sprout
                   size={24}
-                  color="#166534"
+                  color={jetons.primaire.fonce}
                   strokeWidth={2.2}
                 />
               </View>
@@ -162,7 +175,7 @@ export function VueCreationObservation({
                 >
                   <MapPin
                     size={14}
-                    color="#6B7280"
+                    color={jetons.texte.secondaire}
                     strokeWidth={2}
                   />
 
@@ -214,7 +227,7 @@ export function VueCreationObservation({
             >
               <FileText
                 size={17}
-                color="#166534"
+                color={jetons.primaire.fonce}
                 strokeWidth={2.2}
               />
             </View>
@@ -261,7 +274,7 @@ export function VueCreationObservation({
               >
                 <FileText
                   size={16}
-                  color="#166534"
+                  color={jetons.primaire.fonce}
                   strokeWidth={2.1}
                 />
 
@@ -292,13 +305,11 @@ export function VueCreationObservation({
                 setDescription
               }
               placeholder={i18n.t('divers.observationPlaceholder')}
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={jetons.texte.discret}
               multiline
               numberOfLines={7}
               textAlignVertical="top"
-              editable={
-                !createMutation.isPending
-              }
+              editable={!saisieVerrouillee}
               maxLength={500}
             />
 
@@ -339,7 +350,7 @@ export function VueCreationObservation({
             >
               <Sprout
                 size={16}
-                color="#166534"
+                color={jetons.primaire.fonce}
                 strokeWidth={2}
               />
             </View>
@@ -371,6 +382,15 @@ export function VueCreationObservation({
 
           {}
 
+          {/* Photos : sélection en attente, envoyées après l'enregistrement */}
+          {onChangePhotos ? (
+            <PhotosSelection
+              photos={photos ?? []}
+              onChange={onChangePhotos}
+              disabled={saisieVerrouillee}
+            />
+          ) : null}
+
           <View
             style={
               styles.sectionHeader
@@ -383,7 +403,7 @@ export function VueCreationObservation({
             >
               <CalendarDays
                 size={17}
-                color="#166534"
+                color={jetons.primaire.fonce}
                 strokeWidth={2.2}
               />
             </View>
@@ -423,7 +443,7 @@ export function VueCreationObservation({
             >
               <CalendarDays
                 size={19}
-                color="#166534"
+                color={jetons.primaire.fonce}
                 strokeWidth={2.1}
               />
             </View>
@@ -444,7 +464,7 @@ export function VueCreationObservation({
               <DateTimeInput
                 value={date}
                 onChange={setDate}
-                disabled={createMutation.isPending}
+                disabled={saisieVerrouillee}
                 placeholder={i18n.t('libelles.choisirDateHeure')}
                 hint={i18n.t('observations.hintHorodatage')}
               />
@@ -468,11 +488,11 @@ export function VueCreationObservation({
             }
             activeOpacity={0.85}
           >
-            {createMutation.isPending ? (
+            {saisieVerrouillee ? (
               <>
                 <ActivityIndicator
                   size="small"
-                  color="#FFFFFF"
+                  color={jetons.primaire.contraste}
                 />
 
                 <Text
@@ -480,7 +500,9 @@ export function VueCreationObservation({
                     styles.saveText
                   }
                 >
-                  Enregistrement...
+                  {envoiPhotosEnCours
+                    ? i18n.t('photos.envoiPhotosEnCours')
+                    : 'Enregistrement...'}
                 </Text>
               </>
             ) : (
@@ -492,7 +514,7 @@ export function VueCreationObservation({
                 >
                   <Check
                     size={18}
-                    color="#FFFFFF"
+                    color={jetons.primaire.contraste}
                     strokeWidth={2.8}
                   />
                 </View>

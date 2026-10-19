@@ -16,6 +16,13 @@ import {
   useIntervention,
   useUpdateIntervention,
 } from '@/hooks';
+import { interventionPhotosApi } from '@/services';
+import {
+  PhotosSelection,
+  type PhotoBrouillon,
+} from '@/components/CommonComponent/PhotosSelection';
+import { PhotosIntervention } from '@/components/InterventionComponent/PhotosIntervention';
+import { envoyerPhotosEnAttente } from '@/utils/envoiPhotos';
 import type { Intervention } from '@/types';
 import { AlertCard, ChoiceChips, DateField, FormInput, PrimaryButton, Skeleton, Text, useToast } from '@/ui';
 import { FormScreen } from '@/ui/layout';
@@ -71,6 +78,9 @@ function Formulaire({
   const [cout, setCout] = useState(initial.cout);
   const [description, setDescription] = useState(initial.description);
   const [erreurs, setErreurs] = useState<Record<string, string | undefined>>({});
+  // Photos jointes à la création (envoyées après enregistrement côté serveur).
+  const [photosBrouillon, setPhotosBrouillon] = useState<PhotoBrouillon[]>([]);
+  const [envoiPhotos, setEnvoiPhotos] = useState(false);
 
   const cultures = useCulturesDuCompte();
   const culture = useMemo(
@@ -120,7 +130,29 @@ function Formulaire({
       if (edition && idIntervention) {
         await modification.mutateAsync({ id: idIntervention, cultureId, body });
       } else {
-        await creation.mutateAsync({ cultureId, body });
+        const creee = await creation.mutateAsync({ cultureId, body });
+        // Photos mises en attente : téléversées dès que l'intervention existe
+        // (sans identifiant serveur — hors-ligne — elles restent à ajouter
+        // depuis la fiche de l'intervention).
+        if (photosBrouillon.length > 0 && creee?.id && !creee._localOnly && culture?.parcelleId) {
+          setEnvoiPhotos(true);
+          try {
+            const bilan = await envoyerPhotosEnAttente(photosBrouillon, (fichier) =>
+              interventionPhotosApi.upload(culture.parcelleId, cultureId, creee.id, fichier),
+            );
+            if (bilan.echouees > 0) {
+              toast({
+                message: t('photos.photosJointesPartiel', {
+                  envoyees: bilan.envoyees,
+                  echouees: bilan.echouees,
+                }),
+                tone: 'error',
+              });
+            }
+          } finally {
+            setEnvoiPhotos(false);
+          }
+        }
       }
       toast({ message: t(edition ? 'ecranInterventions.modifiee' : 'ecranInterventions.enregistree'), tone: 'success' });
       if (router.canGoBack()) router.back();
@@ -128,7 +160,7 @@ function Formulaire({
     } catch {
       toast({ message: t('ecranInterventions.erreurEnvoi'), tone: 'error' });
     }
-  }, [cultureId, type, date, produit, quantite, unite, cout, description, edition, idIntervention, creation, modification, toast, t]);
+  }, [cultureId, culture, type, date, produit, quantite, unite, cout, description, photosBrouillon, edition, idIntervention, creation, modification, toast, t]);
 
   return (
     <FormScreen
@@ -142,7 +174,7 @@ function Formulaire({
           testID="intervention-enregistrer"
           label={t(edition ? 'ecranInterventions.enregistrerModifications' : 'ecranInterventions.enregistrer')}
           onPress={() => void enregistrer()}
-          loading={creation.isPending || modification.isPending}
+          loading={creation.isPending || modification.isPending || envoiPhotos}
           disabled={lectureSeule}
         />
       }
@@ -236,6 +268,21 @@ function Formulaire({
           error={erreurs.description}
           disabled={lectureSeule}
         />
+        {/* Photos : en direct en modification, mises en attente à la création */}
+        {edition && idIntervention && culture?.parcelleId && cultureId ? (
+          <PhotosIntervention
+            parcelleId={culture.parcelleId}
+            cultureId={cultureId}
+            interventionId={idIntervention}
+            modificationAutorisee={!lectureSeule}
+          />
+        ) : (
+          <PhotosSelection
+            photos={photosBrouillon}
+            onChange={setPhotosBrouillon}
+            disabled={creation.isPending || envoiPhotos || lectureSeule}
+          />
+        )}
         <View style={styles.aide}>
           <Wrench size={16} color="#5F6F66" />
           <Text variant="caption">{t('ecranInterventions.aide')}</Text>

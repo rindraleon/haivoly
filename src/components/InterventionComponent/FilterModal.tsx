@@ -2,7 +2,8 @@ import { ActivityIndicator, Modal, ScrollView, Text, TouchableOpacity, View } fr
 import { i18n } from '@/i18n/instance';
 import { Check, ChevronDown, ChevronRight, MapPin, Sprout, X } from 'lucide-react-native';
 import { libelleStatut } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
-import { styles } from '@/screens/InterventionScreen/InterventionListScreen.styles';
+import { useTheme } from '@/hooks/common/useTheme';
+import { useStylesInterventions } from '@/screens/InterventionScreen/stylesInterventions';
 
 export function FilterModal({
   visible,
@@ -24,7 +25,7 @@ export function FilterModal({
   onViewFollow,
   modeAjout,
   onContinueAjout,
-}: {
+}: Readonly<{
   visible: boolean;
   onClose: () => void;
   parcelles: any[];
@@ -44,7 +45,9 @@ export function FilterModal({
   onViewFollow: () => void;
   modeAjout: boolean;
   onContinueAjout: () => void;
-}) {
+}>) {
+  const styles = useStylesInterventions();
+  const { jetons } = useTheme();
   const parcellePourSelection =
     parcelles.find(item => item.id === parcelleTemporaire);
 
@@ -54,6 +57,155 @@ export function FilterModal({
   const culturesDisponibles = cultures.filter(
     culture => culture.statut !== 'SUPPRIMEE',
   );
+
+  const contenuParcelles = () => {
+    if (parcellesLoading) {
+      return (
+        <View style={styles.dropdownLoading}>
+          <ActivityIndicator color={jetons.primaire.fonce} />
+          <Text style={styles.dropdownLoadingText}>
+            Chargement des parcelles...
+          </Text>
+        </View>
+      );
+    }
+
+    if (parcelles.length === 0) {
+      return (
+        <Text style={styles.dropdownEmpty}>
+          Aucune parcelle disponible.
+        </Text>
+      );
+    }
+
+    return (
+      <ScrollView nestedScrollEnabled style={styles.filterDropdownScroll}>
+        {parcelles.map(item => (
+          <TouchableOpacity
+            key={item.id}
+            activeOpacity={0.7}
+            style={[
+              styles.filterDropdownItem,
+              parcelleTemporaire === item.id &&
+                styles.filterDropdownItemSelected,
+            ]}
+            onPress={() => onSelectParcelle(item.id)}
+          >
+            <View style={styles.dropdownItemLeft}>
+              <MapPin
+                size={16}
+                color={
+                  parcelleTemporaire === item.id
+                    ? jetons.primaire.fonce
+                    : jetons.texte.discret
+                }
+              />
+              <Text
+                style={[
+                  styles.filterDropdownItemText,
+                  parcelleTemporaire === item.id &&
+                    styles.filterDropdownItemTextSelected,
+                ]}
+                numberOfLines={1}
+              >
+                {item.nom}
+              </Text>
+            </View>
+
+            {parcelleTemporaire === item.id ? (
+              <Check
+                size={18}
+                color={jetons.primaire.fonce}
+                strokeWidth={2.5}
+              />
+            ) : null}
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    );
+  };
+
+  const contenuCultures = () => {
+    if (culturesLoading) {
+      return (
+        <View style={styles.dropdownLoading}>
+          <ActivityIndicator color={jetons.primaire.fonce} />
+          <Text style={styles.dropdownLoadingText}>
+            Chargement des cultures...
+          </Text>
+        </View>
+      );
+    }
+
+    if (culturesDisponibles.length === 0) {
+      return (
+        <Text style={styles.dropdownEmpty}>
+          Aucune culture disponible.
+        </Text>
+      );
+    }
+
+    return (
+      <ScrollView nestedScrollEnabled style={styles.filterDropdownScroll}>
+        {culturesDisponibles.map(culture => {
+          const autorisee =
+            culture.statut !== 'RECOLTEE' &&
+            culture.statut !== 'ABANDONNEE';
+
+          return (
+            <TouchableOpacity
+              key={culture.id}
+              activeOpacity={autorisee ? 0.7 : 1}
+              disabled={!autorisee}
+              style={[
+                styles.filterCultureItem,
+                cultureTemporaire === culture.id &&
+                  styles.filterCultureItemSelected,
+                !autorisee && styles.filterCultureItemDisabled,
+              ]}
+              onPress={() => onSelectCulture(culture.id)}
+            >
+              <View style={styles.filterCultureInfo}>
+                <View style={styles.filterCultureNameRow}>
+                  <Sprout
+                    size={16}
+                    color={
+                      autorisee
+                        ? jetons.primaire.fonce
+                        : jetons.texte.discret
+                    }
+                  />
+                  <Text
+                    style={[
+                      styles.filterCultureName,
+                      !autorisee && styles.disabledCultureText,
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {culture.nom}
+                  </Text>
+                </View>
+
+                <Text style={styles.filterCultureStatus}>
+                  {libelleStatut(culture.statut)}
+                </Text>
+              </View>
+
+              {cultureTemporaire === culture.id ? (
+                <View style={styles.selectedCheckCircle}>
+                  <Check
+                    size={15}
+                    color={jetons.primaire.contraste}
+                    strokeWidth={2.8}
+                  />
+                </View>
+              ) : null}
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    );
+  };
 
   return (
     <Modal
@@ -91,7 +243,7 @@ export function FilterModal({
               onPress={onClose}
               style={styles.sheetCloseButton}
             >
-              <X size={20} color="#374151" />
+              <X size={20} color={jetons.texte.principal} />
             </TouchableOpacity>
           </View>
 
@@ -112,7 +264,7 @@ export function FilterModal({
             >
               <View style={styles.filterSelectLeft}>
                 <View style={styles.filterSelectIcon}>
-                  <MapPin size={18} color="#166534" />
+                  <MapPin size={18} color={jetons.primaire.fonce} />
                 </View>
 
                 <Text
@@ -130,7 +282,7 @@ export function FilterModal({
 
               <ChevronDown
                 size={19}
-                color="#6B7280"
+                color={jetons.texte.secondaire}
                 style={
                   selectionParcelleOuverte
                     ? styles.chevronRotated
@@ -140,67 +292,7 @@ export function FilterModal({
             </TouchableOpacity>
 
             {selectionParcelleOuverte ? (
-              <View style={styles.filterDropdown}>
-                {parcellesLoading ? (
-                  <View style={styles.dropdownLoading}>
-                    <ActivityIndicator color="#166534" />
-                    <Text style={styles.dropdownLoadingText}>
-                      Chargement des parcelles...
-                    </Text>
-                  </View>
-                ) : parcelles.length === 0 ? (
-                  <Text style={styles.dropdownEmpty}>
-                    Aucune parcelle disponible.
-                  </Text>
-                ) : (
-                  <ScrollView
-                    nestedScrollEnabled
-                    style={styles.filterDropdownScroll}
-                  >
-                    {parcelles.map(item => (
-                      <TouchableOpacity
-                        key={item.id}
-                        activeOpacity={0.7}
-                        style={[
-                          styles.filterDropdownItem,
-                          parcelleTemporaire === item.id &&
-                            styles.filterDropdownItemSelected,
-                        ]}
-                        onPress={() => onSelectParcelle(item.id)}
-                      >
-                        <View style={styles.dropdownItemLeft}>
-                          <MapPin
-                            size={16}
-                            color={
-                              parcelleTemporaire === item.id
-                                ? '#166534'
-                                : '#9CA3AF'
-                            }
-                          />
-                          <Text
-                            style={[
-                              styles.filterDropdownItemText,
-                              parcelleTemporaire === item.id &&
-                                styles.filterDropdownItemTextSelected,
-                            ]}
-                            numberOfLines={1}
-                          >
-                            {item.nom}
-                          </Text>
-                        </View>
-
-                        {parcelleTemporaire === item.id ? (
-                          <Check
-                            size={18}
-                            color="#166534"
-                            strokeWidth={2.5}
-                          />
-                        ) : null}
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                )}
-              </View>
+              <View style={styles.filterDropdown}>{contenuParcelles()}</View>
             ) : null}
 
             <Text style={[styles.filterLabel, styles.filterLabelCulture]}>
@@ -231,8 +323,8 @@ export function FilterModal({
                     size={18}
                     color={
                       parcelleTemporaire
-                        ? '#166534'
-                        : '#9CA3AF'
+                        ? jetons.primaire.fonce
+                        : jetons.texte.discret
                     }
                   />
                 </View>
@@ -256,8 +348,8 @@ export function FilterModal({
                 size={19}
                 color={
                   parcelleTemporaire
-                    ? '#6B7280'
-                    : '#9CA3AF'
+                    ? jetons.texte.secondaire
+                    : jetons.texte.discret
                 }
                 style={
                   selectionCultureOuverte
@@ -269,133 +361,54 @@ export function FilterModal({
 
             {selectionCultureOuverte && parcelleTemporaire ? (
               <View style={styles.filterDropdown}>
-                {culturesLoading ? (
-                  <View style={styles.dropdownLoading}>
-                    <ActivityIndicator color="#166534" />
-                    <Text style={styles.dropdownLoadingText}>
-                      Chargement des cultures...
-                    </Text>
-                  </View>
-                ) : culturesDisponibles.length === 0 ? (
-                  <Text style={styles.dropdownEmpty}>
-                    Aucune culture disponible.
-                  </Text>
-                ) : (
-                  <ScrollView
-                    nestedScrollEnabled
-                    style={styles.filterDropdownScroll}
-                  >
-                    {culturesDisponibles.map(culture => {
-                      const autorisee =
-                        culture.statut !== 'RECOLTEE' &&
-                        culture.statut !== 'ABANDONNEE';
-
-                      return (
-                        <TouchableOpacity
-                          key={culture.id}
-                          activeOpacity={autorisee ? 0.7 : 1}
-                          disabled={!autorisee}
-                          style={[
-                            styles.filterCultureItem,
-                            cultureTemporaire === culture.id &&
-                              styles.filterCultureItemSelected,
-                            !autorisee &&
-                              styles.filterCultureItemDisabled,
-                          ]}
-                          onPress={() =>
-                            onSelectCulture(culture.id)
-                          }
-                        >
-                          <View style={styles.filterCultureInfo}>
-                            <View style={styles.filterCultureNameRow}>
-                              <Sprout
-                                size={16}
-                                color={
-                                  autorisee
-                                    ? '#166534'
-                                    : '#9CA3AF'
-                                }
-                              />
-                              <Text
-                                style={[
-                                  styles.filterCultureName,
-                                  !autorisee &&
-                                    styles.disabledCultureText,
-                                ]}
-                                numberOfLines={1}
-                              >
-                                {culture.nom}
-                              </Text>
-                            </View>
-
-                            <Text style={styles.filterCultureStatus}>
-                              {libelleStatut(culture.statut)}
-                            </Text>
-                          </View>
-
-                          {cultureTemporaire === culture.id ? (
-                            <View style={styles.selectedCheckCircle}>
-                              <Check
-                                size={15}
-                                color="#FFFFFF"
-                                strokeWidth={2.8}
-                              />
-                            </View>
-                          ) : null}
-                        </TouchableOpacity>
-                      );
-                    })}
-                  </ScrollView>
-                )}
+                {contenuCultures()}
               </View>
             ) : null}
 
             {!modeAjout ? (
-              <>
-                <TouchableOpacity
-                  activeOpacity={
-                    parcelleTemporaire && cultureTemporaire
-                      ? 0.85
-                      : 1
-                  }
-                  disabled={!parcelleTemporaire || !cultureTemporaire}
-                  onPress={onViewFollow}
-                  style={[
-                    styles.followButton,
-                    (!parcelleTemporaire || !cultureTemporaire) &&
-                      styles.followButtonDisabled,
-                  ]}
-                >
-                  <View style={styles.followButtonIcon}>
-                    <Sprout
-                      size={19}
-                      color="#FFFFFF"
-                      strokeWidth={2.2}
-                    />
-                  </View>
-                  <View style={styles.followButtonContent}>
-                    <Text style={styles.followButtonTitle}>
-                      Voir le suivi
-                    </Text>
-                    <Text
-                      style={styles.followButtonSubtitle}
-                      numberOfLines={1}
-                    >
-                      {cultureTemporaire
-                        ? `${culturePourSelection?.nom ?? 'Culture'} • ${parcellePourSelection?.nom ?? 'Parcelle'}`
-                        : i18n.t('observations.selectionParcelleCulture')}
-                    </Text>
-                  </View>
-                  <ChevronRight
-                    size={20}
-                    color={
-                      parcelleTemporaire && cultureTemporaire
-                        ? '#FFFFFF'
-                        : '#9CA3AF'
-                    }
+              <TouchableOpacity
+                activeOpacity={
+                  parcelleTemporaire && cultureTemporaire
+                    ? 0.85
+                    : 1
+                }
+                disabled={!parcelleTemporaire || !cultureTemporaire}
+                onPress={onViewFollow}
+                style={[
+                  styles.followButton,
+                  (!parcelleTemporaire || !cultureTemporaire) &&
+                    styles.followButtonDisabled,
+                ]}
+              >
+                <View style={styles.followButtonIcon}>
+                  <Sprout
+                    size={19}
+                    color={jetons.primaire.contraste}
+                    strokeWidth={2.2}
                   />
-                </TouchableOpacity>
-              </>
+                </View>
+                <View style={styles.followButtonContent}>
+                  <Text style={styles.followButtonTitle}>
+                    Voir le suivi
+                  </Text>
+                  <Text
+                    style={styles.followButtonSubtitle}
+                    numberOfLines={1}
+                  >
+                    {cultureTemporaire
+                      ? `${culturePourSelection?.nom ?? 'Culture'} • ${parcellePourSelection?.nom ?? 'Parcelle'}`
+                      : i18n.t('observations.selectionParcelleCulture')}
+                  </Text>
+                </View>
+                <ChevronRight
+                  size={20}
+                  color={
+                    parcelleTemporaire && cultureTemporaire
+                      ? jetons.primaire.contraste
+                      : jetons.texte.discret
+                  }
+                />
+              </TouchableOpacity>
             ) : null}
 
             <View style={styles.filterPanelActions}>
@@ -418,7 +431,7 @@ export function FilterModal({
               >
                 <Check
                   size={16}
-                  color="#FFFFFF"
+                  color={jetons.primaire.contraste}
                   strokeWidth={2.5}
                 />
                 <Text style={styles.applySmallButtonText}>

@@ -10,7 +10,9 @@ import {
 } from 'react-native';
 import { Check, ChevronDown, X } from 'lucide-react-native';
 
-import { colors, radius, spacing } from '@/theme';
+import { radius, spacing } from '@/theme';
+import { useTheme } from '@/hooks/common/useTheme';
+import type { Jetons } from '@/theme/jetons';
 
 export interface SelectOption<T extends string = string> {
   /** Valeur réellement envoyée à l'API (identifiant technique). */
@@ -48,6 +50,8 @@ export function AppSelect<T extends string = string>({
   emptyLabel,
 }: AppSelectProps<T>) {
   const { t } = useTranslation();
+  const { jetons } = useTheme();
+  const styles = useMemo(() => creerStyles(jetons), [jetons]);
   // Libellés par défaut résolus dans le corps, pas dans la signature (voir
   // ErrorState) : une valeur par défaut figée bloquerait la langue.
   const placeholderAffiche = placeholder ?? t('commun.placeholders.selectionner');
@@ -63,6 +67,7 @@ export function AppSelect<T extends string = string>({
     <View style={styles.wrapper}>
       {label ? (
         <View style={styles.labelRow}>
+          {/* Label fixe au-dessus du champ : toujours visible pendant la saisie. */}
           <Text style={styles.label}>
             {label}
             {required ? <Text style={styles.required}> *</Text> : null}
@@ -87,7 +92,7 @@ export function AppSelect<T extends string = string>({
         >
           {selected?.label ?? placeholderAffiche}
         </Text>
-        <ChevronDown size={18} color={colors.neutral[400]} />
+        <ChevronDown size={18} color={jetons.texte.discret} />
       </Pressable>
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -110,7 +115,7 @@ export function AppSelect<T extends string = string>({
               onPress={() => setOpen(false)}
               hitSlop={10}
             >
-              <X size={20} color={colors.neutral[500]} />
+              <X size={20} color={jetons.texte.secondaire} />
             </Pressable>
           </View>
 
@@ -147,7 +152,7 @@ export function AppSelect<T extends string = string>({
                         <Text style={styles.optionDescription}>{item.description}</Text>
                       ) : null}
                     </View>
-                    {active ? <Check size={18} color={colors.primary[500]} /> : null}
+                    {active ? <Check size={18} color={jetons.primaire.base} /> : null}
                   </Pressable>
                 );
               }}
@@ -159,70 +164,76 @@ export function AppSelect<T extends string = string>({
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: { gap: 7 },
-  labelRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  label: {
-    fontSize: 13.5,
-    fontWeight: '600',
-    color: colors.neutral[700],
-    letterSpacing: -0.1,
-  },
-  required: { color: colors.error[500] },
-  field: {
-    minHeight: 52,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 10,
-    paddingHorizontal: 14,
-    borderRadius: radius.md,
-    borderWidth: 1.25,
-    borderColor: colors.border.strong,
-    backgroundColor: colors.background.card,
-  },
-  fieldError: { borderColor: colors.border.error },
-  fieldDisabled: { backgroundColor: colors.background.muted, opacity: 0.7 },
-  valueText: { flex: 1, fontSize: 15, color: colors.neutral[900] },
-  placeholderText: { flex: 1, fontSize: 15, color: colors.neutral[400] },
-  hint: { fontSize: 12, color: colors.neutral[500] },
-  error: { fontSize: 12, color: colors.error[500] },
+function creerStyles(jetons: Jetons) {
+  return StyleSheet.create({
+    wrapper: { gap: 7 },
+    labelRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    label: {
+      fontSize: 13.5,
+      fontWeight: '600',
+      color: jetons.texte.principal,
+      letterSpacing: -0.1,
+    },
+    required: { color: jetons.erreur.base },
+    field: {
+      minHeight: 52,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 10,
+      paddingHorizontal: 14,
+      borderRadius: radius.md,
+      borderWidth: 1.25,
+      borderColor: jetons.bordure.appuyee,
+      backgroundColor: jetons.fond.carte,
+    },
+    fieldError: { borderColor: jetons.erreur.base },
+    fieldDisabled: { backgroundColor: jetons.fond.attenue, opacity: 0.7 },
+    valueText: { flex: 1, fontSize: 15, color: jetons.texte.principal },
+    placeholderText: { flex: 1, fontSize: 15, color: jetons.texte.discret },
+    hint: { fontSize: 12, color: jetons.texte.secondaire },
+    error: { fontSize: 12, color: jetons.erreur.base },
 
-  backdrop: { flex: 1, backgroundColor: colors.background.overlay },
-  sheet: {
-    maxHeight: '72%',
-    backgroundColor: colors.background.card,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
-    paddingBottom: spacing.xl ?? 24,
-  },
-  sheetHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.default,
-  },
-  sheetTitle: { fontSize: 16, fontWeight: '700', color: colors.neutral[900] },
-  list: { paddingHorizontal: 8 },
-  empty: { padding: 24, textAlign: 'center', color: colors.neutral[500] },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    borderRadius: radius.md,
-  },
-  optionActive: { backgroundColor: colors.primary[50] },
-  optionDisabled: { opacity: 0.4 },
-  optionTexts: { flex: 1, gap: 2 },
-  optionLabel: { fontSize: 15, color: colors.neutral[800] },
-  optionLabelActive: { color: colors.primary[700], fontWeight: '600' },
-  optionDescription: { fontSize: 12.5, color: colors.neutral[500] },
-});
+    backdrop: { flex: 1, backgroundColor: jetons.fond.superposition },
+    sheet: {
+      maxHeight: '72%',
+      backgroundColor: jetons.fond.carte,
+      borderTopLeftRadius: radius.xl,
+      borderTopRightRadius: radius.xl,
+      paddingBottom: spacing.xl ?? 24,
+    },
+    sheetHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: jetons.bordure.defaut,
+    },
+    sheetTitle: { fontSize: 16, fontWeight: '700', color: jetons.texte.principal },
+    list: { paddingHorizontal: 8 },
+    empty: { padding: 24, textAlign: 'center', color: jetons.texte.secondaire },
+    option: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12,
+      paddingHorizontal: 14,
+      paddingVertical: 14,
+      borderRadius: radius.md,
+    },
+    optionActive: { backgroundColor: jetons.primaire.clair },
+    optionDisabled: { opacity: 0.4 },
+    optionTexts: { flex: 1, gap: 2 },
+    optionLabel: { fontSize: 15, color: jetons.texte.principal },
+    optionLabelActive: { color: jetons.primaire.base, fontWeight: '600' },
+    optionDescription: { fontSize: 12.5, color: jetons.texte.secondaire },
+  });
+}
 
 export default AppSelect;

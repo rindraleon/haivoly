@@ -2,11 +2,11 @@ import { useTranslation } from 'react-i18next';
 
 import { useMemo, useState } from 'react';
 
-import { View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { router } from 'expo-router';
 
-import { Leaf } from 'lucide-react-native';
+import { ArrowLeft } from 'lucide-react-native';
 
 import { useRegister } from '@/hooks/auth/useRegister';
 
@@ -17,6 +17,7 @@ import {
   langueAPI,
 } from '@/screens/AuthScreen/RegisterScreen.helpers';
 
+import { MarqueHaivoly } from '@/components/AuthComponent/MarqueHaivoly';
 import { RegisterForm } from '@/components/AuthComponent/RegisterForm';
 import { estEmailValide } from '@/utils/email';
 import { codeErreur, erreursParChamp, estErreurDe, messageErreur } from '@/utils/erreur';
@@ -222,55 +223,70 @@ export default function RegisterScreen() {
 
   return (
     <View style={styles.root}>
-      {}
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.contenu}>
+            {/* Flèche retour identique à l'écran de connexion. */}
+            <View style={styles.backWrap}>
+              {router.canGoBack() ? (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('commun.actions.retour')}
+                  onPress={() => router.back()}
+                  style={({ pressed }) => [styles.back, pressed && { opacity: 0.75 }]}
+                >
+                  <ArrowLeft size={19} color="#1B2B20" strokeWidth={2.2} />
+                </Pressable>
+              ) : null}
+            </View>
 
-      <View pointerEvents="none" style={styles.backgroundDecor}>
-        <View style={styles.decorCircleLarge} />
+            {/* En-tête de marque : logo officiel transparent, sans aucun
+                cadre blanc, posé à même le fond clair comme sur la connexion. */}
+            <View style={styles.headerBloc}>
+              <MarqueHaivoly taille={74} testID="register-logo" />
+              <Text style={styles.headerTitre}>{t('auth.register.titre')}</Text>
+              <Text style={styles.headerSousTitre}>{t('auth.register.sousTitre')}</Text>
+            </View>
 
-        <View style={styles.decorCircleMedium} />
+            <View style={styles.card}>
+              <RegisterForm
+                clearFieldError={clearFieldError}
+                email={email}
+                errors={errors}
+                handleRegister={handleRegister}
+                isLoading={isLoading}
+                nom={nom}
+                password={password}
+                passwordLabel={passwordLabel}
+                passwordScore={passwordScore}
+                prenom={prenom}
+                pwdChecks={pwdChecks}
+                setEmail={setEmail}
+                setNom={setNom}
+                setPassword={setPassword}
+                setPrenom={setPrenom}
+                setTelephone={setTelephone}
+                telephone={telephone}
+                setUsername={setUsername}
+                username={username}
+                role={role}
+                setRole={setRole}
+              />
+            </View>
 
-        <View style={styles.decorCircleSmall} />
-
-        <Leaf
-          size={190}
-          color="rgba(255,255,255,0.06)"
-          strokeWidth={1}
-          style={styles.decorLeafOne}
-        />
-
-        <Leaf
-          size={135}
-          color="rgba(255,255,255,0.05)"
-          strokeWidth={1}
-          style={styles.decorLeafTwo}
-        />
-      </View>
-
-      {}
-
-      <RegisterForm
-        clearFieldError={clearFieldError}
-        email={email}
-        errors={errors}
-        handleRegister={handleRegister}
-        isLoading={isLoading}
-        nom={nom}
-        password={password}
-        passwordLabel={passwordLabel}
-        passwordScore={passwordScore}
-        prenom={prenom}
-        pwdChecks={pwdChecks}
-        setEmail={setEmail}
-        setNom={setNom}
-        setPassword={setPassword}
-        setPrenom={setPrenom}
-        setTelephone={setTelephone}
-        telephone={telephone}
-        setUsername={setUsername}
-        username={username}
-        role={role}
-        setRole={setRole}
-      />
+            <Text style={styles.footer}>
+              {t('auth.piedDePage', { annee: new Date().getFullYear() })}
+            </Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

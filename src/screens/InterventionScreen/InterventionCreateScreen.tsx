@@ -4,7 +4,6 @@ import { Alert, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { CalendarClock, Sparkles } from 'lucide-react-native';
 
-import { colors } from '@/theme';
 import { Badge } from '@/components/CommonComponent/Badge';
 import { Button } from '@/components/CommonComponent/Button';
 import { Card } from '@/components/CommonComponent/Card';
@@ -14,6 +13,12 @@ import { AppSelect } from '@/components/CommonComponent/AppSelect';
 import { ParcelleFormShell } from '@/components/ParcelleComponent/ParcelleFormShell';
 import { useCreateIntervention, useCulture, useCultures, useParcelles } from '@/hooks';
 import { ApiError } from '@/services/http';
+import { interventionPhotosApi } from '@/services';
+import {
+  PhotosSelection,
+  type PhotoBrouillon,
+} from '@/components/CommonComponent/PhotosSelection';
+import { envoyerPhotosEnAttente } from '@/utils/envoiPhotos';
 import {
   PRODUITS_INTERVENTION,
   TYPES_INTERVENTION,
@@ -22,11 +27,14 @@ import {
 } from '@/utils/intervention';
 import { dateOnlyVersIso, formatDate, isDateOnly, todayDateOnly } from '@/utils/date';
 
-import { styles } from './InterventionCreateScreen.styles';
+import { creerStylesCreationIntervention } from './InterventionCreateScreen.styles';
+import { useTheme } from '@/hooks/common/useTheme';
 
 import { formatNombre } from '@/utils/formatNombre';
 
 export default function AjoutInterventionScreen() {
+  const { jetons } = useTheme();
+  const styles = useMemo(() => creerStylesCreationIntervention(jetons), [jetons]);
   const params = useLocalSearchParams<{
     cultureId?: string;
     parcelleId?: string;
@@ -42,6 +50,9 @@ export default function AjoutInterventionScreen() {
   const [unite, setUnite] = useState<string>('kg');
   const [cout, setCout] = useState('');
   const [description, setDescription] = useState('');
+  // Photos jointes à la création : envoyées après que l'intervention existe.
+  const [photos, setPhotos] = useState<PhotoBrouillon[]>([]);
+  const [envoiPhotos, setEnvoiPhotos] = useState(false);
 
   const parcelles = useParcelles({ limit: 100 });
   const culture = useCulture(parcelleId || undefined, cultureId || undefined);
@@ -76,7 +87,7 @@ export default function AjoutInterventionScreen() {
     }
 
     try {
-      await creation.mutateAsync({
+      const creee = await creation.mutateAsync({
         cultureId,
         body: {
           type,
@@ -89,6 +100,31 @@ export default function AjoutInterventionScreen() {
           // ⚠️ aucun `statut` : le serveur le calcule.
         },
       });
+
+      // Photos jointes : envoyées une fois l'intervention créée (hors-ligne :
+      // intervention locale sans identifiant serveur — elles resteront à
+      // ajouter depuis la fiche de l'intervention).
+      if (photos.length > 0 && creee?.id && !creee._localOnly && parcelleId) {
+        setEnvoiPhotos(true);
+        try {
+          const bilan = await envoyerPhotosEnAttente(photos, (fichier) =>
+            interventionPhotosApi.upload(parcelleId, cultureId, creee.id, fichier),
+          );
+          if (bilan.echouees > 0) {
+            Alert.alert(
+              i18n.t('photos.erreur'),
+              i18n.t('photos.photosJointesPartiel', {
+                envoyees: bilan.envoyees,
+                echouees: bilan.echouees,
+              }),
+              [{ text: 'OK', onPress: () => router.back() }],
+            );
+            return;
+          }
+        } finally {
+          setEnvoiPhotos(false);
+        }
+      }
 
       Alert.alert(i18n.t('interventions.enregistree'), i18n.t('interventions.statutCalculeServeur'), [
         { text: 'OK', onPress: () => router.back() },
@@ -107,7 +143,7 @@ export default function AjoutInterventionScreen() {
       subtitle={i18n.t('interventions.typeCultureProduit')}
       onBack={() => router.back()}
       footer={
-        <Button onPress={enregistrer} loading={creation.isPending}>
+        <Button onPress={enregistrer} loading={creation.isPending || envoiPhotos}>
           Enregistrer l’intervention
         </Button>
       }
@@ -151,12 +187,12 @@ export default function AjoutInterventionScreen() {
               ? `Date retenue : ${formatDate(date)} — statut déduit par le serveur`
               : i18n.t('interventions.selectionnerDate')
           }
-          leftIcon={<CalendarClock size={16} color={colors.neutral[400]} />}
+          leftIcon={<CalendarClock size={16} color={jetons.texte.discret} />}
         />
 
         {apercuStatut ? (
           <View style={styles.previewRow}>
-            <Sparkles size={15} color={colors.primary[700]} />
+            <Sparkles size={15} color={jetons.primaire.fonce} />
             <Text style={styles.previewText}>Statut calculé :</Text>
             <Badge
               label={apercuStatut === 'PLANIFIEE' ? i18n.t('statuts.PLANIFIEE') : i18n.t('statuts.EN_COURS')}
@@ -211,6 +247,14 @@ export default function AjoutInterventionScreen() {
           placeholder={i18n.t('interventions.descriptionPlaceholder')}
           multiline
           numberOfLines={3}
+        />
+      </Card>
+
+      <Card style={styles.section}>
+        <PhotosSelection
+          photos={photos}
+          onChange={setPhotos}
+          disabled={creation.isPending || envoiPhotos}
         />
       </Card>
 

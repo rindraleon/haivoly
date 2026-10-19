@@ -92,23 +92,23 @@ export function LoginForm({
 }
 
 const styles = StyleSheet.create({
-  form: { gap: 14 },
+  form: { gap: 15 },
   forgotWrap: { alignSelf: 'flex-end', paddingVertical: 2 },
   forgotText: { fontSize: 13, fontWeight: '600', color: colors.primary[600] },
   divider: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 2 },
-  line: { flex: 1, height: 1, backgroundColor: colors.border.default },
-  or: { fontSize: 12, color: colors.neutral[400], fontWeight: '600' },
-  registerBox: { alignItems: 'center', gap: 10, marginTop: 4 },
+  line: { flex: 1, height: 1, backgroundColor: '#E7EBE7' },
+  or: { fontSize: 12, color: '#98A29A', fontWeight: '600' },
+  registerBox: { alignItems: 'center', gap: 10, marginTop: 2 },
   registerHint: { fontSize: 13, color: colors.neutral[500] },
   registerBtn: {
     alignSelf: 'stretch',
     minHeight: 48,
-    borderRadius: radius.md,
+    borderRadius: radius.full,
     borderWidth: 1.25,
-    borderColor: colors.primary[200],
-    backgroundColor: colors.primary[50],
+    borderColor: '#D8E0DA',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  registerBtnText: { fontSize: 14, fontWeight: '700', color: colors.primary[700] },
+  registerBtnText: { fontSize: 14, fontWeight: '700', color: '#1B4E1F' },
 });

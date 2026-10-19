@@ -28,7 +28,10 @@ import {
   useUpdateIntervention,
 } from '@/hooks';
 
-import { styles } from './InterventionListScreen.styles';
+import { useStylesInterventions } from './stylesInterventions';
+import { interventionPhotosApi } from '@/services';
+import { envoyerPhotosEnAttente } from '@/utils/envoiPhotos';
+import type { PhotoBrouillon } from '@/components/CommonComponent/PhotosSelection';
 
 import { ContexteFormulaire, CultureGlobale, Intervention, InterventionGlobale, StatutCulture, interventionDate, normaliserErreur } from '@/screens/InterventionScreen/InterventionListScreen.helpers';
 
@@ -47,6 +50,7 @@ const maintenant = Date.now();
 
 
 export default function InterventionsCultureScreen() {
+  const styles = useStylesInterventions();
   const params = useLocalSearchParams<{
     parcelleId?: string;
     cultureId?: string;
@@ -347,6 +351,9 @@ export default function InterventionsCultureScreen() {
   const [quantite, setQuantite] = useState('');
   const [unite, setUnite] = useState('');
   const [cout, setCout] = useState('');
+  // Photos mises en attente à la création (vue globale), envoyées après
+  // que l'intervention existe côté serveur.
+  const [photosBrouillon, setPhotosBrouillon] = useState<PhotoBrouillon[]>([]);
 
 
   const chargerInterventions = useCallback(async () => {
@@ -530,6 +537,7 @@ export default function InterventionsCultureScreen() {
   };
 
   const fermerFormulaire = () => {
+    setPhotosBrouillon([]);
     setFormOuvert(false);
     setInterventionEnModification(null);
     setContexteFormulaire(null);
@@ -632,10 +640,47 @@ export default function InterventionsCultureScreen() {
           i18n.t('interventions.modifieeSucces'),
         );
       } else {
-        await createMutation.mutateAsync({
+        const creee = await createMutation.mutateAsync({
           cultureId: contexte.cultureId,
           body: data,
         });
+
+        // Photos jointes : envoyées une fois l'intervention créée (hors-ligne
+        // — intervention locale sans identifiant serveur — elles resteront à
+        // ajouter depuis la fiche de l'intervention).
+        setPhotosBrouillon([]);
+        if (
+          photosBrouillon.length > 0 &&
+          creee?.id &&
+          !creee._localOnly &&
+          contexte.parcelleId
+        ) {
+          try {
+            const bilan = await envoyerPhotosEnAttente(
+              photosBrouillon,
+              (fichier) =>
+                interventionPhotosApi.upload(
+                  contexte.parcelleId,
+                  contexte.cultureId,
+                  creee.id,
+                  fichier,
+                ),
+            );
+
+            if (bilan.echouees > 0) {
+              Alert.alert(
+                i18n.t('domaine.succes'),
+                i18n.t('photos.photosJointesPartiel', {
+                  envoyees: bilan.envoyees,
+                  echouees: bilan.echouees,
+                }),
+              );
+              return;
+            }
+          } catch {
+            logger.warn('InterventionListScreen', "Échec de l'envoi des photos");
+          }
+        }
 
         Alert.alert(
           i18n.t('domaine.succes'),
@@ -867,6 +912,10 @@ export default function InterventionsCultureScreen() {
         enregistrerIntervention={enregistrerIntervention}
         fermerFormulaire={fermerFormulaire}
         interventionEnModification={interventionEnModification}
+        parcelleId={contexteFormulaire?.parcelleId}
+        cultureId={contexteFormulaire?.cultureId}
+        photosBrouillon={photosBrouillon}
+        onChangePhotosBrouillon={setPhotosBrouillon}
         parcelleLabel={parcelleLabel}
         produit={produit}
         quantite={quantite}

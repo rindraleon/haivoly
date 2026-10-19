@@ -22,6 +22,9 @@ import {
 
 import { VueCreationObservation } from '@/components/ObservationComponent/VueCreationObservation';
 import { logger } from '@/utils/logger';
+import { observationPhotosApi } from '@/services';
+import { envoyerPhotosEnAttente } from '@/utils/envoiPhotos';
+import type { PhotoBrouillon } from '@/components/CommonComponent/PhotosSelection';
 type StatutCulture =
   | 'PLANIFIEE'
   | 'EN_COURS'
@@ -74,6 +77,12 @@ export default function AjoutObservationScreen() {
     useState(
       new Date().toISOString(),
     );
+
+  // Photos mises en attente : envoyées après création de l'observation.
+  const [photosBrouillon, setPhotosBrouillon] =
+    useState<PhotoBrouillon[]>([]);
+  const [envoiPhotos, setEnvoiPhotos] =
+    useState(false);
 
   const statutLabel = useMemo(() => {
     switch (statut) {
@@ -134,18 +143,69 @@ export default function AjoutObservationScreen() {
       }
 
       try {
-        await createMutation.mutateAsync(
-          {
-            cultureId,
-            body: {
-              description:
-                description.trim(),
-              date:
-                date.trim() ||
-                undefined,
+        const creee =
+          await createMutation.mutateAsync(
+            {
+              cultureId,
+              body: {
+                description:
+                  description.trim(),
+                date:
+                  date.trim() ||
+                  undefined,
+              },
             },
-          },
-        );
+          );
+
+        // Photos jointes : envoyées une fois l'observation créée (hors-ligne
+        // — observation locale sans identifiant serveur — elles resteront à
+        // ajouter depuis la fiche de l'observation).
+        if (
+          photosBrouillon.length > 0 &&
+          creee?.id &&
+          !creee._localOnly &&
+          parcelleId
+        ) {
+          setEnvoiPhotos(true);
+          try {
+            const bilan =
+              await envoyerPhotosEnAttente(
+                photosBrouillon,
+                (fichier) =>
+                  observationPhotosApi.upload(
+                    parcelleId,
+                    cultureId,
+                    creee.id,
+                    fichier,
+                  ),
+              );
+
+            if (bilan.echouees > 0) {
+              Alert.alert(
+                i18n.t('observations.enregistree'),
+                i18n.t(
+                  'photos.photosJointesPartiel',
+                  {
+                    envoyees:
+                      bilan.envoyees,
+                    echouees:
+                      bilan.echouees,
+                  },
+                ),
+                [
+                  {
+                    text: 'OK',
+                    onPress: () =>
+                      router.back(),
+                  },
+                ],
+              );
+              return;
+            }
+          } finally {
+            setEnvoiPhotos(false);
+          }
+        }
 
         Alert.alert(
           i18n.t('observations.enregistree'),
@@ -178,6 +238,9 @@ export default function AjoutObservationScreen() {
       description={description}
       enregistrer={enregistrer}
       parcelleNom={parcelleNom}
+      photos={photosBrouillon}
+      onChangePhotos={setPhotosBrouillon}
+      envoiPhotosEnCours={envoiPhotos}
       setDate={setDate}
       setDescription={setDescription}
       statutLabel={statutLabel}

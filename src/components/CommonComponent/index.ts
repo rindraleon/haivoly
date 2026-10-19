@@ -16,6 +16,7 @@ export * from './IconButton';
 export * from './LoadingState';
 export * from './OfflineBanner';
 export * from './PasswordInput';
+export * from './PhotosSelection';
 export * from './ScreenContainer';
 export * from './ScreenHeader';
 export * from './SearchBar';

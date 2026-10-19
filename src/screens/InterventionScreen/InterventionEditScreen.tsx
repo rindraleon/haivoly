@@ -5,7 +5,7 @@ import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-na
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 
-import { styles } from './InterventionEditScreen.styles';
+import { useStylesEditionIntervention } from './InterventionEditScreen.styles';
 
 import {
   useIntervention,
@@ -15,6 +15,7 @@ import {
 import { VueModificationIntervention } from '@/components/InterventionComponent/VueModificationIntervention';
 import { dateOnlyVersIso } from '@/utils/date';
 export default function ModifierInterventionScreen() {
+  const styles = useStylesEditionIntervention();
   const params = useLocalSearchParams<{
     parcelleId?: string;
     cultureId?: string;
@@ -296,6 +297,9 @@ export default function ModifierInterventionScreen() {
 
   return (
     <VueModificationIntervention
+      cultureId={cultureId}
+      interventionId={interventionId}
+      parcelleId={parcelleId}
       cout={cout}
       cultureNom={cultureNom}
       date={date}

@@ -90,6 +90,15 @@ const mg: Traductions = {
 
   // ── Fidirana ──────────────────────────────────────────────────────────
   auth: {
+    landing: {
+      titre: 'Ny tanetsininao sy ny voly, ao an-tànana foana',
+      sousTitre: 'Saripika ny tanimboly, ararao ary ny voly, dia voan-tsoratra ny asa amam-boly rehetra — na tsy afa-tserasera aza.',
+      foncParcelles: 'Tanimboly voafaritra amin’ny GPS',
+      foncCultures: 'Fanaraha-maso ny voly sy ny fijinjana',
+      foncTravaux: 'Fitsidihana sy fanamarinana miaraka amin’ny sary',
+      dejaCompte: 'Manana kaonty efa ? Hiditra',
+      pasCompte: 'Tsy mbola misy kaonty ? Mamorona iray',
+    },
     login: {
       bienvenue: 'Tongasoa',
       sousTitre: 'Midira hijery ny tanimboly sy ny fambolena.',
@@ -394,6 +403,19 @@ const mg: Traductions = {
     voulezVraimentSupprimerPhoto: 'Tianao ho fafana tokoa ve ity sary ity?',
     impossiblePrendrePhoto: 'Tsy afaka maka sary.',
     impossibleSupprimerPhoto: 'Tsy afaka mamafa ny sary.',
+    ajouterPhoto: 'Manampy sary',
+    choisirSource: 'Safidio ny loharano.',
+    remplacerPhoto: 'Soloina ny sary',
+    supprimerPhoto: 'Fafao ny sary',
+    apercuPhoto: 'Topimaso ny sary {{numero}}',
+    limiteAtteinte: 'Tratra ny fetra',
+    limiteTexte: 'Sary {{max}} farafahatsiny no azo ampiomboina.',
+    aideSelection: 'Tsy misy sary. Makà sary na ampidiro avy amin’ny fitaovanao : hiaraka amin’ny fanoratana izy.',
+    aideApresSelection: 'Tsindrio ny sary raha te-hamerina azy. Tsatsembohana ary alefa miaraka amin’ny fanoratana ny sary.',
+    envoiPhotosEnCours: 'Fandefasana sary… ({{envoyees}}/{{total}})',
+    photosJointesOk: 'Sary {{count}} nampiana soa aman-tsara.',
+    photosJointesPartiel: 'Sary {{envoyees}} nalefa, {{echouees}} tsy tafita. Azo averina avy amin’ny pejy.',
+    captureImpossible: 'Tsy afaka maka sary.',
   },
 
   // ── Soratra iombonana amin'ny efijery ─────────────────────────────────
