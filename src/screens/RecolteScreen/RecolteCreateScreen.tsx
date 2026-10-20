@@ -11,9 +11,15 @@ import { DateInput } from '@/components/CommonComponent/DateInput';
 import { Input } from '@/components/CommonComponent/Input';
 import { AppSelect } from '@/components/CommonComponent/AppSelect';
 import { ParcelleFormShell } from '@/components/ParcelleComponent/ParcelleFormShell';
+import {
+  PhotosSelection,
+  type PhotoBrouillon,
+} from '@/components/CommonComponent/PhotosSelection';
 import { useCreateRecolte } from '@/hooks';
+import { recoltePhotosApi } from '@/services';
 import { ApiError } from '@/services/http';
 import { todayDateOnly, isDateOnly } from '@/utils/date';
+import { envoyerPhotosEnAttente } from '@/utils/envoiPhotos';
 
 
 import { styles } from './RecolteCreateScreen.styles';
@@ -37,6 +43,8 @@ export default function AjoutRecolteScreen() {
   const [prixVente, setPrixVente] = useState('');
   const [coutRecolte, setCoutRecolte] = useState('');
   const [description, setDescription] = useState('');
+  const [photos, setPhotos] = useState<PhotoBrouillon[]>([]);
+  const [envoiPhotos, setEnvoiPhotos] = useState(false);
   const [erreurs, setErreurs] = useState<{ date?: string; quantite?: string }>({});
 
   const creation = useCreateRecolte();
@@ -61,7 +69,7 @@ export default function AjoutRecolteScreen() {
     if (!valider()) return;
 
     try {
-      await creation.mutateAsync({
+      const creee = await creation.mutateAsync({
         cultureId: cultureId as string,
         body: {
           // Date calendaire : envoyée telle quelle, jamais convertie.
@@ -75,6 +83,28 @@ export default function AjoutRecolteScreen() {
           // Aucun `statut` : c'est le serveur qui passe la culture en RECOLTEE.
         },
       });
+
+      if (photos.length > 0 && creee?.id && !creee._localOnly) {
+        setEnvoiPhotos(true);
+        try {
+          const bilan = await envoyerPhotosEnAttente(photos, (fichier) =>
+            recoltePhotosApi.upload(creee.id, fichier),
+          );
+          if (bilan.echouees > 0) {
+            Alert.alert(
+              i18n.t('photos.erreur'),
+              i18n.t('photos.photosJointesPartiel', {
+                envoyees: bilan.envoyees,
+                echouees: bilan.echouees,
+              }),
+              [{ text: 'OK', onPress: () => router.back() }],
+            );
+            return;
+          }
+        } finally {
+          setEnvoiPhotos(false);
+        }
+      }
 
       Alert.alert(
         i18n.t('recoltes.enregistree'),
@@ -99,7 +129,7 @@ export default function AjoutRecolteScreen() {
       footer={
         <Button
           onPress={enregistrer}
-          loading={creation.isPending}
+          loading={creation.isPending || envoiPhotos}
           leftIcon={<Wheat size={16} color={colors.neutral[0]} />}
         >
           Enregistrer la récolte
@@ -164,6 +194,14 @@ export default function AjoutRecolteScreen() {
           placeholder={i18n.t('recoltes.conditions')}
           multiline
           numberOfLines={3}
+        />
+      </Card>
+
+      <Card style={styles.section}>
+        <PhotosSelection
+          photos={photos}
+          onChange={setPhotos}
+          disabled={creation.isPending || envoiPhotos}
         />
       </Card>
 

@@ -1,6 +1,0 @@
-export * from './ParcelleCard';
-export * from './ParcelleFormShell';
-export * from './ParcelleMap';
-export * from './ParcelleWizard';
-export * from './VueHistoriqueParcelles';
-export * from './VueParcelles';
