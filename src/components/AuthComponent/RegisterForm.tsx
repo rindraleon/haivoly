@@ -2,15 +2,13 @@ import type { Errors } from '@/screens/AuthScreen/RegisterScreen.helpers';
 import { styles } from '@/screens/AuthScreen/RegisterScreen.styles';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { AlertCircle, ArrowLeft, ArrowRight } from 'lucide-react-native';
 import { i18n } from '@/i18n/instance';
 import type { Role } from '@/types';
-import { MarqueHaivoly } from '@/components/AuthComponent/MarqueHaivoly';
 import { PwdCheck } from '@/components/AuthComponent/PwdCheck';
 import { AppSelect } from '@/components/CommonComponent/AppSelect';
 import { Button } from '@/components/CommonComponent/Button';
-import { Card } from '@/components/CommonComponent/Card';
 import { Input } from '@/components/CommonComponent/Input';
 import { PasswordInput } from '@/components/CommonComponent/PasswordInput';
 import { estEmailValide } from '@/utils/email';
@@ -44,6 +42,13 @@ export type RegisterFormProps = {
   setRole: Dispatch<SetStateAction<Role>>;
 };
 
+/**
+ * Inscription en deux étapes (identité → contact + sécurité), rendue à
+ * l'intérieur de la carte de `RegisterScreen` — même squelette visuel que
+ * l'écran de connexion (défilement + clavier gérés par l'écran parent).
+ * La validation serveur complète reste portée par `handleRegister` à
+ * l'étape 2.
+ */
 export function RegisterForm({
   clearFieldError,
   email,
@@ -66,7 +71,7 @@ export function RegisterForm({
   username,
   role,
   setRole,
-}: Readonly<RegisterFormProps>) {
+}: RegisterFormProps) {
   const [etape, setEtape] = useState<1 | 2>(1);
   const [erreursEtape, setErreursEtape] = useState<{
     nom?: string;
@@ -86,25 +91,18 @@ export function RegisterForm({
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.kav}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-        <View style={styles.sansScroll} testID={`register-etape-${etape}`}>
-        <View style={styles.enteteCompacte}>
-          
-          <View style={styles.progression}>
-            <View style={styles.progressionRail}>
-              <View style={[styles.progressionTrait, { width: etape === 1 ? '50%' : '100%' }]} />
-            </View>
-            <Text style={styles.progressText}>
-              {i18n.t('auth.register.progression', { current: etape, total: 2 })}
-              {' — '}
-              {etape === 1
-                ? i18n.t('auth.register.etapeIdentite')
-                : i18n.t('auth.register.etapeSecurite')}
-            </Text>
+    <View style={styles.formContenu} testID={`register-etape-${etape}`}>
+        <View style={styles.progression}>
+          <View style={styles.progressionRail}>
+            <View style={[styles.progressionTrait, { width: etape === 1 ? '50%' : '100%' }]} />
           </View>
+          <Text style={styles.progressText}>
+            {i18n.t('auth.register.progression', { current: etape, total: 2 })}
+            {' — '}
+            {etape === 1
+              ? i18n.t('auth.register.etapeIdentite')
+              : i18n.t('auth.register.etapeSecurite')}
+          </Text>
         </View>
 
         {errors.general && (
@@ -255,8 +253,7 @@ export function RegisterForm({
             </View>
           </View>
         )}
-        </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 

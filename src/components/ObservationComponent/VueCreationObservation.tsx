@@ -42,7 +42,7 @@ export function VueCreationObservation({
   setDate,
   setDescription,
   statutLabel,
-}: Readonly<Props>) {
+}: Props) {
   const styles = useStylesCreationObservation();
   const { jetons } = useTheme();
   const saisieVerrouillee = createMutation.isPending || !!envoiPhotosEnCours;

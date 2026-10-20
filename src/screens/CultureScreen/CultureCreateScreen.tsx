@@ -28,7 +28,9 @@ import { useCreateCulture } from '@/hooks';
 
 
 import { VueCreationCulture } from '@/components/CultureComponent/VueCreationCulture';
+import { toApiError } from '@/services/http';
 import { formatDate, toDateOnly } from '@/utils/date';
+import { messageErreur } from '@/utils/erreur';
 import { logger } from '@/utils/logger';
 export default function AjouterCultureScreen() {
   const {
@@ -93,6 +95,12 @@ export default function AjouterCultureScreen() {
 
 
   const enregistrer = () => {
+    // Anti double-soumission : un second appui pendant la requête ne
+    // déclenche jamais une création en double.
+    if (createCulture.isPending) {
+      return;
+    }
+
     if (!parcelleId) {
       Alert.alert(
         i18n.t('domaine.erreur'),
@@ -205,15 +213,23 @@ export default function AjouterCultureScreen() {
         },
 
         onError: (
-          error: any,
+          error: unknown,
         ) => {
-          logger.warn('CultureCreateScreen', 'Échec de la création de la culture');
+          // Journal de diagnostic SANS données sensibles : statut HTTP, code
+          // d'erreur stable, noms des champs invalides, champs envoyés.
+          // (Les valeurs saisies et le jeton de session ne sont jamais loggés.)
+          const apiErreur = toApiError(error);
+          logger.warn('CultureCreateScreen', 'Échec de la création de la culture', {
+            statut: apiErreur.status,
+            code: apiErreur.code,
+            parcelleConnue: Boolean(parcelleId),
+            champsInvalides: apiErreur.fields.map((champ) => champ.field),
+            clesEnvoyees: Object.keys(data),
+          });
 
           Alert.alert(
             i18n.t('domaine.erreur'),
-            error?.response?.data
-              ?.message ||
-              i18n.t('cultures.impossibleDAjouterCulture'),
+            messageErreur(error, i18n.t('cultures.impossibleDAjouterCulture')),
           );
         },
       },

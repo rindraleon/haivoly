@@ -49,150 +49,161 @@ export function Keyboard1({
   setPrenom,
   setTelephone,
   telephone,
-}: Props) {
+}: Readonly<Props>) {
   return (
 <ScrollView
-              contentContainerStyle={
-                styles.scroll
-              }
-              keyboardShouldPersistTaps="handled"
-              keyboardDismissMode="on-drag"
-              showsVerticalScrollIndicator={false}
-            >
+  contentContainerStyle={
+    styles.scroll
+  }
+  keyboardShouldPersistTaps="handled"
+  keyboardDismissMode="on-drag"
+  showsVerticalScrollIndicator={false}
+>
 
-              {}
+  {}
 
-              <View
-                style={
-                  styles.hero
-                }
-              >
+  <View
+    style={
+      styles.contenu
+    }
+  >
 
-                <View
-                  style={
-                    styles.heroTopRow
-                  }
-                >
+    <View
+      style={
+        {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }
+      }
+    >
 
-                  <View
-                    style={
-                      styles.logoCircle
-                    }
-                  >
+      <View
+        style={
+          {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+          }
+        }
+      >
 
-                    <Sprout
-                      size={13}
-                      color="#FFFFFF"
-                      strokeWidth={2}
-                    />
+        <Sprout
+          size={13}
+          color="#FFFFFF"
+          strokeWidth={2}
+        />
 
-                     <Text
-                    style={
-                      styles.brandTitle
-                    }
-                  >
-                    Haivoly
-                  </Text>
+          <Text
+            style={{ color: '#FFFFFF', fontSize: 18, fontWeight: '700' }}
+      >
+        Haivoly
+      </Text>
 
-                  </View>
+      </View>
 
-                  <View
-                    style={
-                      styles.heroBadge
-                    }
-                  >
+      <View
+        style={
+          {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 6,
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            borderRadius: 999,
+            backgroundColor: 'rgba(255, 255, 255, 0.15)',
+          }
+        }
+      >
 
-                    <Leaf
-                      size={13}
-                      color="#FFFFFF"
-                      strokeWidth={2}
-                    />
+        <Leaf
+          size={13}
+          color="#FFFFFF"
+          strokeWidth={2}
+        />
 
-                    <Text
-                      style={
-                        styles.heroBadgeText
-                      }
-                    >
-                      AGRICULTURE
-                    </Text>
+        <Text
+          style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '700', letterSpacing: 1 }}
+        >
+          AGRICULTURE
+        </Text>
 
-                  </View>
+      </View>
 
-                </View>
+    </View>
 
-                <View
-                  style={
-                    styles.heroCopy
-                  }
-                >
+    <View
+      style={{ gap: 8 }}
+    >
 
-                  <Text
-                    style={
-                      styles.heroTitle
-                    }
-                  >
-                    Cultivez votre réussite.
-                  </Text>
+      <Text
+        style={{ color: '#FFFFFF', fontSize: 28, fontWeight: '800' }}
+      >
+        Cultivez votre réussite.
+      </Text>
 
-                  <Text
-                    style={
-                      styles.heroSubtitle
-                    }
-                  >
-                    Gérez vos parcelles,
-                    cultures et activités
-                    agricoles simplement.
-                  </Text>
+      <Text
+        style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: 14, lineHeight: 21 }}
+      >
+        Gérez vos parcelles,
+        cultures et activités
+        agricoles simplement.
+      </Text>
 
-                </View>
+    </View>
 
-                <View
-                  style={
-                    styles.heroBottomHint
-                  }
-                >
+    <View
+      style={
+          {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+          }
+      }
+    >
 
-                  <View
-                    style={
-                      styles.heroDot
-                    }
-                  />
+      <View
+        style={{
+          width: 8,
+          height: 8,
+          borderRadius: 4,
+          backgroundColor: '#FFFFFF',
+        }}
+      />
 
-                  <Text
-                    style={
-                      styles.heroHintText
-                    }
-                  >
-                    Votre exploitation,
-                    au même endroit.
-                  </Text>
+      <Text
+        style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '600' }}
+      >
+        Votre exploitation,
+        au même endroit.
+      </Text>
 
-                </View>
+    </View>
 
-              </View>
+  </View>
 
-              {}
+  {}
 
-              <RegisterCard
-                clearFieldError={clearFieldError}
-                email={email}
-                errors={errors}
-                handleRegister={handleRegister}
-                isLoading={isLoading}
-                nom={nom}
-                password={password}
-                passwordLabel={passwordLabel}
-                passwordScore={passwordScore}
-                prenom={prenom}
-                pwdChecks={pwdChecks}
-                setEmail={setEmail}
-                setNom={setNom}
-                setPassword={setPassword}
-                setPrenom={setPrenom}
-                setTelephone={setTelephone}
-                telephone={telephone}
-              />
+  <RegisterCard
+    clearFieldError={clearFieldError}
+    email={email}
+    errors={errors}
+    handleRegister={handleRegister}
+    isLoading={isLoading}
+    nom={nom}
+    password={password}
+    passwordLabel={passwordLabel}
+    passwordScore={passwordScore}
+    prenom={prenom}
+    pwdChecks={pwdChecks}
+    setEmail={setEmail}
+    setNom={setNom}
+    setPassword={setPassword}
+    setPrenom={setPrenom}
+    setTelephone={setTelephone}
+    telephone={telephone}
+  />
 
-            </ScrollView>
+</ScrollView>
   );
 }

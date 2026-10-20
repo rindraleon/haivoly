@@ -18,7 +18,7 @@ export function InterventionCard({
   modificationAutorisee,
   onModifier,
   onSupprimer,
-}: Readonly<{
+}: {
   intervention: Intervention;
   parcelleId: string;
   cultureId: string;
@@ -28,7 +28,7 @@ export function InterventionCard({
   modificationAutorisee: boolean;
   onModifier: (intervention: Intervention) => void;
   onSupprimer: (intervention: Intervention) => void;
-}>) {
+}) {
   const styles = useStylesInterventions();
   const { jetons } = useTheme();
   return (

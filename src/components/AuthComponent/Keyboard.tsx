@@ -1,12 +1,5 @@
-
-
-
-
 import type { Errors } from '@/screens/AuthScreen/RegisterScreen.helpers';
 import { styles } from '@/screens/AuthScreen/RegisterScreen.styles';
-
-
-
 import type { Dispatch, SetStateAction } from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 
@@ -19,7 +12,6 @@ type Props = {
   isLoading: boolean;
   nom: string;
   password: string;
-  /** Libellé affiché : `string`, pas une union de littéraux français (i18n). */
   passwordLabel: string;
   passwordScore: number;
   prenom: string;
@@ -50,11 +42,11 @@ export function Keyboard({
   setPrenom,
   setTelephone,
   telephone,
-}: Props) {
+}: Readonly<Props>) {
   return (
 <KeyboardAvoidingView
           style={
-            styles.keyboard
+            styles.flex
           }
           behavior={
             Platform.OS === 'ios'

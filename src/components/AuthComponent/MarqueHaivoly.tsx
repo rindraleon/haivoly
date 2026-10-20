@@ -7,19 +7,11 @@ export interface MarqueHaivolyProps {
   style?: ViewStyle;
 }
 
-/**
- * Logo officiel Haivoly — fichier PNG à ellipse réelle (canal alpha) affiché
- * tel quel, **sans fond blanc, cadre ni bloc de couleur** : il se pose
- * directement sur le fond des écrans (clair comme sombre, le logo étant
- * entièrement vert il reste lisible sur les teintes claires ou moyennes).
- * Règle d'affichage unique du projet : proportions préservées via `contain`,
- * aucune copie modifiée du fichier.
- */
 export function MarqueHaivoly({
   taille = 150,
   testID = 'logo-haivoly',
   style,
-}: MarqueHaivolyProps) {
+}: Readonly<MarqueHaivolyProps>) {
   return (
     <View style={[styles.cadre, { width: taille, height: taille }, style]} testID={testID}>
       <Image

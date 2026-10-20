@@ -24,7 +24,7 @@ export function LoginForm({
   onEmailChange,
   onPasswordChange,
   onSubmit,
-}: Props) {
+}: Readonly<Props>) {
   const { t } = useTranslation();
 
   return (

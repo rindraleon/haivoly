@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { Check, ChevronDown, X } from 'lucide-react-native';
+import type { LucideIcon } from 'lucide-react-native';
 
 import { radius, spacing } from '@/theme';
 import { useTheme } from '@/hooks/common/useTheme';
@@ -35,6 +36,15 @@ interface AppSelectProps<T extends string = string> {
   disabled?: boolean;
   /** Affiche le libellé au lieu de la valeur technique (par défaut : oui). */
   emptyLabel?: string;
+  /**
+   * Déclencheur affiché : `champ` (aspect champ de formulaire, défaut) ou
+   * `bouton` — bouton nettement identifié (icône + libellé), à la manière
+   * du bouton de filtre déroulant ; la liste d'options et son comportement
+   * restent strictement identiques dans les deux cas.
+   */
+  variant?: 'champ' | 'bouton';
+  /** Icône menant le déclencheur en variant `bouton`. */
+  iconeBouton?: LucideIcon;
 }
 
 export function AppSelect<T extends string = string>({
@@ -48,6 +58,8 @@ export function AppSelect<T extends string = string>({
   required,
   disabled,
   emptyLabel,
+  variant = 'champ',
+  iconeBouton: IconeBouton,
 }: AppSelectProps<T>) {
   const { t } = useTranslation();
   const { jetons } = useTheme();
@@ -75,25 +87,56 @@ export function AppSelect<T extends string = string>({
         </View>
       ) : null}
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={label ?? placeholderAffiche}
-        disabled={disabled}
-        onPress={() => setOpen(true)}
-        style={[
-          styles.field,
-          error ? styles.fieldError : null,
-          disabled ? styles.fieldDisabled : null,
-        ]}
-      >
-        <Text
-          numberOfLines={1}
-          style={selected ? styles.valueText : styles.placeholderText}
+      {variant === 'bouton' ? (
+        /* Déclencheur en bouton visible : icône + libellé explicite à gauche,
+           chevron à droite, tout en gardant la même feuille d'options. */
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={label ?? placeholderAffiche}
+          accessibilityState={{ expanded: open, disabled: !!disabled }}
+          disabled={disabled}
+          onPress={() => setOpen(true)}
+          style={({ pressed }) => [
+            styles.boutonDeclencheur,
+            error ? styles.fieldError : null,
+            disabled ? styles.fieldDisabled : null,
+            pressed && !disabled ? styles.boutonDeclencheurActif : null,
+          ]}
         >
-          {selected?.label ?? placeholderAffiche}
-        </Text>
-        <ChevronDown size={18} color={jetons.texte.discret} />
-      </Pressable>
+          {IconeBouton ? (
+            <View style={styles.boutonIcone}>
+              <IconeBouton size={16} color={jetons.primaire.base} strokeWidth={2.2} />
+            </View>
+          ) : null}
+          <Text
+            numberOfLines={1}
+            style={selected ? styles.boutonTexte : styles.boutonTextePlaceholder}
+          >
+            {selected?.label ?? placeholderAffiche}
+          </Text>
+          <ChevronDown size={18} color={jetons.primaire.base} strokeWidth={2.2} />
+        </Pressable>
+      ) : (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={label ?? placeholderAffiche}
+          disabled={disabled}
+          onPress={() => setOpen(true)}
+          style={[
+            styles.field,
+            error ? styles.fieldError : null,
+            disabled ? styles.fieldDisabled : null,
+          ]}
+        >
+          <Text
+            numberOfLines={1}
+            style={selected ? styles.valueText : styles.placeholderText}
+          >
+            {selected?.label ?? placeholderAffiche}
+          </Text>
+          <ChevronDown size={18} color={jetons.texte.discret} />
+        </Pressable>
+      )}
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
       {!error && hint ? <Text style={styles.hint}>{hint}</Text> : null}
@@ -193,6 +236,33 @@ function creerStyles(jetons: Jetons) {
     },
     fieldError: { borderColor: jetons.erreur.base },
     fieldDisabled: { backgroundColor: jetons.fond.attenue, opacity: 0.7 },
+    /* Déclencheur « bouton de filtre déroulant » : teinte verte de l'app,
+       rayon md comme tous les boutons, toucher ample et retour visuel. */
+    boutonDeclencheur: {
+      minHeight: 48,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      paddingHorizontal: 13,
+      paddingVertical: 10,
+      borderRadius: radius.md,
+      borderWidth: 1.25,
+      borderColor: jetons.primaire.base,
+      backgroundColor: jetons.primaire.clair,
+    },
+    boutonDeclencheurActif: { opacity: 0.85, transform: [{ scale: 0.99 }] },
+    boutonIcone: {
+      width: 30,
+      height: 30,
+      borderRadius: radius.sm,
+      backgroundColor: jetons.fond.carte,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1,
+      borderColor: jetons.bordure.appuyee,
+    },
+    boutonTexte: { flex: 1, fontSize: 14, fontWeight: '700', color: jetons.primaire.fonce },
+    boutonTextePlaceholder: { flex: 1, fontSize: 14, fontWeight: '600', color: jetons.primaire.base },
     valueText: { flex: 1, fontSize: 15, color: jetons.texte.principal },
     placeholderText: { flex: 1, fontSize: 15, color: jetons.texte.discret },
     hint: { fontSize: 12, color: jetons.texte.secondaire },

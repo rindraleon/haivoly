@@ -175,10 +175,10 @@ export default function LoginScreen() {
 
             <View style={styles.cardWrap}>
             <View style={styles.card}>
-              <View style={styles.header}>
+              {/* <View style={styles.header}>
                 <Text style={styles.hTitle}>{t('auth.login.bienvenue')}</Text>
                 <Text style={styles.hSubtitle}>{t('auth.login.sousTitre')}</Text>
-              </View>
+              </View> */}
 
               {errors.general && (
                 <View style={styles.bannerError}>

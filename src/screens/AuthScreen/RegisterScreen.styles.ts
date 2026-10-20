@@ -1,6 +1,13 @@
 import { StyleSheet } from 'react-native';
 import { colors } from '@/theme';
 
+/**
+ * Écran d'inscription mobile — strictement aligné sur l'écran de connexion :
+ * fond `#F2F4F2`, flèche retour en pastille blanche, logo officiel
+ * transparent posé à même le fond (aucun cadre blanc), carte blanche rayon
+ * 26 à bord fin `#E7EBE7` et ombre `#122618`. Palette verte existante,
+ * aucune nouvelle teinte.
+ */
 export const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#F2F4F2' },
   flex: { flex: 1 },
@@ -26,7 +33,7 @@ export const styles = StyleSheet.create({
 
   headerBloc: { alignItems: 'center', gap: 3, paddingHorizontal: 24 },
   headerTitre: {
-    marginTop: 2,
+    marginTop: 4,
     fontSize: 21,
     fontWeight: '800',
     letterSpacing: -0.3,

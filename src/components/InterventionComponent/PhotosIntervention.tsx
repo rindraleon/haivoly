@@ -26,12 +26,12 @@ export function PhotosIntervention({
   cultureId,
   interventionId,
   modificationAutorisee,
-}: Readonly<{
+}: {
   parcelleId: string;
   cultureId: string;
   interventionId: string;
   modificationAutorisee: boolean;
-}>) {
+}) {
   const { t } = useTranslation();
   const styles = useStylesInterventions();
   const { jetons } = useTheme();
