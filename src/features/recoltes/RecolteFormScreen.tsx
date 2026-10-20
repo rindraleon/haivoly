@@ -1,13 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Coins, Scale, ShieldCheck, Wheat } from 'lucide-react-native';
-import { useMemo } from 'react';
+import { Camera, Coins, Scale, ShieldCheck, Wheat } from 'lucide-react-native';
+import { useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { AccessibilityInfo, Alert, StyleSheet, View } from 'react-native';
 
+import {
+  PhotosSelection,
+  type PhotoBrouillon,
+} from '@/components/CommonComponent/PhotosSelection';
 import { useCreateRecolte, useCulture } from '@/hooks';
+import { recoltePhotosApi } from '@/services';
 import { ApiError } from '@/services/http';
+import { envoyerPhotosEnAttente } from '@/utils/envoiPhotos';
 import {
   AlertCard,
   Card,
@@ -18,6 +24,7 @@ import {
   PrimaryButton,
   Text,
   useTheme,
+  useToast,
 } from '@/ui';
 import { dateOnlyVersDateLocale, formatDate, todayDateOnly } from '@/utils/date';
 
@@ -31,18 +38,15 @@ import {
   type ValeursRecolte,
 } from './schema';
 
-/**
- * Formulaire « Nouvelle récolte » V2 : `FormScreen` (contrat clavier),
- * react-hook-form + Zod, bouton « Enregistrer » toujours visible au-dessus du
- * clavier, erreurs serveur reportées sur les champs. Même hook, même charge
- * utile et même fonctionnement hors ligne que la V1.
- */
 export function RecolteFormScreen() {
   const { t, i18n } = useTranslation();
   const theme = useTheme();
+  const toast = useToast();
   const { cultureId, parcelleId } = useLocalSearchParams<{ cultureId: string; parcelleId?: string }>();
   const culture = useCulture(parcelleId, cultureId);
   const creation = useCreateRecolte();
+  const [photosBrouillon, setPhotosBrouillon] = useState<PhotoBrouillon[]>([]);
+  const [envoiPhotos, setEnvoiPhotos] = useState(false);
 
   // La culture peut arriver après l'ouverture : le schéma est recalculé, et
   // react-hook-form relit le resolver à chaque rendu.
@@ -88,7 +92,31 @@ export function RecolteFormScreen() {
     async (valeurs) => {
       if (!cultureId) return;
       try {
-        await creation.mutateAsync({ cultureId, body: versPayloadRecolte(valeurs) });
+        const creee = await creation.mutateAsync({ cultureId, body: versPayloadRecolte(valeurs) });
+
+        // Photos jointes : envoyées une fois la récolte créée (hors-ligne :
+        // récolte locale sans identifiant serveur — elles resteront à ajouter
+        // depuis la fiche de la récolte).
+        if (photosBrouillon.length > 0 && creee?.id && !creee._localOnly) {
+          setEnvoiPhotos(true);
+          try {
+            const bilan = await envoyerPhotosEnAttente(photosBrouillon, (fichier) =>
+              recoltePhotosApi.upload(creee.id, fichier),
+            );
+            if (bilan.echouees > 0) {
+              toast({
+                message: t('photos.photosJointesPartiel', {
+                  envoyees: bilan.envoyees,
+                  echouees: bilan.echouees,
+                }),
+                tone: 'error',
+              });
+            }
+          } finally {
+            setEnvoiPhotos(false);
+          }
+        }
+
         Alert.alert(t('recoltes.enregistree'), t('recoltes.cultureMarquee'), [
           { text: 'OK', onPress: () => router.back() },
         ]);
@@ -138,7 +166,7 @@ export function RecolteFormScreen() {
           label={t('recoltes.enregistrer')}
           icon={Wheat}
           onPress={() => void enregistrer()}
-          loading={isSubmitting || creation.isPending}
+          loading={isSubmitting || creation.isPending || envoiPhotos}
           disabled={!cultureId}
           fullWidth
           testID="recolte-enregistrer"
@@ -296,6 +324,21 @@ export function RecolteFormScreen() {
               testID="recolte-description"
             />
           )}
+        />
+      </Card>
+
+      <Card style={styles.carte}>
+        <View style={styles.titreCarte}>
+          <Camera size={18} color={theme.couleurs.primaire} />
+          <Text variant="h3">{t('photos.titre')}</Text>
+          <Text variant="caption" color="texteSecondaire">
+            {t('formulaire.facultatif')}
+          </Text>
+        </View>
+        <PhotosSelection
+          photos={photosBrouillon}
+          onChange={setPhotosBrouillon}
+          disabled={creation.isPending || envoiPhotos}
         />
       </Card>
 
