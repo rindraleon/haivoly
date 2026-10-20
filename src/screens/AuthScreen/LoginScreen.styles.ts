@@ -1,6 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { colors, radius } from '@/theme';
 
+/**
+ * Styles de l'écran de connexion, inspirés de la maquette fournie : fond
+ * gris très clair, carte blanche fortement arrondie à bord fin, titre à
+ * gauche avec flèche retour, bouton sombre. La palette verte d'Haivoly
+ * remplace le bleu marine de la référence (identité visuelle conservée).
+ */
 export const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#F2F4F2' },
   flex: { flex: 1 },

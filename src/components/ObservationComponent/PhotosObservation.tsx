@@ -26,17 +26,22 @@ import { LIBELLE_ETAPE_ENVOI, preparerFichierPhoto, type EtapeEnvoiPhoto } from 
 import { useStylesInterventions } from '@/screens/InterventionScreen/stylesInterventions';
 import { logger } from '@/utils/logger';
 
+/**
+ * Photos d'une observation : affichage, ajout (caméra ou galerie) et
+ * suppression en direct — mêmes règles et même présentation que les photos
+ * d'intervention. Utilisé à la modification et sur les fiches d'observation.
+ */
 export function PhotosObservation({
   parcelleId,
   cultureId,
   observationId,
   modificationAutorisee,
-}: Readonly<{
+}: {
   parcelleId: string;
   cultureId: string;
   observationId: string;
   modificationAutorisee: boolean;
-}>) {
+}) {
   const { t } = useTranslation();
   const styles = useStylesInterventions();
   const { jetons } = useTheme();

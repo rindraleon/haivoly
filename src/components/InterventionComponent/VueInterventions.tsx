@@ -17,7 +17,6 @@ import {
   UNITES_INTERVENTION,
 } from '@/utils/intervention';
 
-
 type Props = {
   cout: string;
   createMutation: UseMutationResult<InterventionInterventions, Error, { cultureId: string; body: InterventionPayload; }, unknown>;
@@ -85,7 +84,7 @@ export function VueInterventions({
   type,
   unite,
   updateMutation,
-}: Readonly<Props>) {
+}: Props) {
   const styles = useStylesInterventions();
   const { jetons } = useTheme();
   const optionsType = useMemo(

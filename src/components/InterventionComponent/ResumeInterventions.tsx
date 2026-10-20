@@ -53,7 +53,7 @@ export function ResumeInterventions({
   statistiquesCourantes,
   statut,
   supprimerIntervention,
-}: Readonly<Props>) {
+}: Props) {
   const styles = useStylesInterventions();
   const { jetons } = useTheme();
   return (

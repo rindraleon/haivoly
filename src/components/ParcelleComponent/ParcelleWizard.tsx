@@ -11,6 +11,7 @@ import {
   SkipForward,
   Sprout,
   Trash2,
+  Mountain,
   X,
 } from 'lucide-react-native';
 
@@ -258,7 +259,11 @@ export function ParcelleWizard({
             autoCapitalize="sentences"
           />
 
+          {/* Type de sol : déclenché par un bouton vert net (icône + libellé),
+              à la manière du bouton de filtre déroulant — options inchangées. */}
           <AppSelect
+            variant="bouton"
+            iconeBouton={Mountain}
             label="Type de sol"
             value={typeSol}
             options={TYPES_SOL}

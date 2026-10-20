@@ -43,7 +43,7 @@ export function VueModificationObservation({
   setDescription,
   statutLabel,
   updateMutation,
-}: Readonly<Props>) {
+}: Props) {
   const styles = useStylesEditionObservation();
   const { jetons } = useTheme();
   if (!observation) return null;

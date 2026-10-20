@@ -92,315 +92,302 @@ export function VueInterventionsCulture({
   setSelectionParcelleOuverte,
   statistiquesGlobales,
   voirSuivi,
-}: Readonly<Props>) {
+}: Props) {
   const styles = useStylesInterventions();
   const { jetons } = useTheme();
-  let texteStatHint: string;
-  if (recherche) {
-    texteStatHint = `pour "${recherche}"`;
-  } else if (filtreActif) {
-    texteStatHint = 'Filtre actif';
-  } else {
-    texteStatHint = i18n.t('domaine.trieesDateRecente');
-  }
-
-  let contenuInterventions: React.JSX.Element;
-  if (chargementGlobal) {
-    contenuInterventions = (
-      <View style={styles.loadingInline}>
-        <ActivityIndicator color={jetons.primaire.base} />
-        <Text style={styles.loadingInlineText}>
-          Chargement des interventions...
-        </Text>
-      </View>
-    );
-  } else if (erreurGlobal) {
-    contenuInterventions = (
-      <View style={styles.emptyCard}>
-        <Text style={styles.emptyIcon}>⚠️</Text>
-        <Text style={styles.emptyTitle}>
-          Impossible de charger les interventions
-        </Text>
-        <Text style={styles.emptyText}>
-          Vérifiez votre connexion puis actualisez l’écran.
-        </Text>
-        <TouchableOpacity
-          style={styles.retryButton}
-          onPress={actualiser}
-          activeOpacity={0.85}
-        >
-          <Text style={styles.retryText}>Réessayer</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  } else if (interventionsGlobalesFiltrees.length === 0) {
-    let texteVide: string;
-    if (recherche) {
-      texteVide = i18n.t('interventions.aucuneRecherche');
-    } else if (filtreActif) {
-      texteVide = i18n.t('interventions.aucuneFiltre');
-    } else {
-      texteVide = i18n.t('divers.aucuneIntervention');
-    }
-
-    contenuInterventions = (
-      <View style={styles.emptyInline}>
-        <View style={styles.emptyCard}>
-          <Text style={styles.emptyIcon}>🛠️</Text>
-          <Text style={styles.emptyTitle}>Aucune intervention</Text>
-          <Text style={styles.emptyText}>{texteVide}</Text>
-        </View>
-      </View>
-    );
-  } else {
-    contenuInterventions = (
-      <View style={styles.cardsList}>
-        {interventionsGlobalesFiltrees.map(renderCarteIntervention)}
-      </View>
-    );
-  }
-
   return (
 <View style={styles.root}>
-      <ScreenHeader
-        title="Interventions"
-        subtitle={`${statistiquesGlobales.total} intervention${
-          statistiquesGlobales.total > 1 ? 's' : ''
-        } • ${statistiquesGlobales.recentes} récentes`}
-      />
-
-      <View style={styles.topBar}>
-        <View style={styles.searchRow}>
-          <View style={styles.searchContainer}>
-            <Search
-              size={19}
-              color={jetons.texte.discret}
-              strokeWidth={2}
-            />
-            <TextInput
-              style={styles.searchInput}
-              placeholder={i18n.t('libelles.rechercheIntervention')}
-              placeholderTextColor={jetons.texte.discret}
-              value={recherche}
-              onChangeText={setRecherche}
-              returnKeyType="search"
-            />
-
-            {recherche ? (
-              <TouchableOpacity
-                activeOpacity={0.75}
-                onPress={() => setRecherche('')}
-                style={styles.clearSearchButton}
-              >
-                <X size={17} color={jetons.texte.secondaire} />
-              </TouchableOpacity>
-            ) : null}
-          </View>
-
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={[
-              styles.filterButton,
-              filtreActif && styles.filterButtonActive,
-            ]}
-            onPress={ouvrirFiltre}
-          >
-            <SlidersHorizontal
-              size={19}
-              color={
-                filtreActif
-                  ? jetons.primaire.contraste
-                  : jetons.texte.principal
-              }
-              strokeWidth={2}
-            />
-            {filtreActif ? (
-              <View style={styles.filterIndicator} />
-            ) : null}
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.statsBar}>
-          <View style={styles.statPill}>
-            <Text style={styles.statPillValue}>
-              {interventionsGlobalesFiltrees.length}
-            </Text>
-            <Text style={styles.statPillLabel}>
-              résultat
-              {interventionsGlobalesFiltrees.length > 1
-                ? 's'
-                : ''}
-            </Text>
-          </View>
-
-          <Text style={styles.statHint} numberOfLines={1}>
-            {texteStatHint}
-          </Text>
-        </View>
-      </View>
-
-      <View style={styles.listArea}>
-        <ScrollView
-          style={styles.listScroll}
-          contentContainerStyle={styles.listScrollContent}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={actualiser}
-              tintColor={jetons.primaire.base}
-            />
-          }
-          showsVerticalScrollIndicator={false}
-        >
-          {contexteValideGlobal
-            ? (() => {
-                const contexteCulture = culturesGlobales.find(
-                  item =>
-                    item.id === contexteFormulaire?.cultureId &&
-                    item.parcelleId === contexteFormulaire?.parcelleId,
-                );
-
-                const contexteParcelle = parcelles.find(
-                  item => item.id === contexteFormulaire?.parcelleId,
-                );
-
-                return renderFormulaireInline(
-                  contexteCulture?.nom ??
-                    (contexteFormulaire?.cultureId === cultureSelectionnee
-                      ? culturesGlobales.find(
-                          item =>
-                            item.id === cultureSelectionnee &&
-                            item.parcelleId === parcelleSelectionnee,
-                        )?.nom ?? i18n.t('libelles.culture')
-                      : i18n.t('libelles.culture')),
-                  contexteParcelle?.nom ??
-                    (contexteFormulaire?.parcelleId === parcelleSelectionnee
-                      ? parcelles.find(
-                          item => item.id === parcelleSelectionnee,
-                        )?.nom ?? i18n.t('libelles.parcelle')
-                      : i18n.t('libelles.parcelle')),
-                );
-              })()
-            : null}
-
-          <View
-            pointerEvents="none"
-            style={[styles.fieldShape, styles.fieldShapeOne]}
-          />
-          <View
-            pointerEvents="none"
-            style={[styles.fieldShape, styles.fieldShapeTwo]}
-          />
-          <View
-            pointerEvents="none"
-            style={[styles.fieldShape, styles.fieldShapeThree]}
-          />
-          <View
-            pointerEvents="none"
-            style={[styles.fieldLine, styles.fieldLineOne]}
-          />
-          <View
-            pointerEvents="none"
-            style={[styles.fieldLine, styles.fieldLineTwo]}
+          <ScreenHeader
+            title="Interventions"
+            subtitle={`${statistiquesGlobales.total} intervention${
+              statistiquesGlobales.total > 1 ? 's' : ''
+            } • ${statistiquesGlobales.recentes} récentes`}
           />
 
-          {filtreActif ? (
-            <View style={styles.activeFilterCard}>
-              <View style={styles.activeFilterIcon}>
-                <SlidersHorizontal
-                  size={15}
-                  color={jetons.primaire.fonce}
+          <View style={styles.topBar}>
+            <View style={styles.searchRow}>
+              <View style={styles.searchContainer}>
+                <Search
+                  size={19}
+                  color={jetons.texte.discret}
+                  strokeWidth={2}
                 />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder={i18n.t('libelles.rechercheIntervention')}
+                  placeholderTextColor={jetons.texte.discret}
+                  value={recherche}
+                  onChangeText={setRecherche}
+                  returnKeyType="search"
+                />
+
+                {recherche ? (
+                  <TouchableOpacity
+                    activeOpacity={0.75}
+                    onPress={() => setRecherche('')}
+                    style={styles.clearSearchButton}
+                  >
+                    <X size={17} color={jetons.texte.secondaire} />
+                  </TouchableOpacity>
+                ) : null}
               </View>
-              <View style={styles.activeFilterContent}>
-                <Text style={styles.activeFilterTitle}>
-                  Filtre actif
+
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={[
+                  styles.filterButton,
+                  filtreActif && styles.filterButtonActive,
+                ]}
+                onPress={ouvrirFiltre}
+              >
+                <SlidersHorizontal
+                  size={19}
+                  color={
+                    filtreActif
+                      ? jetons.primaire.contraste
+                      : jetons.texte.principal
+                  }
+                  strokeWidth={2}
+                />
+                {filtreActif ? (
+                  <View style={styles.filterIndicator} />
+                ) : null}
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.statsBar}>
+              <View style={styles.statPill}>
+                <Text style={styles.statPillValue}>
+                  {interventionsGlobalesFiltrees.length}
                 </Text>
-                <Text
-                  style={styles.activeFilterText}
-                  numberOfLines={2}
-                >
-                  {parcelles.find(
-                    item =>
-                      item.id === parcelleSelectionnee,
-                  )?.nom || 'Toutes les parcelles'}
-                  {cultureSelectionnee
-                    ? ` • ${culturesGlobales.find(
-                        item =>
-                          item.id === cultureSelectionnee,
-                      )?.nom || i18n.t('libelles.culture')}`
+                <Text style={styles.statPillLabel}>
+                  résultat
+                  {interventionsGlobalesFiltrees.length > 1
+                    ? 's'
                     : ''}
                 </Text>
               </View>
-              <TouchableOpacity
-                onPress={reinitialiserFiltre}
-                style={styles.activeFilterClear}
-                activeOpacity={0.8}
-              >
-                <X size={17} color={jetons.primaire.fonce} />
-              </TouchableOpacity>
+
+              <Text style={styles.statHint} numberOfLines={1}>
+                {recherche
+                  ? `pour "${recherche}"`
+                  : filtreActif
+                    ? 'Filtre actif'
+                    : i18n.t('domaine.trieesDateRecente')}
+              </Text>
             </View>
-          ) : null}
+          </View>
 
-          {contenuInterventions}
-        </ScrollView>
-      </View>
+          <View style={styles.listArea}>
+            <ScrollView
+              style={styles.listScroll}
+              contentContainerStyle={styles.listScrollContent}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={actualiser}
+                  tintColor={jetons.primaire.base}
+                />
+              }
+              showsVerticalScrollIndicator={false}
+            >
+              {contexteValideGlobal
+                ? (() => {
+                    const contexteCulture = culturesGlobales.find(
+                      item =>
+                        item.id === contexteFormulaire?.cultureId &&
+                        item.parcelleId === contexteFormulaire?.parcelleId,
+                    );
 
-      {formOuvert ? null : (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={i18n.t('libelles.ajouterIntervention')}
-          onPress={ouvrirAjoutGlobal}
-          style={({ pressed }) => [
-            styles.fab,
-            pressed && {
-              opacity: 0.9,
-              transform: [{ scale: 0.94 }],
-            },
-          ]}
-        >
-          <Plus
-            size={27}
-            color={jetons.primaire.contraste}
-            strokeWidth={2.7}
+                    const contexteParcelle = parcelles.find(
+                      item => item.id === contexteFormulaire?.parcelleId,
+                    );
+
+                    return renderFormulaireInline(
+                      contexteCulture?.nom ??
+                        (contexteFormulaire?.cultureId === cultureSelectionnee
+                          ? culturesGlobales.find(
+                              item =>
+                                item.id === cultureSelectionnee &&
+                                item.parcelleId === parcelleSelectionnee,
+                            )?.nom ?? i18n.t('libelles.culture')
+                          : i18n.t('libelles.culture')),
+                      contexteParcelle?.nom ??
+                        (contexteFormulaire?.parcelleId === parcelleSelectionnee
+                          ? parcelles.find(
+                              item => item.id === parcelleSelectionnee,
+                            )?.nom ?? i18n.t('libelles.parcelle')
+                          : i18n.t('libelles.parcelle')),
+                    );
+                  })()
+                : null}
+
+              <View
+                pointerEvents="none"
+                style={[styles.fieldShape, styles.fieldShapeOne]}
+              />
+              <View
+                pointerEvents="none"
+                style={[styles.fieldShape, styles.fieldShapeTwo]}
+              />
+              <View
+                pointerEvents="none"
+                style={[styles.fieldShape, styles.fieldShapeThree]}
+              />
+              <View
+                pointerEvents="none"
+                style={[styles.fieldLine, styles.fieldLineOne]}
+              />
+              <View
+                pointerEvents="none"
+                style={[styles.fieldLine, styles.fieldLineTwo]}
+              />
+
+              {filtreActif ? (
+                <View style={styles.activeFilterCard}>
+                  <View style={styles.activeFilterIcon}>
+                    <SlidersHorizontal
+                      size={15}
+                      color={jetons.primaire.fonce}
+                    />
+                  </View>
+                  <View style={styles.activeFilterContent}>
+                    <Text style={styles.activeFilterTitle}>
+                      Filtre actif
+                    </Text>
+                    <Text
+                      style={styles.activeFilterText}
+                      numberOfLines={2}
+                    >
+                      {parcelles.find(
+                        item =>
+                          item.id === parcelleSelectionnee,
+                      )?.nom || 'Toutes les parcelles'}
+                      {cultureSelectionnee
+                        ? ` • ${culturesGlobales.find(
+                            item =>
+                              item.id === cultureSelectionnee,
+                          )?.nom || i18n.t('libelles.culture')}`
+                        : ''}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={reinitialiserFiltre}
+                    style={styles.activeFilterClear}
+                    activeOpacity={0.8}
+                  >
+                    <X size={17} color={jetons.primaire.fonce} />
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+
+              {chargementGlobal ? (
+                <View style={styles.loadingInline}>
+                  <ActivityIndicator
+                    color={jetons.primaire.base}
+                  />
+                  <Text style={styles.loadingInlineText}>
+                    Chargement des interventions...
+                  </Text>
+                </View>
+              ) : erreurGlobal ? (
+                <View style={styles.emptyCard}>
+                  <Text style={styles.emptyIcon}>⚠️</Text>
+                  <Text style={styles.emptyTitle}>
+                    Impossible de charger les interventions
+                  </Text>
+                  <Text style={styles.emptyText}>
+                    Vérifiez votre connexion puis actualisez l’écran.
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.retryButton}
+                    onPress={actualiser}
+                    activeOpacity={0.85}
+                  >
+                    <Text style={styles.retryText}>Réessayer</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : interventionsGlobalesFiltrees.length === 0 ? (
+                <View style={styles.emptyInline}>
+                  <View style={styles.emptyCard}>
+                    <Text style={styles.emptyIcon}>🛠️</Text>
+                    <Text style={styles.emptyTitle}>
+                      Aucune intervention
+                    </Text>
+                    <Text style={styles.emptyText}>
+                      {recherche
+                        ? i18n.t('interventions.aucuneRecherche')
+                        : filtreActif
+                          ? i18n.t('interventions.aucuneFiltre')
+                          : i18n.t('divers.aucuneIntervention')}
+                    </Text>
+                  </View>
+                </View>
+              ) : (
+                <View style={styles.cardsList}>
+                  {interventionsGlobalesFiltrees.map(
+                    renderCarteIntervention,
+                  )}
+                </View>
+              )}
+            </ScrollView>
+          </View>
+
+          {formOuvert ? null : (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={i18n.t('libelles.ajouterIntervention')}
+              onPress={ouvrirAjoutGlobal}
+              style={({ pressed }) => [
+                styles.fab,
+                pressed && {
+                  opacity: 0.9,
+                  transform: [{ scale: 0.94 }],
+                },
+              ]}
+            >
+              <Plus
+                size={27}
+                color={jetons.primaire.contraste}
+                strokeWidth={2.7}
+              />
+            </Pressable>
+          )}
+
+          <FilterModal
+            visible={filtreOuvert}
+            onClose={fermerFiltre}
+            parcelles={parcelles}
+            parcellesLoading={parcellesQuery.isLoading}
+            cultures={culturesFiltre}
+            culturesLoading={culturesFiltreQuery.isLoading}
+            parcelleTemporaire={parcelleTemporaire}
+            cultureTemporaire={cultureTemporaire}
+            selectionParcelleOuverte={selectionParcelleOuverte}
+            selectionCultureOuverte={selectionCultureOuverte}
+            onToggleParcelle={() => {
+              setSelectionParcelleOuverte(value => !value);
+              setSelectionCultureOuverte(false);
+            }}
+            onToggleCulture={() => {
+              setSelectionCultureOuverte(value => !value);
+              setSelectionParcelleOuverte(false);
+            }}
+            onSelectParcelle={id => {
+              setParcelleTemporaire(id);
+              setCultureTemporaire('');
+              setSelectionParcelleOuverte(false);
+            }}
+            onSelectCulture={id => {
+              setCultureTemporaire(id);
+              setSelectionCultureOuverte(false);
+            }}
+            onApply={appliquerFiltre}
+            onReset={reinitialiserFiltre}
+            onViewFollow={voirSuivi}
+            modeAjout={modeAjoutGlobal}
+            onContinueAjout={continuerAjoutGlobal}
           />
-        </Pressable>
-      )}
-
-      <FilterModal
-        visible={filtreOuvert}
-        onClose={fermerFiltre}
-        parcelles={parcelles}
-        parcellesLoading={parcellesQuery.isLoading}
-        cultures={culturesFiltre}
-        culturesLoading={culturesFiltreQuery.isLoading}
-        parcelleTemporaire={parcelleTemporaire}
-        cultureTemporaire={cultureTemporaire}
-        selectionParcelleOuverte={selectionParcelleOuverte}
-        selectionCultureOuverte={selectionCultureOuverte}
-        onToggleParcelle={() => {
-          setSelectionParcelleOuverte(value => !value);
-          setSelectionCultureOuverte(false);
-        }}
-        onToggleCulture={() => {
-          setSelectionCultureOuverte(value => !value);
-          setSelectionParcelleOuverte(false);
-        }}
-        onSelectParcelle={id => {
-          setParcelleTemporaire(id);
-          setCultureTemporaire('');
-          setSelectionParcelleOuverte(false);
-        }}
-        onSelectCulture={id => {
-          setCultureTemporaire(id);
-          setSelectionCultureOuverte(false);
-        }}
-        onApply={appliquerFiltre}
-        onReset={reinitialiserFiltre}
-        onViewFollow={voirSuivi}
-        modeAjout={modeAjoutGlobal}
-        onContinueAjout={continuerAjoutGlobal}
-      />
-    </View>
+        </View>
   );
 }

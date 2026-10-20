@@ -3,11 +3,6 @@ import { i18n } from '@/i18n/instance';
 
 import { MarqueHaivoly } from '@/components/AuthComponent/MarqueHaivoly';
 
-/**
- * En-tête de marque compact de l'écran de connexion : logo officiel posé à
- * même le fond clair de l'écran (sans médaillon ni cadre blanc), nom et
- * courte promesse.
- */
 export function LoginHeaderSimple() {
   return (
     <View style={styles.bloc}>

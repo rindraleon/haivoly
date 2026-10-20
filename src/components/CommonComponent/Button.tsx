@@ -110,10 +110,12 @@ export function Button({
   );
 }
 
+/** Toutes les tailles héritent du rayon `md` du style de base : rayon unique
+    des boutons du mobile (connexion, inscriptions, wizards, listes…). */
 const stylesBySize: Record<Size, ViewStyle> = {
-  sm: { minHeight: sizing.buttonHeightSm, paddingHorizontal: 14, borderRadius: radius.sm },
+  sm: { minHeight: sizing.buttonHeightSm, paddingHorizontal: 14 },
   md: { minHeight: sizing.buttonHeight, paddingHorizontal: 18 },
-  lg: { minHeight: sizing.buttonHeightLg, paddingHorizontal: 22, borderRadius: radius.lg },
+  lg: { minHeight: sizing.buttonHeightLg, paddingHorizontal: 22 },
 };
 
 const textSizeBySize: Record<Size, TextStyle> = {
