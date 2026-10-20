@@ -7,7 +7,7 @@ export function LoginHeaderSimple() {
   return (
     <View style={styles.bloc}>
       <MarqueHaivoly taille={86} testID="login-header-logo" />
-      <Text style={styles.titre}>Haivoly</Text>
+      {/* <Text style={styles.titre}>Haivoly</Text> */}
       <Text style={styles.sousTitre}>{i18n.t('auth.login.sousTitre')}</Text>
     </View>
   );
