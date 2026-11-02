@@ -276,6 +276,7 @@ const mg: Traductions = {
     aucune: 'Tsy misy torohevitra',
     aucuneDescription: 'Hampandrenesina ianao raha misy tompony mandefa torohevitra.',
     erreurChargement: 'Tsy afaka naka ny torohevitra.',
+    erreurSynchronisation: 'Tsy nahomby ny fampifanarahana. Mety tsy vaovao ny torohevitra aseho.',
     connexionRequise: 'Mifandraisa amin’ny Internet hanamarina ny famakiana.',
     echecLecture: 'Tsy nanamarina ny famakiana ny mpizara.',
     voirTout: 'Jereo daholo',

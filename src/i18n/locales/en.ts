@@ -278,6 +278,7 @@ const en: Traductions = {
     aucune: 'No recommendation',
     aucuneDescription: 'You will be alerted as soon as an owner sends you a recommendation.',
     erreurChargement: 'Unable to load recommendations.',
+    erreurSynchronisation: 'Synchronization failed. The recommendations shown may not be up to date.',
     connexionRequise: 'Connect to the Internet to confirm reads.',
     echecLecture: 'The server did not confirm the read.',
     voirTout: 'See all',
