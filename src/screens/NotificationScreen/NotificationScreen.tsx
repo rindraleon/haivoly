@@ -9,6 +9,7 @@ import { NotificationCard } from '@/components/NotificationComponent/Notificatio
 import { EmptyState } from '@/components/CommonComponent/EmptyState';
 import { LoadingState } from '@/components/CommonComponent/LoadingState';
 import { useRecommendationsFeed } from '@/hooks';
+import { env } from '@/config/env';
 import { colors } from '@/theme';
 import type { Recommendation } from '@/types/notification.types';
 
@@ -16,8 +17,17 @@ import { styles } from './NotificationScreen.styles';
 
 export default function NotificationScreen() {
   const { t } = useTranslation();
-  const { recommendations, unreadCount, loading, refreshing, refresh, markRead, markAllRead } =
-    useRecommendationsFeed();
+  const {
+    recommendations,
+    unreadCount,
+    loading,
+    refreshing,
+    erreur,
+    derniereErreur,
+    refresh,
+    markRead,
+    markAllRead,
+  } = useRecommendationsFeed();
   const [marking, setMarking] = useState(false);
 
   const onPressItem = useCallback(
@@ -83,29 +93,62 @@ export default function NotificationScreen() {
           }
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
-            unreadCount > 0 ? (
-              <View style={styles.summary}>
-                <Text style={styles.summaryText}>
-                  {t('notifications.nonLues', { count: unreadCount })}
-                </Text>
-                <Pressable
-                  onPress={() => void onMarkAllRead()}
-                  disabled={marking}
-                  accessibilityRole="button"
-                  accessibilityLabel={t('notifications.marquerToutLu')}
-                  style={({ pressed }) => [styles.markAll, pressed && styles.pressed]}
-                >
-                  <CheckCheck size={14} color={colors.primary[700]} />
-                  <Text style={styles.markAllText}>{t('notifications.marquerToutLu')}</Text>
-                </Pressable>
+            unreadCount > 0 || erreur ? (
+              <View>
+                {erreur ? (
+                  <View style={styles.syncError}>
+                    <View style={styles.syncErrorCopy}>
+                      <Text style={styles.syncErrorText}>
+                        {t('notifications.erreurSynchronisation')}
+                      </Text>
+                      {env.isDev && derniereErreur ? (
+                        <Text selectable style={styles.syncErrorDetail}>
+                          {derniereErreur}
+                        </Text>
+                      ) : null}
+                    </View>
+                    <Pressable
+                      onPress={() => void refresh()}
+                      disabled={refreshing}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('commun.actions.reessayer')}
+                      style={({ pressed }) => [styles.retry, pressed && styles.pressed]}
+                    >
+                      <Text style={styles.retryText}>{t('commun.actions.reessayer')}</Text>
+                    </Pressable>
+                  </View>
+                ) : null}
+                {unreadCount > 0 ? (
+                  <View style={styles.summary}>
+                    <Text style={styles.summaryText}>
+                      {t('notifications.nonLues', { count: unreadCount })}
+                    </Text>
+                    <Pressable
+                      onPress={() => void onMarkAllRead()}
+                      disabled={marking}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('notifications.marquerToutLu')}
+                      style={({ pressed }) => [styles.markAll, pressed && styles.pressed]}
+                    >
+                      <CheckCheck size={14} color={colors.primary[700]} />
+                      <Text style={styles.markAllText}>{t('notifications.marquerToutLu')}</Text>
+                    </Pressable>
+                  </View>
+                ) : null}
               </View>
             ) : null
           }
           ListEmptyComponent={
             <EmptyState
               icon={Bell}
-              title={t('notifications.aucune')}
-              description={t('notifications.aucuneDescription')}
+              title={erreur ? t('notifications.erreurChargement') : t('notifications.aucune')}
+              description={
+                erreur
+                  ? t('notifications.erreurSynchronisation')
+                  : t('notifications.aucuneDescription')
+              }
+              actionLabel={erreur ? t('commun.actions.reessayer') : undefined}
+              onAction={erreur ? () => void refresh() : undefined}
             />
           }
         />

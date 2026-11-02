@@ -280,6 +280,7 @@ const fr = {
     aucune: 'Aucune recommandation',
     aucuneDescription: 'Vous serez alerté dès qu’un propriétaire vous envoie une recommandation.',
     erreurChargement: 'Impossible de charger les recommandations.',
+    erreurSynchronisation: 'La synchronisation a échoué. Les recommandations affichées peuvent ne pas être à jour.',
     connexionRequise: 'Connectez-vous à Internet pour confirmer la lecture.',
     echecLecture: 'La lecture n’a pas été confirmée par le serveur.',
     voirTout: 'Voir tout',
