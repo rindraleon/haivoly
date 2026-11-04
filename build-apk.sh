@@ -2,7 +2,7 @@
 set -e
 # Haivoly — Build APK local (debug, arm64, installable)
 # Usage: bash build-apk.sh  [--release] [--universal]
-# Prérequis: JDK17, ANDROID_HOME, ngrok optionnel pour 4G
+# Prérequis: JDK17, ANDROID_HOME
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
@@ -17,26 +17,9 @@ ARCH="arm64-v8a"
 if [[ "$*" == *"--release"* ]]; then MODE="release"; fi
 if [[ "$*" == *"--universal"* ]]; then ARCH="armeabi-v7a,arm64-v8a,x86,x86_64"; fi
 
-# Détection IP LAN
-IP=$(hostname -I 2>/dev/null | awk '{print $1}')
-if [[ -z "$IP" ]]; then IP=$(ipconfig 2>/dev/null | grep -oE "192\.168\.[0-9]+\.[0-9]+" | head -1); fi
-if [[ -z "$IP" ]]; then IP="192.168.2.170"; fi
-
-# Si ngrok déjà lancé, propose son URL
-NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels 2>/dev/null | grep -oE "https://[a-z0-9-]+\.ngrok[^\"\"]*" | head -1 || true)
-
-if [[ -n "$NGROK_URL" ]]; then
-  echo "Ngrok détecté: $NGROK_URL"
-  read -p "Utiliser ngrok (accessible 4G) ? [O/n] " use_ngrok
-  if [[ "$use_ngrok" != "n" && "$use_ngrok" != "N" ]]; then
-    echo "EXPO_PUBLIC_API_URL=$NGROK_URL" > .env
-  else
-    echo "EXPO_PUBLIC_API_URL=http://$IP:3000" > .env
-  fi
-else
-  echo "EXPO_PUBLIC_API_URL=http://$IP:3000" > .env
-  echo "Astuce 4G: lance 'ngrok http 3000' dans un autre terminal puis relance ce script."
-fi
+# Backend en ligne (Render) : joignable en 4G comme en Wi-Fi.
+API_URL="https://haivoly-back.onrender.com"
+echo "EXPO_PUBLIC_API_URL=$API_URL" > .env
 
 echo "EXPO_PUBLIC_API_URL=$(cat .env)"
 echo "JAVA=$(java -version 2>&1 | head -1)"
