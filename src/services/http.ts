@@ -212,6 +212,23 @@ export async function request<T>(config: AxiosRequestConfig): Promise<T> {
   }
 }
 
+let reveilLance = false;
+
+/**
+ * Réveille le backend Render (offre gratuite) dès le démarrage.
+ * Le premier appel (login, inscription…) n'attend plus le réveil du serveur,
+ * qui peut prendre plusieurs dizaines de secondes.
+ */
+export function rechaufferApi(): void {
+  if (reveilLance) return;
+  reveilLance = true;
+  void httpClient
+    .get('/health', { timeout: Math.max(env.apiTimeout, 60000) })
+    .catch(() => {
+      // Sans réseau au démarrage : la requête métier réessaiera normalement.
+    });
+}
+
 export const http = {
   get: <T>(url: string, config?: AxiosRequestConfig) =>
     request<T>({ ...config, method: 'GET', url }),

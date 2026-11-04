@@ -20,7 +20,7 @@ import { initialiserI18n } from '@/i18n';
 import { ThemeProvider, initialiserTheme } from '@/theme/ThemeProvider';
 import { ToastProvider } from '@/ui';
 import { i18n } from '@/i18n/instance';
-import { setUnauthorizedHandler } from '@/services/http';
+import { rechaufferApi, setUnauthorizedHandler } from '@/services/http';
 import { startRecommendationPolling } from '@/services/offline/recommendationSync';
 import { useNetworkStatus } from '@/hooks/common/useNetwork';
 import {
@@ -73,6 +73,10 @@ function SyncProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<SyncState>(getSyncState);
 
   useEffect(() => onSyncState(setState), []);
+
+  useEffect(() => {
+    rechaufferApi();
+  }, []);
 
   useEffect(() => {
     setUnauthorizedHandler(() => {
