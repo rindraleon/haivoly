@@ -141,6 +141,7 @@ const en: Traductions = {
       prenomObligatoire: 'First name is required.',
       emailObligatoire: 'Email address is required.',
       echecCreation: 'Unable to create the account.',
+      compteCree: 'Account created. You can now sign in.',
       confirmationDifferent: 'The passwords do not match.',
       creation: 'Creating…',
       soumettre: 'Create my account',

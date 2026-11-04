@@ -59,6 +59,23 @@ export const styles = StyleSheet.create({
     padding: 12,
   },
   bannerText: { flex: 1, fontSize: 13, lineHeight: 18, color: colors.error[700], fontWeight: '600' },
+  bannerSuccess: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'flex-start',
+    backgroundColor: colors.primary[50],
+    borderWidth: 1,
+    borderColor: colors.primary[200],
+    borderRadius: radius.md,
+    padding: 12,
+  },
+  bannerSuccessText: {
+    flex: 1,
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.primary[700],
+    fontWeight: '600',
+  },
   verificationPanel: {
     gap: 10,
     padding: 12,

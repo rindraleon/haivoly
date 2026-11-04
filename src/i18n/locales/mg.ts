@@ -139,6 +139,7 @@ const mg: Traductions = {
       prenomObligatoire: 'Tsy maintsy feno ny fanampin’anarana.',
       emailObligatoire: 'Tsy maintsy feno ny mailaka.',
       echecCreation: 'Tsy afaka namorona ny kaonty.',
+      compteCree: 'Vita ny kaonty. Afaka miditra ianao izao.',
       confirmationDifferent: 'Tsy mitovy ny tenimiafina.',
       creation: 'Mamorona…',
       soumettre: 'Hamorona ny kaontiko',

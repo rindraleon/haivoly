@@ -165,13 +165,10 @@ export default function RegisterScreen() {
       },
 
       {
-        onSuccess: (response) => {
+        onSuccess: () => {
           router.replace({
-            pathname: '/(auth)/verify-email',
-            params: {
-              email: email.trim(),
-              emailEnvoye: response.emailEnvoye === false ? '0' : '1',
-            },
+            pathname: '/(auth)/login',
+            params: { inscription: '1' },
           } as never);
         },
 

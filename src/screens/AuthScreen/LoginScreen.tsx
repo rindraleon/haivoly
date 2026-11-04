@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
-import { router } from 'expo-router';
-import { AlertCircle, ArrowLeft } from 'lucide-react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react-native';
 import { useLogin } from '@/hooks/auth/useLogin';
 import { authApi } from '@/services';
 import { saveSession } from '@/storage/authStorage';
@@ -26,6 +26,9 @@ type FieldErrors = { email?: string; password?: string; general?: string };
 
 export default function LoginScreen() {
   const { t } = useTranslation();
+  const params = useLocalSearchParams<{ inscription?: string | string[] }>();
+  const inscriptionReussie =
+    (Array.isArray(params.inscription) ? params.inscription[0] : params.inscription) === '1';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -179,6 +182,15 @@ export default function LoginScreen() {
                 <Text style={styles.hTitle}>{t('auth.login.bienvenue')}</Text>
                 <Text style={styles.hSubtitle}>{t('auth.login.sousTitre')}</Text>
               </View> */}
+
+              {inscriptionReussie && (
+                <View style={styles.bannerSuccess}>
+                  <CheckCircle2 size={18} color={colors.primary[600]} />
+                  <Text style={styles.bannerSuccessText}>
+                    {t('auth.register.compteCree')}
+                  </Text>
+                </View>
+              )}
 
               {errors.general && (
                 <View style={styles.bannerError}>

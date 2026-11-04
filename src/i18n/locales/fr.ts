@@ -143,6 +143,7 @@ const fr = {
       prenomObligatoire: 'Le prénom est obligatoire.',
       emailObligatoire: 'L’adresse e-mail est obligatoire.',
       echecCreation: 'Impossible de créer le compte.',
+      compteCree: 'Compte créé. Vous pouvez maintenant vous connecter.',
       confirmationDifferent: 'Les mots de passe ne correspondent pas.',
       creation: 'Création…',
       soumettre: 'Créer mon compte',
